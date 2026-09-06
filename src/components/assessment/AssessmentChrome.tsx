@@ -26,7 +26,7 @@ export function AssessmentHeader({ onSaveExit }: { onSaveExit?: () => void }) {
           aria-label="GoRebalance — back to the main site"
           className="inline-flex items-center min-h-[44px] shrink-0 transition-opacity hover:opacity-85"
         >
-          <Logo className="text-text" />
+          <Logo size={34} />
         </Link>
 
         <div className="flex items-center gap-2">

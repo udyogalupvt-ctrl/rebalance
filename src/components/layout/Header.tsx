@@ -6,6 +6,7 @@ import { Logo } from "@/components/ui/Logo";
 import { useTheme } from "@/components/shared/ThemeProvider";
 import { cn } from "@/lib/utils";
 import { Link, useRouterState } from "@tanstack/react-router";
+import { DUR, EASE_SETTLE } from "@/lib/motion";
 
 const navLinks = [
   { name: "Home", href: "/" },
@@ -67,7 +68,11 @@ export function Header({ overHero = true }: HeaderProps = {}) {
 
   // Over the hero the bar is transparent and the content is on-dark. Once the
   // pill has a --surface fill, content switches to the normal text colours.
-  const onDark = overHero && !isScrolled && !isMenuOpen;
+  //
+  // The open mobile menu is a dark panel, so the bar has to use the on-dark
+  // treatment there too regardless of scroll -- otherwise the logo and the
+  // close button disappear into it.
+  const onDark = isMenuOpen || (overHero && !isScrolled);
 
   const spring = reduce
     ? { duration: 0 }
@@ -94,13 +99,16 @@ export function Header({ overHero = true }: HeaderProps = {}) {
             paddingRight: isScrolled ? 22 : 40,
             marginTop: isScrolled ? 16 : 0,
             borderRadius: isScrolled ? 999 : 0,
-            backgroundColor: isScrolled
-              ? "rgba(var(--surface-rgb), 0.72)"
-              : "rgba(var(--surface-rgb), 0)",
-            borderColor: isScrolled ? "var(--border)" : "rgba(var(--surface-rgb), 0)",
-            boxShadow: isScrolled
-              ? "0 8px 32px rgba(var(--text-rgb), 0.10), 0 2px 8px rgba(var(--text-rgb), 0.05)"
-              : "0 0 0 rgba(var(--shadow-rgb), 0)",
+            backgroundColor:
+              isScrolled && !isMenuOpen
+                ? "rgba(var(--surface-rgb), 0.72)"
+                : "rgba(var(--surface-rgb), 0)",
+            borderColor:
+              isScrolled && !isMenuOpen ? "var(--border)" : "rgba(var(--surface-rgb), 0)",
+            boxShadow:
+              isScrolled && !isMenuOpen
+                ? "0 8px 32px rgba(var(--text-rgb), 0.10), 0 2px 8px rgba(var(--text-rgb), 0.05)"
+                : "0 0 0 rgba(var(--shadow-rgb), 0)",
           }}
           transition={spring}
           style={{ borderWidth: 1, borderStyle: "solid", maxWidth: "100%" }}
@@ -110,7 +118,7 @@ export function Header({ overHero = true }: HeaderProps = {}) {
           )}
         >
           <Link to="/" aria-label="GoRebalance — home" className="shrink-0">
-            <Logo className={cn(onDark ? "text-on-dark" : "text-text")} />
+            <Logo tone={onDark ? "light" : "dark"} size={36} />
           </Link>
 
           {/* Desktop nav */}
@@ -200,7 +208,7 @@ export function Header({ overHero = true }: HeaderProps = {}) {
               aria-expanded={isMenuOpen}
             >
               {isMenuOpen ? (
-                <X className="w-6 h-6 text-text" />
+                <X className="w-6 h-6 text-on-dark" />
               ) : (
                 <Menu className={cn("w-6 h-6", onDark ? "text-on-dark" : "text-text")} />
               )}
@@ -220,56 +228,110 @@ export function Header({ overHero = true }: HeaderProps = {}) {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: reduce ? 0 : 0.25 }}
-            className="fixed inset-0 -z-10 lg:hidden bg-bg/97 backdrop-blur-xl flex flex-col overflow-y-auto pointer-events-auto"
-            style={{ paddingTop: "calc(var(--header-h) + 44px)" }}
+            className="fixed inset-0 -z-10 lg:hidden bg-[var(--dark-surface)] flex flex-col overflow-y-auto pointer-events-auto"
+            style={{ paddingTop: "calc(var(--header-h) + 40px)" }}
           >
-            <div className="flex flex-col gap-1 px-7">
-              {navLinks.map((link, i) => (
-                <motion.div
-                  key={link.name}
-                  initial={{ opacity: 0, x: -16 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: reduce ? 0 : 0.05 + i * 0.05, duration: 0.3 }}
-                >
-                  <Link
-                    to={link.href}
-                    onClick={() => setIsMenuOpen(false)}
-                    aria-current={isActive(link.href) ? "page" : undefined}
-                    className={cn(
-                      "flex items-center gap-3 py-2 font-fraunces text-[clamp(1.75rem,8vw,2.25rem)] font-medium transition-colors",
-                      isActive(link.href) ? "text-primary-contrast" : "text-text",
-                    )}
-                  >
-                    <span
-                      className={cn(
-                        "h-2 w-2 rounded-full bg-accent transition-opacity",
-                        isActive(link.href) ? "opacity-100" : "opacity-0",
-                      )}
-                      aria-hidden="true"
-                    />
-                    {link.name}
-                  </Link>
-                </motion.div>
-              ))}
+            {/* Brand light, so the panel has depth rather than being a flat
+                fill — the same wash used behind the marketing sections. */}
+            <div
+              className="pointer-events-none absolute inset-0 overflow-hidden"
+              aria-hidden="true"
+            >
+              <div className="absolute -left-1/3 -top-1/4 h-[560px] w-[560px] rounded-full bg-primary/20 blur-[120px]" />
+              <div className="absolute -right-1/4 top-1/3 h-[420px] w-[420px] rounded-full bg-accent/12 blur-[110px]" />
+              {/* The mark itself, held large and faint at the foot of the
+                  panel. It is the brand, so it earns the space. */}
+              <img
+                src="/brand-mark-light.png"
+                alt=""
+                className="absolute -bottom-16 -right-12 w-[300px] opacity-[0.06]"
+              />
             </div>
 
-            <div className="mt-auto flex flex-col gap-6 px-7 pt-10 pb-10">
+            <nav className="relative z-10 flex flex-col px-7" aria-label="Main">
+              {navLinks.map((link, i) => {
+                const active = isActive(link.href);
+                return (
+                  <motion.div
+                    key={link.name}
+                    initial={{ opacity: 0, y: 14 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{
+                      delay: reduce ? 0 : 0.06 + i * 0.055,
+                      duration: reduce ? 0 : DUR.md,
+                      ease: EASE_SETTLE,
+                    }}
+                  >
+                    <Link
+                      to={link.href}
+                      onClick={() => setIsMenuOpen(false)}
+                      aria-current={active ? "page" : undefined}
+                      className={cn(
+                        "group flex items-baseline gap-4 border-b border-on-dark-border/40 py-4",
+                        "transition-colors duration-300",
+                      )}
+                    >
+                      {/* An index, so the list reads as a considered set
+                          rather than an undifferentiated stack of words. */}
+                      <span
+                        className={cn(
+                          "font-jakarta text-[12px] font-semibold tabular-nums tracking-[0.14em] transition-colors",
+                          active ? "text-on-dark-accent" : "text-on-dark-faint",
+                        )}
+                        aria-hidden="true"
+                      >
+                        {String(i + 1).padStart(2, "0")}
+                      </span>
+                      <span
+                        className={cn(
+                          "font-fraunces text-[clamp(1.75rem,8vw,2.25rem)] font-medium leading-tight transition-transform duration-300 group-hover:translate-x-1",
+                          active ? "text-on-dark" : "text-on-dark-muted",
+                        )}
+                      >
+                        {link.name}
+                      </span>
+                      {active && (
+                        <span
+                          className="ml-auto h-1.5 w-1.5 shrink-0 self-center rounded-full bg-accent"
+                          aria-hidden="true"
+                        />
+                      )}
+                    </Link>
+                  </motion.div>
+                );
+              })}
+            </nav>
+
+            <motion.div
+              initial={{ opacity: 0, y: 14 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{
+                delay: reduce ? 0 : 0.06 + navLinks.length * 0.055,
+                duration: reduce ? 0 : DUR.md,
+                ease: EASE_SETTLE,
+              }}
+              className="relative z-10 mt-auto flex flex-col gap-7 px-7 pb-12 pt-10"
+            >
               <Link
                 to="/assessment"
                 onClick={() => setIsMenuOpen(false)}
-                className="w-full h-14 bg-accent-strong text-on-accent rounded-pill font-jakarta text-[16px] font-semibold flex items-center justify-center gap-2"
+                className="press flex h-14 w-full items-center justify-center gap-2 rounded-pill bg-accent-strong font-jakarta text-[16px] font-semibold text-on-accent"
               >
                 Start My Assessment
-                <ArrowRight className="w-4 h-4" />
+                <ArrowRight className="h-4 w-4" />
               </Link>
-              <div className="text-center">
-                <p className="fs-micro mb-1">Questions? Call us</p>
-                <a href="tel:+919390414536" className="font-fraunces text-2xl text-text">
+
+              <div className="flex flex-col gap-1">
+                <p className="fs-eyebrow text-on-dark-faint">Questions? Call us</p>
+                <a
+                  href="tel:+919390414536"
+                  className="font-fraunces text-2xl text-on-dark transition-colors hover:text-on-dark-accent"
+                >
                   +91 93904 14536
                 </a>
-                <p className="mt-2 fs-micro text-balance">Kakinada, Andhra Pradesh</p>
+                <p className="fs-micro text-on-dark-faint">Kakinada, Andhra Pradesh</p>
               </div>
-            </div>
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>

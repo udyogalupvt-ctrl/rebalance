@@ -1,5 +1,4 @@
 import * as React from "react";
-import { motion, useReducedMotion } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 interface LogoProps {
@@ -7,52 +6,55 @@ interface LogoProps {
   style?: React.CSSProperties;
   /** Render the mark only, without the wordmark. */
   hideText?: boolean;
-  /** Draw the mark on mount. Used by the preloader; off everywhere else. */
-  animate?: boolean;
+  /**
+   * Which artwork to use.
+   *
+   * The real mark is full-colour — dark green with a sage interior — so unlike
+   * the old hand-drawn SVG it cannot inherit `currentColor`. On a dark surface
+   * it would all but vanish, so there is a second file whose lightness is
+   * inverted with hue and saturation preserved: still the brand green, not a
+   * white silhouette.
+   */
+  tone?: "dark" | "light";
+  /** Height of the mark in pixels. */
+  size?: number;
 }
 
 /**
- * Brand lockup. Both the mark and the wordmark inherit `currentColor`, so the
- * caller controls the colour with a single text-* class. (The wordmark used to
- * hardcode text-text, which made it invisible on the dark footer.)
+ * The GoRebalance brand lockup: the mark, with the wordmark set as live text.
+ *
+ * The supplied artwork is a *vertical* lockup — mark stacked above the
+ * wordmark — which is wrong for a header bar: constraining it to bar height
+ * shrinks the wordmark to a few illegible pixels. So the mark is used as an
+ * image and the wordmark is typeset beside it in Fraunces, which also lets it
+ * take the surrounding colour and stay crisp at any size.
  */
-export function Logo({ className, style, hideText, animate = false }: LogoProps) {
-  const reduce = useReducedMotion();
-  const shouldDraw = animate && !reduce;
+export function Logo({ className, style, hideText, tone = "dark", size = 36 }: LogoProps) {
+  const src = tone === "light" ? "/brand-mark-light.png" : "/brand-mark.png";
 
   return (
-    <div className={cn("flex items-center gap-3 text-text", className)} style={style}>
-      <svg
-        width="40"
-        height="40"
-        viewBox="0 0 40 40"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-        className="shrink-0"
+    <span className={cn("inline-flex items-center gap-2.5", className)} style={style}>
+      <img
+        src={src}
+        alt=""
+        width={size}
+        height={size}
+        decoding="async"
+        className="block shrink-0 object-contain"
+        style={{ width: size, height: size }}
         aria-hidden="true"
-      >
-        <motion.path
-          d="M20 5C11.7157 5 5 11.7157 5 20C5 28.2843 11.7157 35 20 35C28.2843 35 35 28.2843 35 20C35 15 32 10 28 8C26 7 24 7 22 8L20 10C18 12 18 15 20 17C22 19 25 19 27 17C29 15 30 12 28 8"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          initial={shouldDraw ? { pathLength: 0 } : false}
-          animate={{ pathLength: 1 }}
-          transition={{ duration: 1.1, ease: "easeInOut" }}
-        />
-        <motion.path
-          d="M20 5C22 3 25 3 27 5"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          initial={shouldDraw ? { pathLength: 0 } : false}
-          animate={{ pathLength: 1 }}
-          transition={{ duration: 0.45, delay: 0.85 }}
-        />
-      </svg>
+      />
       {!hideText && (
-        <span className="font-fraunces text-2xl font-semibold tracking-tight">GoRebalance</span>
+        <span
+          className={cn(
+            "font-fraunces font-semibold tracking-tight leading-none",
+            tone === "light" ? "text-on-dark" : "text-text",
+          )}
+          style={{ fontSize: Math.round(size * 0.62) }}
+        >
+          GoRebalance
+        </span>
       )}
-    </div>
+    </span>
   );
 }

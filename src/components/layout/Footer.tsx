@@ -80,7 +80,7 @@ export function Footer() {
                   aria-label="GoRebalance - home"
                   className="inline-flex items-center min-h-[44px] gap-3 group transition-opacity hover:opacity-85"
                 >
-                  <Logo className="text-[var(--on-dark)]" />
+                  <Logo tone="light" size={40} />
                 </Link>
                 <p className="mt-2.5 text-[12.5px] font-semibold uppercase tracking-[0.14em] text-on-dark-accent">
                   Gut Health · Nutrition · Balance

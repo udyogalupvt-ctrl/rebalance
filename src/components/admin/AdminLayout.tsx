@@ -133,7 +133,7 @@ export default function AdminLayout() {
   const SidebarContent = () => (
     <div className="af-admin-sidebar-inner">
       <div className="af-admin-sidebar-header">
-        <Logo style={{ width: 30, height: 30 }} hideText />
+        <Logo size={30} hideText />
         <span className="af-admin-logo-text">GoRebalance</span>
         <span className="af-admin-chip">ADMIN</span>
       </div>

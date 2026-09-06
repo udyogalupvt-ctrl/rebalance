@@ -21,7 +21,7 @@ export default function ProtectedRoute({ children }: { children?: React.ReactNod
         <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 16 }}>
           {/* Logo pulse */}
           <div style={{ animation: "af-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite" }}>
-            <Logo style={{ width: 40, height: 40 }} hideText />
+            <Logo size={40} hideText />
           </div>
           {/* Progress line */}
           <div

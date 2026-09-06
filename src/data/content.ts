@@ -629,8 +629,10 @@ export const navLinks = [
 // === ABOUT PAGE — PRACTITIONER STORY ===
 export const practitionerStory = {
   portrait: {
-    src: "https://images.unsplash.com/photo-1606787364406-a3cdf06c6d0c?auto=format&fit=crop&q=80&w=1800",
-    alt: "A consultation over a shared table with fresh ingredients and notes",
+    // Was a stock photograph of a stranger, captioned with the practitioner's
+    // name — a false attribution on the page that introduces her.
+    src: "/founder.jpg",
+    alt: "Dt. N. Sai Sowjanya at her desk in the GoRebalance clinic, Kakinada",
     caption: "Dt. N. Sai Sowjanya at the Kakinada clinic",
   },
   intro:

@@ -9,7 +9,6 @@ import { CurveDivider } from "@/components/shared/CurveDivider";
 import { stats, brand, locations } from "@/data/content";
 import { cn } from "@/lib/utils";
 import { Link } from "@tanstack/react-router";
-import practitionerPortrait from "@/assets/sai-sowjanya.jpg.asset.json";
 
 export function AboutPreview() {
   const containerRef = React.useRef(null);
@@ -76,26 +75,18 @@ export function AboutPreview() {
                     y: shouldReduceMotion ? 0 : imageY,
                     scale: shouldReduceMotion ? 1 : 1.08,
                   }}
-                  src={practitionerPortrait.url}
+                  src="/founder.jpg"
                   alt="Dt. N. Sai Sowjanya, clinical nutritionist and gut health specialist"
-                  width={880}
-                  height={1100}
+                  width={1086}
+                  height={1448}
                   loading="lazy"
                   decoding="async"
                   className="h-full w-full object-cover object-[center_top]"
-                  // The portrait is served from the asset host, which is not
-                  // reachable in local dev. Fall back to an on-brand image
-                  // rather than rendering a broken-image box with spilled alt
-                  // text. The real portrait still wins wherever it resolves.
-                  onError={(e) => {
-                    const img = e.currentTarget;
-                    if (img.dataset["fallback"]) return;
-                    img.dataset["fallback"] = "1";
-                    img.src =
-                      "https://images.unsplash.com/photo-1606787364406-a3cdf06c6d0c?auto=format&fit=crop&q=80&w=880";
-                    img.alt =
-                      "A consultation at the GoRebalance practice, with fresh ingredients on the table";
-                  }}
+                  // Served from /public now. The old source was an asset-host
+                  // URL that never resolved, so every visitor actually saw the
+                  // stock fallback rather than the practitioner.
+                  srcSet="/founder-sm.jpg 640w, /founder.jpg 1086w"
+                  sizes="(max-width: 640px) 90vw, 420px"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-[var(--dark-surface)]/28 to-transparent pointer-events-none" />
               </div>

@@ -50,7 +50,7 @@ export function Preloader() {
             {/* Mark only — the wordmark below is the single instance of the
                 brand name. Previously <Logo> rendered it too, so it appeared
                 twice. */}
-            <Logo hideText animate className="mb-6 scale-125 text-primary" />
+            <Logo hideText size={72} className="mb-6" />
 
             <div className="flex overflow-hidden" aria-label={WORDMARK}>
               {WORDMARK.split("").map((char, i) => (

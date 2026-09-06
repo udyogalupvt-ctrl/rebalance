@@ -21,10 +21,10 @@ const aboutHeroProps = {
     { label: "About", href: "/about" },
   ],
   image: {
-    src: "https://images.unsplash.com/photo-1606787364406-a3cdf06c6d0c?auto=format&fit=crop&q=80&w=2000",
-    alt: "Professional and warm consultation room with natural light",
-    width: 2000,
-    height: 1200,
+    src: "/founder.jpg",
+    alt: "Dt. N. Sai Sowjanya at the GoRebalance clinic in Kakinada",
+    width: 1086,
+    height: 1448,
   },
 };
 

@@ -109,7 +109,7 @@ export default function AdminLogin() {
         className="af-admin-login-card"
       >
         <div style={{ display: "flex", justifyContent: "center", marginBottom: 20 }}>
-          <Logo style={{ width: 44, height: 44 }} hideText />
+          <Logo size={44} hideText />
         </div>
 
         <h1
