@@ -97,11 +97,13 @@ const HoursCard = () => {
                   </span>
                 )}
               </dt>
-              <dd
-                className={`text-[14.5px] tabular-nums ${item.time === "Closed" ? "text-text-muted/65" : "text-text-muted"}`}
-              >
-                {item.time}
-              </dd>
+              {/* "Closed" was set at text-text-muted/65 to play it down. At 65%
+                  alpha it measured 2.94:1 on white against a required 4.5 (and
+                  about 4.1:1 in dark), so the one line telling a visitor the
+                  clinic is shut was the hardest line in the table to read.
+                  It keeps the muted tone -- already a step below the day names,
+                  which are text-text -- just at full strength. */}
+              <dd className="text-[14.5px] tabular-nums text-text-muted">{item.time}</dd>
             </div>
           );
         })}

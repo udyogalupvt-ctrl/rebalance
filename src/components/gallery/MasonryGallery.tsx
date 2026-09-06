@@ -1,4 +1,5 @@
 import * as React from "react";
+
 import { useState, useMemo, useEffect } from "react";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { Maximize2, Plus } from "lucide-react";
@@ -11,6 +12,9 @@ import { FilterBar } from "@/components/shared/FilterBar";
 import { Lightbox } from "@/components/shared/Lightbox";
 import { cn } from "@/lib/utils";
 import type { GalleryItem } from "@/data/gallery";
+
+/** Chip ground that stays legible over any photograph. */
+const CHIP_BG = "bg-dark-surface/85 backdrop-blur-md border border-on-dark-border";
 const CATEGORIES = ["All", "Clinic", "Consultations", "Meal Plans", "Nutrition", "Community"];
 export function MasonryGallery() {
   const [activeCategory, setActiveCategory] = useState("All");
@@ -185,7 +189,14 @@ function GalleryTile({
       {/* Caption Block */}
       <div className="absolute bottom-0 left-0 right-0 p-[13px] md:p-[18px] text-left">
         {item.category && ratio !== "2/3" && (
-          <span className="inline-block fs-eyebrow text-on-dark glass-on-dark px-[9px] py-1 rounded-full mb-1.5">
+          // Same dark ground as the video chips. This one sits on the strong
+          // end of the scrim and measured 4.63-4.76:1 -- passing, but only
+          // just, and the margin depends on which photo is behind it.
+          <span
+            className={
+              "inline-block fs-eyebrow text-on-dark px-[9px] py-1 rounded-full mb-1.5 " + CHIP_BG
+            }
+          >
             {item.category}
           </span>
         )}

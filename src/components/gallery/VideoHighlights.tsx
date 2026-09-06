@@ -1,4 +1,5 @@
 import * as React from "react";
+
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { Play, X } from "lucide-react";
 import { useReducedMotion } from "framer-motion";
@@ -7,6 +8,9 @@ import { SectionWrapper } from "@/components/shared/SectionWrapper";
 import { SectionHeading } from "@/components/shared/SectionHeading";
 import { Reveal } from "@/components/shared/Reveal";
 import { videoHighlights, type VideoHighlight } from "@/data/content";
+
+/** Chip ground that stays legible over any photograph. */
+const CHIP_BG = "bg-dark-surface/85 backdrop-blur-md border border-on-dark-border";
 
 // PLACEHOLDER VIDEOS — replace poster images and videoUrl values with the client's real footage.
 // If no video is available at launch, leave the `videoHighlights` array empty and the section will not render.
@@ -102,9 +106,17 @@ function VideoCard({
           }}
         />
 
+        {/* Not glass-on-dark. That token is rgba(244,248,245,0.12) -- a
+            translucent WHITE -- and this chip sits at top-3, where the gradient
+            below is still fully transparent. Over a pale photo the chip went
+            lighter rather than darker and the white label measured 1.99:1.
+            A dark ground at 85% is 10:1 even over pure white. */}
         <span
           aria-hidden="true"
-          className="absolute top-3 left-3 px-[10px] py-[4px] rounded-pill fs-eyebrow text-on-dark glass-on-dark"
+          className={
+            "absolute top-3 left-3 px-[10px] py-[4px] rounded-pill fs-eyebrow text-on-dark " +
+            CHIP_BG
+          }
         >
           {item.category}
         </span>
