@@ -1,0 +1,112 @@
+rules_version = '2';
+
+// GoRebalance Firestore security rules.
+//
+// The admin panel checks authorisation by reading config/admins and looking for
+// the signed-in UID in its `uids` array. That check is a UI convenience only —
+// it decides what to render. These rules are what actually enforce access, and
+// they must assume the client is hostile: the Firebase web API key ships in the
+// browser bundle by design, so anyone can call the REST API with it.
+//
+// Deploy with:  firebase deploy --only firestore:rules
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ── helpers ──────────────────────────────────────────────────────────
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    // Reads the admin allowlist. get() is billed as a document read per
+    // evaluation, which is acceptable here: admin writes are infrequent.
+    function isAdmin() {
+      return isSignedIn()
+        && exists(/databases/$(database)/documents/config/admins)
+        && request.auth.uid in get(/databases/$(database)/documents/config/admins).data.uids;
+    }
+
+    // ── config ───────────────────────────────────────────────────────────
+    // The allowlist is readable by signed-in users only — a visitor has no
+    // reason to enumerate admin UIDs, and the panel only needs it after login.
+    //
+    // Writes are denied to everyone, including admins. This is the whole point:
+    // membership is granted manually in the Firebase console, so a stolen admin
+    // session cannot add a second account and persist.
+    match /config/{document=**} {
+      allow read: if isSignedIn();
+      allow write: if false;
+    }
+
+    // ── assessments ──────────────────────────────────────────────────────
+    // Anyone may submit one (patients have no account), but only an admin can
+    // read them back. These hold names, phone numbers, medical history and
+    // payment screenshots.
+    match /assessments/{id} {
+      allow create: if true;
+      allow read, update, delete: if isAdmin();
+    }
+
+    // Drafts are written by the public form as the patient progresses, keyed by
+    // a client-generated id. Creating and updating your own draft is open;
+    // reading them back is not.
+    match /assessmentDrafts/{id} {
+      allow create, update: if true;
+      allow read, delete: if isAdmin();
+    }
+
+    // ── public application status ────────────────────────────────────────
+    // The tracking page reads this, and only this, without being signed in.
+    // It holds a first name, the last four digits of the phone and two status
+    // fields -- never medical history, address, email or the payment image.
+    //
+    // `get` is open but `list` is denied, which is the whole design: a reader
+    // must already know the submission id from their own confirmation screen,
+    // and cannot walk the collection to discover who has booked. The phone
+    // check happens client-side against phoneLast4 and is a confirmation, not
+    // an access control -- the reference is what gates the read.
+    match /assessmentStatus/{id} {
+      allow get: if true;
+      allow list: if false;
+      allow create: if true;              // written by the public form on submit
+      allow update, delete: if isAdmin(); // status changes come from the panel
+    }
+
+    // ── enquiries ────────────────────────────────────────────────────────
+    // Same shape: the public contact form writes, only admins read.
+    match /enquiries/{id} {
+      allow create: if true;
+      allow read, update, delete: if isAdmin();
+    }
+
+    // ── published content ────────────────────────────────────────────────
+    // The public site reads these, so read is open. Only admins may change them.
+    match /treatments/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    match /testimonials/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    match /galleryItems/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // ── activity log ─────────────────────────────────────────────────────
+    // Append-only from the admin panel. Entries are never edited or removed, so
+    // the trail cannot be quietly rewritten.
+    match /activityLog/{id} {
+      allow read, create: if isAdmin();
+      allow update, delete: if false;
+    }
+
+    // ── default deny ─────────────────────────────────────────────────────
+    // Anything not matched above is closed. New collections must be added here
+    // deliberately rather than inheriting access by accident.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

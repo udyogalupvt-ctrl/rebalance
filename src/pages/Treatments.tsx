@@ -1,0 +1,54 @@
+import * as React from "react";
+import { MetaChip } from "@/components/shared/MetaChip";
+import { Header } from "@/components/layout/Header";
+import { Footer } from "@/components/layout/Footer";
+import { PageHero } from "@/components/shared/PageHero";
+import { ProgramsGrid } from "@/components/treatments/ProgramsGrid";
+import { WhatsIncluded } from "@/components/treatments/WhatsIncluded";
+import { ProgramJourney } from "@/components/treatments/ProgramJourney";
+import { TreatmentsFaq } from "@/components/treatments/TreatmentsFaq";
+import { AssessmentCTA } from "@/components/home/AssessmentCTA";
+import { treatmentsCtaCopy } from "@/data/content";
+
+import { Layers, UserCheck, Video } from "lucide-react";
+
+export default function Treatments() {
+  const breadcrumb = [
+    { label: "Home", href: "/" },
+    { label: "Treatments", href: "/treatments" },
+  ];
+
+  return (
+    <>
+      <Header />
+      <main>
+        <PageHero
+          variant="image"
+          align="left"
+          eyebrow="OUR PROGRAMS"
+          title="Nutrition built around your *condition*."
+          subtitle="Six focused programs, each addressing a different root cause — but all starting from the same place: your gut, your history and your daily life. Most clients begin with one and find the others resolve alongside it."
+          breadcrumb={breadcrumb}
+          image={{
+            src: "https://images.unsplash.com/photo-1767114915989-c6ab3c8fc42e?auto=format&fit=crop&q=80&w=1920",
+            alt: "A professional clinical nutrition consultation setup with fresh ingredients in warm natural light",
+          }}
+        >
+          <div className="flex flex-wrap gap-3">
+            <MetaChip icon={Layers} label="6 Focused Programs" />
+            <MetaChip icon={UserCheck} label="Personalised, Never Templated" />
+            <MetaChip icon={Video} label="In-Clinic & Online" />
+          </div>
+        </PageHero>
+
+        <ProgramsGrid />
+        <WhatsIncluded />
+        <ProgramJourney />
+        <TreatmentsFaq />
+        <AssessmentCTA title={treatmentsCtaCopy.title} subtitle={treatmentsCtaCopy.subtitle} />
+      </main>
+
+      <Footer />
+    </>
+  );
+}

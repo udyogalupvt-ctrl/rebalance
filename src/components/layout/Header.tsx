@@ -1,0 +1,278 @@
+import * as React from "react";
+import { useState, useEffect } from "react";
+import { motion, AnimatePresence, useScroll, useReducedMotion } from "framer-motion";
+import { Menu, X, Sun, Moon, ArrowRight } from "lucide-react";
+import { Logo } from "@/components/ui/Logo";
+import { useTheme } from "@/components/shared/ThemeProvider";
+import { cn } from "@/lib/utils";
+import { Link, useRouterState } from "@tanstack/react-router";
+
+const navLinks = [
+  { name: "Home", href: "/" },
+  { name: "About", href: "/about" },
+  { name: "Treatments", href: "/treatments" },
+  { name: "Gallery", href: "/gallery" },
+  { name: "Testimonials", href: "/testimonials" },
+  { name: "Contact", href: "/contact" },
+];
+
+interface HeaderProps {
+  /**
+   * Whether this page opens with a dark hero behind the bar.
+   *
+   * Defaults to true because every marketing page does. Pages that start on
+   * the light page background must pass false: the transparent-over-hero
+   * styling puts --on-dark text on a scrim that assumes dark imagery beneath
+   * it, and on a light page the logo measured 2.47:1 against 3.0 required.
+   */
+  overHero?: boolean;
+}
+
+export function Header({ overHero = true }: HeaderProps = {}) {
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { theme, setTheme } = useTheme();
+  const { scrollY } = useScroll();
+  const reduce = useReducedMotion();
+  const pathname = useRouterState({ select: (state) => state.location.pathname });
+
+  useEffect(() => {
+    const unsub = scrollY.on("change", (latest) => setIsScrolled(latest > 60));
+    setIsScrolled(scrollY.get() > 60);
+    return unsub;
+  }, [scrollY]);
+
+  // Lock the page behind the mobile menu.
+  useEffect(() => {
+    if (!isMenuOpen) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    // The floating WhatsApp / back-to-top buttons sit above the menu and
+    // overlapped its contact details.
+    document.body.dataset["menuOpen"] = "true";
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setIsMenuOpen(false);
+    window.addEventListener("keydown", onKey);
+    return () => {
+      document.body.style.overflow = prev;
+      delete document.body.dataset["menuOpen"];
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [isMenuOpen]);
+
+  const toggleTheme = () => setTheme(theme === "dark" ? "light" : "dark");
+
+  // "/" must match exactly; every other route also matches its sub-paths.
+  const isActive = (href: string) =>
+    href === "/" ? pathname === "/" : pathname === href || pathname.startsWith(href + "/");
+
+  // Over the hero the bar is transparent and the content is on-dark. Once the
+  // pill has a --surface fill, content switches to the normal text colours.
+  const onDark = overHero && !isScrolled && !isMenuOpen;
+
+  const spring = reduce
+    ? { duration: 0 }
+    : ({ type: "spring", stiffness: 260, damping: 30, mass: 0.9 } as const);
+
+  return (
+    <header className="fixed top-0 left-0 z-50 w-full pointer-events-none">
+      {/* Scrim: keeps the nav legible over light hero imagery. Fades out once
+          the pill has its own background. */}
+      <motion.div
+        aria-hidden="true"
+        className="header-scrim absolute inset-x-0 top-0 h-[168px] pointer-events-none"
+        animate={{ opacity: onDark ? 1 : 0 }}
+        transition={{ duration: reduce ? 0 : 0.35, ease: "easeOut" }}
+      />
+
+      <div className="relative flex justify-center">
+        <motion.div
+          animate={{
+            width: isScrolled ? "min(1180px, calc(100% - 32px))" : "100%",
+            paddingTop: isScrolled ? 12 : 26,
+            paddingBottom: isScrolled ? 12 : 26,
+            paddingLeft: isScrolled ? 22 : 40,
+            paddingRight: isScrolled ? 22 : 40,
+            marginTop: isScrolled ? 16 : 0,
+            borderRadius: isScrolled ? 999 : 0,
+            backgroundColor: isScrolled
+              ? "rgba(var(--surface-rgb), 0.72)"
+              : "rgba(var(--surface-rgb), 0)",
+            borderColor: isScrolled ? "var(--border)" : "rgba(var(--surface-rgb), 0)",
+            boxShadow: isScrolled
+              ? "0 8px 32px rgba(var(--text-rgb), 0.10), 0 2px 8px rgba(var(--text-rgb), 0.05)"
+              : "0 0 0 rgba(var(--shadow-rgb), 0)",
+          }}
+          transition={spring}
+          style={{ borderWidth: 1, borderStyle: "solid", maxWidth: "100%" }}
+          className={cn(
+            "flex items-center justify-between pointer-events-auto",
+            isScrolled && "backdrop-blur-[20px]",
+          )}
+        >
+          <Link to="/" aria-label="GoRebalance — home" className="shrink-0">
+            <Logo className={cn(onDark ? "text-on-dark" : "text-text")} />
+          </Link>
+
+          {/* Desktop nav */}
+          <nav className="hidden lg:flex items-center gap-8">
+            {navLinks.map((link) => {
+              const active = isActive(link.href);
+              return (
+                <Link
+                  key={link.name}
+                  to={link.href}
+                  aria-current={active ? "page" : undefined}
+                  className={cn(
+                    "relative group font-jakarta text-[15px] transition-colors py-2",
+                    active ? "font-semibold" : "font-medium",
+                    onDark
+                      ? active
+                        ? "text-on-dark"
+                        : "text-on-dark-muted hover:text-on-dark"
+                      : active
+                        ? "text-primary-contrast"
+                        : "text-text-muted hover:text-text",
+                  )}
+                >
+                  {link.name}
+                  <span
+                    className={cn(
+                      "absolute -bottom-0.5 left-0 h-[2px] rounded-full transition-all duration-300",
+                      active ? "w-full" : "w-0 group-hover:w-full",
+                      onDark ? "bg-on-dark-accent" : "bg-accent",
+                    )}
+                  />
+                </Link>
+              );
+            })}
+          </nav>
+
+          <div className="flex items-center gap-2 sm:gap-3">
+            <button
+              onClick={toggleTheme}
+              className={cn(
+                "grid place-items-center w-11 h-11 rounded-full transition-colors",
+                onDark ? "hover:bg-white/12" : "hover:bg-primary-soft",
+              )}
+              aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+            >
+              <span className="relative block w-5 h-5">
+                <motion.span
+                  className="absolute inset-0 grid place-items-center"
+                  animate={{
+                    rotate: theme === "dark" ? 0 : 90,
+                    opacity: theme === "dark" ? 1 : 0,
+                    scale: theme === "dark" ? 1 : 0.4,
+                  }}
+                  transition={{ duration: reduce ? 0 : 0.35 }}
+                >
+                  <Moon className={cn("w-5 h-5", onDark ? "text-on-dark" : "text-text")} />
+                </motion.span>
+                <motion.span
+                  className="absolute inset-0 grid place-items-center"
+                  animate={{
+                    rotate: theme === "dark" ? -90 : 0,
+                    opacity: theme === "dark" ? 0 : 1,
+                    scale: theme === "dark" ? 0.4 : 1,
+                  }}
+                  transition={{ duration: reduce ? 0 : 0.35 }}
+                >
+                  <Sun className={cn("w-5 h-5", onDark ? "text-on-dark" : "text-text")} />
+                </motion.span>
+              </span>
+            </button>
+
+            <Link
+              to="/assessment"
+              className="hidden sm:inline-flex items-center gap-2 h-11 px-6 bg-accent-strong text-on-accent rounded-pill font-jakarta text-[14px] font-semibold transition-transform hover:scale-[1.03] active:scale-95 group"
+            >
+              Start My Assessment
+              <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+            </Link>
+
+            <button
+              onClick={() => setIsMenuOpen((v) => !v)}
+              className={cn(
+                "lg:hidden grid place-items-center w-11 h-11 rounded-full transition-colors",
+                onDark ? "hover:bg-white/12" : "hover:bg-primary-soft",
+              )}
+              aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+              aria-expanded={isMenuOpen}
+            >
+              {isMenuOpen ? (
+                <X className="w-6 h-6 text-text" />
+              ) : (
+                <Menu className={cn("w-6 h-6", onDark ? "text-on-dark" : "text-text")} />
+              )}
+            </button>
+          </div>
+        </motion.div>
+      </div>
+
+      {/* Mobile menu.
+          Rendered BEFORE the bar in paint order via a negative-priority
+          stacking context so the logo and close button stay visible and
+          clickable on top of it. */}
+      <AnimatePresence>
+        {isMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: reduce ? 0 : 0.25 }}
+            className="fixed inset-0 -z-10 lg:hidden bg-bg/97 backdrop-blur-xl flex flex-col overflow-y-auto pointer-events-auto"
+            style={{ paddingTop: "calc(var(--header-h) + 44px)" }}
+          >
+            <div className="flex flex-col gap-1 px-7">
+              {navLinks.map((link, i) => (
+                <motion.div
+                  key={link.name}
+                  initial={{ opacity: 0, x: -16 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: reduce ? 0 : 0.05 + i * 0.05, duration: 0.3 }}
+                >
+                  <Link
+                    to={link.href}
+                    onClick={() => setIsMenuOpen(false)}
+                    aria-current={isActive(link.href) ? "page" : undefined}
+                    className={cn(
+                      "flex items-center gap-3 py-2 font-fraunces text-[clamp(1.75rem,8vw,2.25rem)] font-medium transition-colors",
+                      isActive(link.href) ? "text-primary-contrast" : "text-text",
+                    )}
+                  >
+                    <span
+                      className={cn(
+                        "h-2 w-2 rounded-full bg-accent transition-opacity",
+                        isActive(link.href) ? "opacity-100" : "opacity-0",
+                      )}
+                      aria-hidden="true"
+                    />
+                    {link.name}
+                  </Link>
+                </motion.div>
+              ))}
+            </div>
+
+            <div className="mt-auto flex flex-col gap-6 px-7 pt-10 pb-10">
+              <Link
+                to="/assessment"
+                onClick={() => setIsMenuOpen(false)}
+                className="w-full h-14 bg-accent-strong text-on-accent rounded-pill font-jakarta text-[16px] font-semibold flex items-center justify-center gap-2"
+              >
+                Start My Assessment
+                <ArrowRight className="w-4 h-4" />
+              </Link>
+              <div className="text-center">
+                <p className="fs-micro mb-1">Questions? Call us</p>
+                <a href="tel:+919390414536" className="font-fraunces text-2xl text-text">
+                  +91 93904 14536
+                </a>
+                <p className="mt-2 fs-micro text-balance">Kakinada, Andhra Pradesh</p>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </header>
+  );
+}

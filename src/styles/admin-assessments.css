@@ -1,0 +1,794 @@
+/* ═══════════════════════════════════════════════
+   ADMIN ASSESSMENTS (LIST & DETAIL)
+   ═══════════════════════════════════════════════ */
+
+/* ─── LIST PAGE TOOLBAR ─── */
+.af-admin-toolbar {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 24px;
+  margin-bottom: 24px;
+}
+
+@media (max-width: 768px) {
+  .af-admin-toolbar {
+    flex-direction: column;
+  }
+}
+
+.af-admin-search-wrap {
+  position: relative;
+  flex: 1;
+  max-width: 340px;
+}
+
+@media (max-width: 768px) {
+  .af-admin-search-wrap {
+    max-width: 100%;
+  }
+}
+
+.af-admin-search-icon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+}
+
+.af-admin-search-input {
+  width: 100%;
+  height: 44px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  padding-left: 42px;
+  padding-right: 14px;
+  font-size: 14px;
+  color: var(--text);
+  outline: none;
+  transition: border-color 150ms ease;
+}
+
+.af-admin-search-input:focus {
+  border-color: var(--primary);
+}
+
+.af-admin-segment-control {
+  display: flex;
+  background: var(--surface-alt);
+  padding: 4px;
+  border-radius: 999px;
+  gap: 4px;
+  /* Labels no longer wrap, so on the narrowest screens the four pills may
+     exceed the gutter. Scroll the control rather than the page. */
+  max-width: 100%;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.af-admin-segment-control::-webkit-scrollbar {
+  display: none;
+}
+
+.af-admin-segment-pill {
+  flex: 0 0 auto;
+  height: 36px;
+  padding: 0 16px;
+  border-radius: 999px;
+  background: transparent;
+  border: none;
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 150ms ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  /* The pill is a fixed 36px, so a label that wraps ("In review" at 360px)
+     breaks onto two lines inside it and rides up out of alignment with its
+     neighbours. These labels are short; keep them on one line. */
+  white-space: nowrap;
+}
+
+.af-admin-segment-pill--active {
+  background: var(--surface);
+  color: var(--text);
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.af-admin-segment-badge {
+  background: var(--accent-strong);
+  color: var(--on-accent);
+  font-size: 11px;
+  padding: 2px 6px;
+  border-radius: 999px;
+  font-weight: 600;
+  line-height: 1;
+}
+
+/* ─── DESKTOP TABLE ─── */
+.af-admin-table-container {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  overflow-x: auto;
+}
+
+@media (max-width: 1023px) {
+  .af-admin-table-container {
+    display: none;
+  }
+}
+
+.af-admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 900px;
+}
+
+.af-admin-table th {
+  background: var(--surface-alt);
+  border-bottom: 1px solid var(--border);
+  height: 48px;
+  padding: 0 20px;
+  text-align: left;
+  font-size: 11.5px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.af-admin-table th.sortable {
+  cursor: pointer;
+  user-select: none;
+}
+
+.af-admin-table th.sortable:hover .sort-icon {
+  opacity: 0.6;
+}
+
+.af-admin-table th.sortable .sort-icon {
+  display: inline-block;
+  margin-left: 6px;
+  vertical-align: middle;
+  opacity: 0;
+  transition: opacity 150ms ease;
+}
+
+.af-admin-table th.sortable .sort-icon--active {
+  opacity: 1 !important;
+  color: var(--text);
+}
+
+.af-admin-table td {
+  height: 68px;
+  border-bottom: 1px solid var(--border);
+  padding: 0 20px;
+  vertical-align: middle;
+}
+
+.af-admin-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.af-admin-table tbody tr {
+  cursor: pointer;
+  transition: background 180ms ease;
+}
+
+.af-admin-table tbody tr:hover {
+  background: var(--surface-alt);
+}
+
+/* ─── MOBILE CARDS ─── */
+.af-admin-cards-container {
+  display: none;
+}
+
+@media (max-width: 1023px) {
+  .af-admin-cards-container {
+    display: block;
+  }
+}
+
+.af-admin-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 18px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  transition:
+    transform 150ms ease,
+    box-shadow 150ms ease;
+}
+
+.af-admin-card:active {
+  transform: scale(0.98);
+}
+
+/* ─── STATUS CHIPS ─── */
+.af-status-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* --accent and --primary are decorative fills; the text-bearing pairs are
+   --accent-strong/--on-accent and --primary-strong/--on-primary. These chips
+   used the decorative tokens with hardcoded white, which measured 3.27:1 in
+   light and 2.43:1 in dark against a 4.5:1 requirement. */
+.af-status-chip--new {
+  background: var(--accent-strong);
+  color: var(--on-accent);
+}
+
+.af-status-chip--review {
+  background: var(--primary-strong);
+  color: var(--on-primary);
+}
+
+.af-status-chip--completed {
+  background: var(--surface-alt);
+  color: var(--text-muted);
+}
+
+.af-pay-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* "Pending" was drawn on a red tint, which reads as a failure rather than a
+   wait, and its --accent text measured 2.72:1. Accent-soft with the
+   text-weight accent is both the right colour and legible. */
+.af-pay-chip--pending {
+  background: var(--accent-soft);
+  color: var(--accent-contrast);
+}
+
+/* These two were hardcoded hexes that never flipped with the theme. The
+   tokens carry a tested value for each mode. */
+.af-pay-chip--verified {
+  background: rgba(var(--success-rgb), 0.14);
+  color: var(--success);
+}
+
+.af-pay-chip--unverified {
+  background: rgba(var(--danger-rgb), 0.14);
+  color: var(--danger);
+}
+
+.af-mode-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.af-mode-chip--primary {
+  background: var(--primary-soft);
+  color: var(--primary);
+}
+
+.af-mode-chip--muted {
+  background: var(--surface-alt);
+  color: var(--text-muted);
+}
+
+.af-unread-dot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--accent);
+  margin-right: 8px;
+  vertical-align: middle;
+}
+
+/* ─── BULK ACTION BAR ─── */
+.af-bulk-bar {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(100px);
+  background: rgba(var(--surface-rgb, 255, 255, 255), 0.94);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 12px 20px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  z-index: 40;
+  opacity: 0;
+  transition:
+    transform 300ms cubic-bezier(0.175, 0.885, 0.32, 1.275),
+    opacity 300ms ease;
+  pointer-events: none;
+}
+
+.af-bulk-bar--visible {
+  transform: translateX(-50%) translateY(0);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* ─── SKELETON SHIMMER ─── */
+.af-skeleton {
+  background: var(--surface-alt);
+  border-radius: 8px;
+  position: relative;
+  overflow: hidden;
+}
+
+.af-skeleton::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(var(--text-rgb, 0, 0, 0), 0.06),
+    transparent
+  );
+  animation: af-shimmer 1.6s infinite;
+}
+
+@keyframes af-shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* ═══════════════════════════════════════════════
+   DETAIL PAGE (ASSESSMENT :ID)
+   ═══════════════════════════════════════════════ */
+
+.af-detail-layout {
+  display: grid;
+  gap: 28px;
+  align-items: start;
+}
+
+@media (min-width: 1280px) {
+  .af-detail-layout {
+    grid-template-columns: 1fr 380px;
+  }
+}
+
+.af-detail-sticky-header {
+  position: sticky;
+  top: 64px; /* below admin top bar */
+  background: rgba(var(--bg-rgb, 255, 255, 255), 0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  padding: 16px 0;
+  z-index: 20;
+  margin-bottom: 24px;
+}
+
+.af-detail-header-inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+
+.af-detail-header-inner select {
+  width: 150px;
+}
+
+@media (max-width: 768px) {
+  .af-detail-header-inner {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  /* Stacking the two halves was not enough. Each half is itself a flex row
+     that never wrapped: the action group (status chip + 150px status select +
+     "Contact client") needs about 338px on one line against roughly 312px of
+     content box at 360, and the identity block's meta row (reference, copy,
+     timestamp) is similarly wide. Both pushed the page out by up to 43px.
+     Letting every row in the header wrap, and allowing the boxes to shrink
+     below their content width, keeps it inside the viewport. */
+  .af-detail-header-inner > div {
+    width: 100%;
+    min-width: 0;
+    flex-wrap: wrap;
+  }
+
+  .af-detail-header-inner > div > div,
+  .af-detail-header-inner > div > div > div {
+    min-width: 0;
+    flex-wrap: wrap;
+  }
+
+  /* The select carries an inline width for the desktop layout; on a phone it
+     should share the row rather than dictate it. */
+  .af-detail-header-inner select {
+    width: 100%;
+    max-width: 220px;
+  }
+}
+
+.af-detail-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 22px;
+  padding: 28px 26px;
+  margin-bottom: 18px;
+}
+
+@media (max-width: 767px) {
+  .af-detail-card {
+    padding: 22px 18px;
+  }
+}
+
+.af-detail-card-heading {
+  font-family: var(--font-fraunces);
+  font-weight: 500;
+  font-size: clamp(1.125rem, 1.6vw, 1.3125rem);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--text);
+  margin-bottom: 22px;
+  padding-bottom: 22px;
+  border-bottom: 1px solid var(--border);
+}
+
+.af-field-grid {
+  display: grid;
+  gap: 20px;
+}
+
+@media (min-width: 768px) {
+  .af-field-grid--2col {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.af-field-label {
+  font-size: 11.5px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+}
+
+.af-field-value {
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--text);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.af-field-value--empty {
+  opacity: 0.6;
+}
+
+/* NUTRITION TIMELINE */
+.af-timeline {
+  position: relative;
+  padding-left: 20px;
+}
+
+.af-timeline::before {
+  content: "";
+  position: absolute;
+  top: 10px;
+  bottom: 10px;
+  left: 20px;
+  width: 2px;
+  background: var(--border);
+}
+
+.af-timeline-item {
+  position: relative;
+  margin-bottom: 32px;
+}
+
+.af-timeline-item:last-child {
+  margin-bottom: 0;
+}
+
+.af-timeline-dot {
+  position: absolute;
+  left: -20px;
+  top: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--primary-soft);
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+}
+
+.af-timeline-content {
+  padding-left: 36px;
+}
+
+/* SIDEBAR PANELS */
+.af-sidebar-panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 22px 20px;
+  margin-bottom: 16px;
+}
+
+.af-sidebar-panel--alt {
+  background: var(--surface-alt);
+}
+
+/* PRINT MEDIA QUERY */
+@media print {
+  body {
+    background: white !important;
+    color: black !important;
+  }
+  /* Hide the application chrome. This block previously only stripped borders
+     and backgrounds from these, so the nav, topbar and every button still
+     printed -- a patient record came out wrapped in admin furniture. */
+  .af-admin-sidebar-desktop,
+  .af-admin-sidebar-mobile,
+  .af-admin-backdrop,
+  .af-admin-topbar,
+  .af-detail-layout > div:last-child, /* actions/payment column */
+  button {
+    display: none !important;
+  }
+
+  /* The header stays -- a printed clinical record needs the client's name,
+     reference and date at the top -- but it stops being sticky and loses its
+     controls (back link, status select, contact menu). */
+  .af-detail-sticky-header {
+    position: static !important;
+    border: none !important;
+    box-shadow: none !important;
+    background: transparent !important;
+  }
+
+  .af-detail-sticky-header a,
+  .af-detail-sticky-header select {
+    display: none !important;
+  }
+
+  /* The main column is offset to clear the fixed sidebar on screen. */
+  .af-admin-main,
+  .af-admin-content-area {
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+  }
+
+  .af-detail-card {
+    border: none !important;
+    box-shadow: none !important;
+    background: transparent !important;
+  }
+  .af-detail-layout {
+    display: block;
+  }
+  .af-detail-layout > div:last-child {
+    display: none !important;
+  }
+  .af-detail-card {
+    break-inside: avoid;
+    padding: 0 !important;
+    margin-bottom: 40px !important;
+  }
+}
+
+/* ==========================================================================
+   PAYMENTS
+   A payment-shaped view over the assessment documents. Shares the toolbar,
+   table and card shells with the assessments list; only the pieces unique to
+   this page are defined here.
+   ========================================================================== */
+
+.af-admin-page-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 22px;
+}
+
+.af-admin-h1 {
+  font-family: var(--font-fraunces);
+  font-weight: 500;
+  font-size: clamp(1.5rem, 2.4vw, 2rem);
+  color: var(--text);
+  margin: 0;
+  line-height: 1.15;
+}
+
+.af-admin-sub {
+  font-size: 13.5px;
+  color: var(--text-muted);
+  margin: 6px 0 0;
+}
+
+.af-admin-ghost-btn {
+  height: 44px;
+  padding: 0 18px;
+  border-radius: 999px;
+  border: 1.5px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition:
+    background 150ms ease,
+    border-color 150ms ease;
+}
+
+.af-admin-ghost-btn:hover:not(:disabled) {
+  background: var(--surface-alt);
+}
+
+.af-admin-ghost-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* --- screenshot thumbnail --- */
+.af-pay-thumb {
+  width: 52px;
+  height: 52px;
+  flex-shrink: 0;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  background: var(--surface-alt);
+  padding: 0;
+  cursor: zoom-in;
+  display: block;
+}
+
+.af-pay-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* --- inline verify / reject --- */
+.af-pay-action {
+  height: 32px;
+  padding: 0 12px;
+  border-radius: 999px;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+  border: 1px solid transparent;
+  transition:
+    filter 150ms ease,
+    background 150ms ease;
+}
+
+.af-pay-action:disabled {
+  opacity: 0.5;
+  cursor: progress;
+}
+
+/* Text-bearing fills, so these use the -strong / on- pairs rather than the
+   decorative --success / --danger, which are tuned for text ON a surface. */
+.af-pay-action--verify {
+  background: rgba(var(--success-rgb), 0.14);
+  color: var(--success);
+  border-color: rgba(var(--success-rgb), 0.35);
+}
+
+.af-pay-action--reject {
+  background: rgba(var(--danger-rgb), 0.12);
+  color: var(--danger);
+  border-color: rgba(var(--danger-rgb), 0.32);
+}
+
+.af-pay-action--verify:hover:not(:disabled),
+.af-pay-action--reject:hover:not(:disabled) {
+  filter: brightness(0.97);
+}
+
+/* --- screenshot lightbox --- */
+.af-pay-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 400;
+  background: rgba(var(--dark-surface-rgb), 0.88);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 20px 88px;
+  cursor: zoom-out;
+  animation: af-fade-in 150ms ease;
+}
+
+.af-pay-lightbox img {
+  max-width: min(100%, 620px);
+  max-height: 100%;
+  object-fit: contain;
+  border-radius: 12px;
+  background: var(--surface);
+}
+
+.af-pay-lightbox-close {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid var(--on-dark-border);
+  background: rgba(var(--dark-surface-rgb), 0.6);
+  color: var(--on-dark);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.af-pay-lightbox-open {
+  position: absolute;
+  bottom: 26px;
+  left: 50%;
+  transform: translateX(-50%);
+  min-height: 44px;
+  padding: 0 18px;
+  border-radius: 999px;
+  border: 1px solid var(--on-dark-border);
+  background: rgba(var(--dark-surface-rgb), 0.6);
+  color: var(--on-dark);
+  font-size: 13.5px;
+  font-weight: 600;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}

@@ -1,0 +1,431 @@
+@import "tailwindcss";
+@import "./styles/tokens.css";
+
+@theme {
+  --font-fraunces: "Fraunces", serif;
+  --font-jakarta: "Plus Jakarta Sans", sans-serif;
+
+  --radius-sm: 10px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  --radius-xl: 32px;
+  --radius-pill: 999px;
+
+  /* Surfaces & text */
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-alt: var(--surface-alt);
+  --color-text: var(--text);
+  --color-text-muted: var(--text-muted);
+
+  /* Brand — decorative */
+  --color-primary: var(--primary);
+  --color-primary-soft: var(--primary-soft);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+
+  /* Brand — text-bearing fills (use these whenever text sits on the fill) */
+  --color-primary-strong: var(--primary-strong);
+  --color-on-primary: var(--on-primary);
+  --color-accent-strong: var(--accent-strong);
+  --color-on-accent: var(--on-accent);
+  --color-primary-contrast: var(--primary-contrast);
+  --color-accent-contrast: var(--accent-contrast);
+
+  /* Status */
+  --color-danger: var(--danger);
+  --color-success: var(--success);
+  --color-whatsapp: var(--whatsapp);
+  --color-on-whatsapp: var(--on-whatsapp);
+
+  /* Lines */
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-border-input: var(--border-input);
+
+  /* The permanently-dark surface + its on-colour ramp */
+  --color-dark-surface: var(--dark-surface);
+  --color-on-dark: var(--on-dark);
+  --color-on-dark-muted: var(--on-dark-muted);
+  --color-on-dark-faint: var(--on-dark-faint);
+  --color-on-dark-border: var(--on-dark-border);
+  --color-on-dark-glass: var(--on-dark-glass);
+  --color-on-dark-accent: var(--on-dark-accent);
+
+  --animate-accordion-down: accordion-down 0.2s ease-out;
+  --animate-accordion-up: accordion-up 0.2s ease-out;
+  --animate-float: float 6s ease-in-out infinite;
+  --animate-float-delayed: float 6s ease-in-out 3s infinite;
+  --animate-marquee: marquee 42s linear infinite;
+  --animate-marquee-mobile: marquee 32s linear infinite;
+  --animate-video-ping: video-ping 2.4s ease-out infinite;
+
+  @keyframes video-ping {
+    0% {
+      transform: scale(1);
+      opacity: 1;
+    }
+    100% {
+      transform: scale(1.45);
+      opacity: 0;
+    }
+  }
+  @keyframes marquee {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-50%);
+    }
+  }
+  @keyframes accordion-down {
+    from {
+      height: 0;
+    }
+    to {
+      height: var(--radix-accordion-content-height);
+    }
+  }
+  @keyframes accordion-up {
+    from {
+      height: var(--radix-accordion-content-height);
+    }
+    to {
+      height: 0;
+    }
+  }
+  @keyframes float {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-20px);
+    }
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-bg text-text font-jakarta antialiased;
+    line-height: 1.7;
+    font-size: clamp(1rem, 1.1vw, 1.125rem);
+    overflow-x: clip;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-fraunces;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+  }
+
+  /* Anchor targets must clear the sticky header. Applied to anything that can
+     be scrolled to, not just <section>. */
+  :target,
+  section[id],
+  [id][data-anchor] {
+    scroll-margin-top: var(--scroll-offset);
+  }
+
+  /* Theme transition. Scoped to the properties that actually change so we
+     don't animate layout. */
+  html.theme-ready body,
+  html.theme-ready .theme-tint {
+    transition:
+      background-color 320ms ease,
+      color 320ms ease,
+      border-color 320ms ease;
+  }
+}
+
+/* ==========================================================================
+   TYPOGRAPHY SCALE — the only place heading sizes are defined.
+   Components must use these classes, never their own text-[..] / clamp().
+   ========================================================================== */
+@layer components {
+  .fs-display {
+    font-family: var(--font-fraunces);
+    font-size: clamp(2.5rem, 5.5vw, 4rem);
+    font-weight: 500;
+    line-height: 1.06;
+    letter-spacing: -0.025em;
+  }
+
+  .fs-h1 {
+    font-family: var(--font-fraunces);
+    font-size: clamp(2.6rem, 6.5vw, 5.5rem);
+    font-weight: 500;
+    line-height: 1.08;
+    letter-spacing: -0.025em;
+  }
+
+  .fs-h2 {
+    font-family: var(--font-fraunces);
+    font-size: clamp(2rem, 4.2vw, 3.5rem);
+    font-weight: 500;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+  }
+
+  .fs-h3 {
+    font-family: var(--font-fraunces);
+    font-size: clamp(1.375rem, 2.2vw, 1.75rem);
+    font-weight: 500;
+    line-height: 1.2;
+    letter-spacing: -0.015em;
+  }
+
+  .fs-h4 {
+    font-family: var(--font-fraunces);
+    font-size: clamp(1.125rem, 1.5vw, 1.375rem);
+    font-weight: 500;
+    line-height: 1.25;
+    letter-spacing: -0.01em;
+  }
+
+  .fs-sub {
+    font-family: var(--font-jakarta);
+    font-size: clamp(1.0625rem, 1.4vw, 1.1875rem);
+    line-height: 1.65;
+    color: var(--text-muted);
+  }
+
+  .fs-body {
+    font-family: var(--font-jakarta);
+    font-size: 15px;
+    line-height: 1.7;
+    font-weight: 400;
+  }
+  @media (min-width: 1024px) {
+    .fs-body {
+      font-size: 16px;
+    }
+  }
+
+  .fs-label {
+    font-family: var(--font-jakarta);
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.5;
+  }
+
+  /* Smallest permitted size anywhere on the site is 12px. */
+  .fs-micro {
+    font-family: var(--font-jakarta);
+    font-size: 12.5px;
+    line-height: 1.5;
+    color: var(--text-muted);
+  }
+
+  .fs-eyebrow {
+    font-family: var(--font-jakarta);
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.4;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+}
+
+@layer utilities {
+  /* ---- SPACING & CONTAINER SCALE — the only source for these values ---- */
+  .container-x {
+    width: 100%;
+    max-width: var(--container-max);
+    margin-inline: auto;
+    padding-inline: 20px;
+  }
+  @media (min-width: 640px) {
+    .container-x {
+      padding-inline: 32px;
+    }
+  }
+  @media (min-width: 1024px) {
+    .container-x {
+      padding-inline: 48px;
+    }
+  }
+  @media (min-width: 1440px) {
+    .container-x {
+      padding-inline: 64px;
+    }
+  }
+
+  /* Narrow reading column, aligned to the same gutters as .container-x */
+  .container-narrow {
+    width: 100%;
+    max-width: 760px;
+    margin-inline: auto;
+    padding-inline: 20px;
+  }
+  @media (min-width: 640px) {
+    .container-narrow {
+      padding-inline: 32px;
+    }
+  }
+
+  .section-y {
+    padding-block: 80px;
+  }
+  @media (min-width: 768px) {
+    .section-y {
+      padding-block: 112px;
+    }
+  }
+  @media (min-width: 1024px) {
+    .section-y {
+      padding-block: 140px;
+    }
+  }
+  @media (min-width: 1440px) {
+    .section-y {
+      padding-block: 160px;
+    }
+  }
+
+  .section-y-sm {
+    padding-block: 56px;
+  }
+  @media (min-width: 768px) {
+    .section-y-sm {
+      padding-block: 72px;
+    }
+  }
+  @media (min-width: 1024px) {
+    .section-y-sm {
+      padding-block: 88px;
+    }
+  }
+
+  /* Standard gap between a section heading and its content */
+  .stack-heading {
+    margin-bottom: 48px;
+  }
+  @media (min-width: 1024px) {
+    .stack-heading {
+      margin-bottom: 64px;
+    }
+  }
+
+  /* ---- surfaces ---- */
+  .glass {
+    background-color: rgba(var(--surface-rgb), 0.72);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--border);
+  }
+
+  .glass-on-dark {
+    background-color: var(--on-dark-glass);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--on-dark-border);
+  }
+
+  /* Scrim placed behind the header so nav stays legible over any hero.
+     Sits under the header content, above the hero image. */
+  .header-scrim {
+    background: linear-gradient(
+      to bottom,
+      rgba(var(--dark-surface-rgb), 0.62) 0%,
+      rgba(var(--dark-surface-rgb), 0.34) 45%,
+      rgba(var(--dark-surface-rgb), 0) 100%
+    );
+  }
+
+  /* Gradient scrim for text sitting on top of an image (gallery captions,
+     location labels). Guarantees the on-dark ramp is legible. */
+  .image-scrim {
+    background: linear-gradient(
+      to top,
+      rgba(var(--dark-surface-rgb), 0.88) 0%,
+      rgba(var(--dark-surface-rgb), 0.55) 42%,
+      rgba(var(--dark-surface-rgb), 0) 100%
+    );
+  }
+
+  /* Single grain overlay — rendered once, at the root only. */
+  .grain-overlay {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+    opacity: 0.038;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='140' height='140'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+    background-size: 140px 140px;
+  }
+
+  /* Floating actions must not sit over the open mobile menu. */
+  body[data-menu-open="true"] .floating-action {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .no-scrollbar {
+    scrollbar-width: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Guarantees a 44px hit area without changing visual size. */
+  .tap-safe {
+    position: relative;
+  }
+  .tap-safe::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    min-width: 44px;
+    min-height: 44px;
+    width: 100%;
+    height: 100%;
+  }
+}
+
+/* Global focus-visible */
+:focus-visible {
+  outline: 2px solid var(--accent-contrast);
+  outline-offset: 3px;
+  border-radius: inherit;
+}
+
+/* ==========================================================================
+   REDUCED MOTION — honoured globally, for CSS animation, transitions,
+   smooth scrolling and any JS-driven animation that reads these.
+   ========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  /* Parallax / Ken Burns layers must sit still rather than snap. */
+  .motion-parallax {
+    transform: none !important;
+  }
+}
