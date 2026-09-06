@@ -26,6 +26,7 @@ export const ProcessSteps: React.FC = () => {
 
   return (
     <SectionWrapper
+      texture="contour"
       arc="left"
       id="method"
       bg="base"

@@ -26,7 +26,13 @@ export function ProgramJourney() {
   return (
     <>
       <CurveDivider fill="base" flip />
-      <SectionWrapper arc="right" id="journey" bg="base" labelledBy="journey-heading">
+      <SectionWrapper
+        texture="weave"
+        arc="right"
+        id="journey"
+        bg="base"
+        labelledBy="journey-heading"
+      >
         {/* Decorative Dot Grid */}
         <div
           className="absolute inset-0 h-[35%] w-full opacity-5 pointer-events-none"

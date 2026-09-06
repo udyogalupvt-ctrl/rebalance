@@ -26,7 +26,13 @@ export function Testimonials() {
   }, []);
 
   return (
-    <SectionWrapper arc="left" id="testimonials" bg="base" labelledBy="testimonials-heading">
+    <SectionWrapper
+      texture="contour"
+      arc="left"
+      id="testimonials"
+      bg="base"
+      labelledBy="testimonials-heading"
+    >
       <div ref={containerRef}>
         <SectionHeading
           align="center"

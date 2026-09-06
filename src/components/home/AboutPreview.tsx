@@ -28,6 +28,7 @@ export function AboutPreview() {
     <>
       <CurveDivider fill="alt" />
       <SectionWrapper
+        texture="weave"
         arc="right"
         id="about"
         bg="alt"
@@ -98,7 +99,14 @@ export function AboutPreview() {
                 viewport={{ once: true }}
                 transition={{ type: "spring", stiffness: 300, damping: 25, delay: 0.35 }}
                 className={cn(
-                  "absolute z-10 p-[18px_22px] rounded-[20px] border glass shadow-[0_16px_40px_rgba(var(--shadow-rgb), 0.12)] bg-surface/88 backdrop-blur-[16px]",
+                  // No `glass` here. It sets background-color: rgba(surface, .72),
+                  // which competes with bg-surface/88 below and wins -- so the card
+                  // rendered at 72% and the founder photo tinted it, dropping the
+                  // muted second line to 4.28:1 against a required 4.5. At the 88%
+                  // that was actually intended the worst case is 4.93:1 even over
+                  // pure black. The border colour comes from the base layer and the
+                  // blur is already declared, so `glass` was adding nothing else.
+                  "absolute z-10 p-[18px_22px] rounded-[20px] border shadow-[0_16px_40px_rgba(var(--shadow-rgb), 0.12)] bg-surface/88 backdrop-blur-[16px]",
                   "bottom-[-20px] left-1/2 -translate-x-1/2 w-[calc(100%-32px)] md:w-auto md:bottom-[-28px] md:left-[-28px] md:translate-x-0",
                 )}
               >

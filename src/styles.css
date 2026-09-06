@@ -2,6 +2,7 @@
 @import "./styles/tokens.css";
 /* Motion and depth. Imported after tokens because it builds on --shadow-rgb. */
 @import "./styles/motion.css";
+@import "./styles/texture.css";
 
 @theme {
   --font-fraunces: "Fraunces", serif;

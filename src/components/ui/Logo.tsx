@@ -21,6 +21,21 @@ interface LogoProps {
 }
 
 /**
+ * Optical centring nudge for the wordmark, in em.
+ *
+ * Zero, and measured rather than assumed. I first pushed the text down by
+ * 0.055em on the theory that a descender-free word rides high in its em box.
+ * Rendering the header at 4x and finding the actual ink extents showed the
+ * opposite: with the nudge the wordmark's ink centre sat 1.33px BELOW the
+ * mark's. Fraunces already places its caps close to the centre of the em box,
+ * so `align-items: center` on the boxes is correct on its own.
+ *
+ * Kept as a named constant because the right value is a property of the
+ * typeface: if the wordmark font ever changes, re-measure rather than guess.
+ */
+const WORDMARK_NUDGE = "0em";
+
+/**
  * The GoRebalance brand lockup: the mark, with the wordmark set as live text.
  *
  * The supplied artwork is a *vertical* lockup — mark stacked above the
@@ -29,7 +44,7 @@ interface LogoProps {
  * image and the wordmark is typeset beside it in Fraunces, which also lets it
  * take the surrounding colour and stay crisp at any size.
  */
-export function Logo({ className, style, hideText, tone = "dark", size = 36 }: LogoProps) {
+export function Logo({ className, style, hideText, tone = "dark", size = 44 }: LogoProps) {
   const src = tone === "light" ? "/brand-mark-light.png" : "/brand-mark.png";
 
   return (
@@ -50,7 +65,12 @@ export function Logo({ className, style, hideText, tone = "dark", size = 36 }: L
             "font-fraunces font-semibold tracking-tight leading-none",
             tone === "light" ? "text-on-dark" : "text-text",
           )}
-          style={{ fontSize: Math.round(size * 0.62) }}
+          style={{
+            // 0.5 rather than 0.62: the mark should lead the lockup, and the
+            // wordmark was previously out-weighing it.
+            fontSize: Math.round(size * 0.5),
+            transform: `translateY(${WORDMARK_NUDGE})`,
+          }}
         >
           GoRebalance
         </span>

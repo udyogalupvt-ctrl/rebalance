@@ -74,7 +74,13 @@ export function ProgramsGrid() {
   }, [requested, treatments]);
 
   return (
-    <SectionWrapper arc="left" id="programs" bg="base" labelledBy="programs-heading">
+    <SectionWrapper
+      texture="contour"
+      arc="left"
+      id="programs"
+      bg="base"
+      labelledBy="programs-heading"
+    >
       {/* Decorative Glow */}
       <div
         className="absolute left-0 top-0 w-[620px] h-[620px] bg-primary/4 rounded-full blur-[150px] -translate-x-1/2 -translate-y-1/2 pointer-events-none"

@@ -96,7 +96,13 @@ export function SymptomChecker() {
   };
 
   return (
-    <SectionWrapper arc="left" id="symptoms" bg="base" labelledBy="symptoms-heading">
+    <SectionWrapper
+      texture="contour"
+      arc="left"
+      id="symptoms"
+      bg="base"
+      labelledBy="symptoms-heading"
+    >
       {/* Decorative Glow */}
       <div
         className="absolute top-0 right-0 w-[700px] h-[700px] bg-primary/5 rounded-full blur-[120px] pointer-events-none -z-10 translate-x-1/4 -translate-y-1/4"

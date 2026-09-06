@@ -19,6 +19,15 @@ interface SectionWrapperProps {
    * "none" for sections that already carry their own imagery.
    */
   arc?: "none" | "left" | "right" | "center";
+  /**
+   * Background texture: fine contour lines, a linen weave, or a technical
+   * grid. Abstract on purpose — an earlier version drew literal leaves and
+   * seeds from the logo and read as clip-art rather than as a surface.
+   *
+   * Kept at a few percent opacity so it registers as the section having a
+   * grain, never as pattern competing with the copy.
+   */
+  texture?: "none" | "contour" | "weave" | "grid";
 }
 
 export function SectionWrapper({
@@ -29,6 +38,7 @@ export function SectionWrapper({
   className,
   size = "default",
   arc = "none",
+  texture = "none",
 }: SectionWrapperProps) {
   const bgClass = {
     base: "bg-bg",
@@ -47,6 +57,10 @@ export function SectionWrapper({
         className,
       )}
     >
+      {texture !== "none" && (
+        <div className={cn("texture texture--fade", `texture--${texture}`)} aria-hidden="true" />
+      )}
+
       {arc !== "none" && (
         <div className="arc-field" aria-hidden="true">
           {/* The wash: brand light in the room, so the section is not a flat fill. */}

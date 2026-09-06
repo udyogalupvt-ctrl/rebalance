@@ -43,7 +43,13 @@ export function TreatmentsPreview() {
   }, []);
 
   return (
-    <SectionWrapper arc="right" id="treatments" bg="alt" labelledBy="treatments-heading">
+    <SectionWrapper
+      texture="grid"
+      arc="right"
+      id="treatments"
+      bg="alt"
+      labelledBy="treatments-heading"
+    >
       {/* Decorative Glow */}
       <div
         className="absolute top-0 left-0 w-[600px] h-[600px] bg-primary/5 rounded-full blur-[140px] pointer-events-none -z-10 translate-x-[-20%] translate-y-[-20%]"
