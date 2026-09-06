@@ -1,10 +1,12 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useSearch } from "@tanstack/react-router";
 import * as React from "react";
 import { useState, useMemo, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import * as Collapsible from "@radix-ui/react-collapsible";
 import { CheckCircle2, Plus, Clock, Video, Dot, ArrowRight } from "lucide-react";
-import { treatments } from "@/data/content";
+import { treatments as fallbackTreatments } from "@/data/content";
+import { fetchPublished } from "@/lib/cms";
+import { toIconComponent } from "@/lib/icons";
 import { SectionWrapper } from "@/components/shared/SectionWrapper";
 import { SectionHeading } from "@/components/shared/SectionHeading";
 import { Reveal } from "@/components/shared/Reveal";
@@ -27,10 +29,49 @@ export function ProgramsGrid() {
   const [activeTab, setActiveTab] = useState("All Programs");
   const [openCardId, setOpenCardId] = useState<string | null>(null);
 
+  /*
+   * Read the programs the practice has published, falling back to the static
+   * copy. Testimonials and the gallery already did this; treatments did not,
+   * so anything edited, reordered or unpublished in the admin never reached
+   * this page -- the manager appeared to work and changed nothing.
+   */
+  const [treatments, setTreatments] = useState<Treatment[]>([...fallbackTreatments]);
+  useEffect(() => {
+    let live = true;
+    void fetchPublished<Treatment>("treatments", fallbackTreatments).then((rows) => {
+      if (live && rows.length) setTreatments(rows);
+    });
+    return () => {
+      live = false;
+    };
+  }, []);
+
   const filteredPrograms = useMemo(() => {
     if (activeTab === "All Programs") return treatments;
     return treatments.filter((t) => t.category === activeTab);
-  }, [activeTab]);
+  }, [activeTab, treatments]);
+
+  /*
+   * Open the card named by ?program=<slug> and bring it into view. This is
+   * where the home-page cards and the footer's Programs links now point;
+   * they previously pointed at /treatments/<slug>, which 404'd.
+   */
+  const { program: requested } = useSearch({ from: "/treatments" });
+  const handledRequest = useRef<string | null>(null);
+  useEffect(() => {
+    if (!requested || handledRequest.current === requested) return;
+    const match = treatments.find((t) => t.slug === requested);
+    if (!match) return;
+    handledRequest.current = requested;
+    setOpenCardId(match.id);
+    // Wait a frame for the card to expand before scrolling to it.
+    const timer = setTimeout(() => {
+      document
+        .getElementById(`program-${match.id}`)
+        ?.scrollIntoView({ behavior: "smooth", block: "center" });
+    }, 260);
+    return () => clearTimeout(timer);
+  }, [requested, treatments]);
 
   return (
     <SectionWrapper id="programs" bg="base" labelledBy="programs-heading">
@@ -108,10 +149,13 @@ function ProgramCard({
   isOpen: boolean;
   onToggle: () => void;
 }) {
-  const Icon = program.icon;
+  // The static fallback carries the component itself; a record loaded from
+  // Firestore carries its name, because a function cannot be stored.
+  const Icon = toIconComponent(program.icon);
 
   return (
     <Collapsible.Root
+      id={`program-${program.id}`}
       open={isOpen}
       onOpenChange={onToggle}
       className={cn(

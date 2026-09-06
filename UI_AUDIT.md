@@ -162,7 +162,7 @@ Verified by HTTP status check on all 52 unique Unsplash IDs plus a rendered cont
 | `photo-1454165833767-02746a7c3b58` | `gallery.ts:146` |
 | `photo-1517048657685-9854495e5095` | `gallery.ts:43` |
 
-Plus `…/sai-sowjanya.jpg` (Lovable CDN) — **the practitioner's own portrait on the home page is broken**.
+Plus `…/sai-sowjanya.jpg` — **the practitioner's own portrait on the home page is broken**.
 
 ### I2 — Wrong subject matter · S1
 Against the brief (warm, editorial, food-forward, human; never gyms, fitness silhouettes, sunsets, sterile medical, distressed people):

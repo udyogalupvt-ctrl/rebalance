@@ -23,11 +23,33 @@ import { toMillis } from "@/lib/runtime";
 import type { LucideIcon } from "lucide-react";
 import type { AssessmentDocument } from "@/types/admin";
 import type { CMSDocument } from "@/lib/cms";
+import { InstallBanner } from "@/components/admin/AppSettings";
 
 const MODE_LABELS: Record<string, string> = {
   in_clinic_kakinada: "In-clinic · Kakinada",
   online: "Online",
 };
+
+/**
+ * "2h", "4d" — a compact age for narrow screens.
+ *
+ * The full "about 2 hours ago" is ~110px and sits in a shrink-0 column, which
+ * squeezed the name beside it down to "Trac…" at 360px. A patient's name is
+ * the one thing that row exists to show.
+ */
+function compactAgo(ms: number): string {
+  const s = Math.max(0, Math.floor((Date.now() - ms) / 1000));
+  if (s < 60) return "now";
+  const m = Math.floor(s / 60);
+  if (m < 60) return `${m}m`;
+  const h = Math.floor(m / 60);
+  if (h < 24) return `${h}h`;
+  const d = Math.floor(h / 24);
+  if (d < 7) return `${d}d`;
+  const w = Math.floor(d / 7);
+  if (w < 5) return `${w}w`;
+  return `${Math.floor(d / 30)}mo`;
+}
 
 export default function Dashboard() {
   const { user } = useAuth();
@@ -100,6 +122,78 @@ export default function Dashboard() {
 
   const needsAttentionCount = newAssessmentsCount + unreadEnquiriesCount;
 
+  /*
+   * Real trends.
+   *
+   * These four figures were hardcoded strings ("+2 this week", "+5 this week",
+   * "+12% vs last month"). They never changed and bore no relation to the
+   * data, which on a clinical dashboard is worse than showing nothing -- the
+   * practice would have made scheduling decisions from invented numbers.
+   */
+  const DAY = 86_400_000;
+  const now = Date.now();
+  const weekAgo = now - 7 * DAY;
+  const twoWeeksAgo = now - 14 * DAY;
+
+  const inRange = (t: number, from: number, to: number) => t >= from && t < to;
+
+  const countAssessments = (from: number, to: number) =>
+    assessments.filter((a) => inRange(toMillis(a.submittedAt), from, to)).length;
+  const countEnquiries = (from: number, to: number) =>
+    enquiries.filter((e) => inRange(toMillis(e["createdAt"] as never), from, to)).length;
+
+  /**
+   * The card VALUE is a backlog (how many are still new / unverified /
+   * unread); the trend below it is an INFLOW (how many arrived this week).
+   * Those are different measures, so the label says which one it is --
+   * "0 unread · +3 vs last week" read as a contradiction.
+   */
+  const weekTrend = (thisWeek: number, lastWeek: number) => {
+    if (thisWeek === 0 && lastWeek === 0) return { label: "None this week", positive: null };
+    if (thisWeek === 0) return { label: "None this week", positive: false };
+    return {
+      label: `${thisWeek} arrived this week`,
+      positive: thisWeek >= lastWeek,
+    };
+  };
+
+  const assessmentsTrend = weekTrend(
+    countAssessments(weekAgo, now),
+    countAssessments(twoWeeksAgo, weekAgo),
+  );
+  const enquiriesTrend = weekTrend(
+    countEnquiries(weekAgo, now),
+    countEnquiries(twoWeeksAgo, weekAgo),
+  );
+  const pendingTrend = weekTrend(
+    assessments.filter(
+      (a) => a.verificationStatus === "pending" && toMillis(a.submittedAt) >= weekAgo,
+    ).length,
+    assessments.filter(
+      (a) =>
+        inRange(toMillis(a.submittedAt), twoWeeksAgo, weekAgo) &&
+        a.verificationStatus === "pending",
+    ).length,
+  );
+
+  // Month over month, stated as a count difference rather than a percentage:
+  // a percentage off a base of one or two submissions is noise.
+  const lastMonthStart = new Date(new Date().getFullYear(), new Date().getMonth() - 1, 1).getTime();
+  const lastMonthCount = countAssessments(lastMonthStart, currentMonthStart);
+  const monthDiff = thisMonthAssessments - lastMonthCount;
+  const monthTrend =
+    lastMonthCount === 0 && thisMonthAssessments === 0
+      ? { label: "None yet this month", positive: null }
+      : lastMonthCount === 0
+        ? { label: "First month with submissions", positive: true }
+        : monthDiff === 0
+          ? { label: "Same as last month", positive: null }
+          : {
+              label: `${monthDiff > 0 ? "+" : "−"}${Math.abs(monthDiff)} vs last month`,
+              positive: monthDiff > 0,
+            };
+  const monthLabel = monthTrend.label;
+
   // Need to extract the 5 oldest pending payments for the right panel
   const pendingPayments = assessments
     .filter((a) => a.verificationStatus === "pending")
@@ -160,6 +254,8 @@ export default function Dashboard() {
         </p>
       </div>
 
+      <InstallBanner />
+
       {/* Stat Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-[18px] mb-[28px]">
         <StatCard
@@ -167,8 +263,8 @@ export default function Dashboard() {
           label="New assessments"
           value={newAssessmentsCount}
           attention={newAssessmentsCount > 0}
-          trend="+2 this week"
-          trendPositive={true}
+          trend={assessmentsTrend.label}
+          trendPositive={assessmentsTrend.positive}
           href="/admin/assessments?filter=new"
         />
         <StatCard
@@ -176,8 +272,8 @@ export default function Dashboard() {
           label="Payments to verify"
           value={pendingPaymentsCount}
           attention={pendingPaymentsCount > 0}
-          trend="Same as last week"
-          trendPositive={null}
+          trend={pendingTrend.label}
+          trendPositive={pendingTrend.positive}
           href="/admin/payments"
         />
         <StatCard
@@ -185,8 +281,8 @@ export default function Dashboard() {
           label="Unread enquiries"
           value={unreadEnquiriesCount}
           attention={unreadEnquiriesCount > 0}
-          trend="+5 this week"
-          trendPositive={true}
+          trend={enquiriesTrend.label}
+          trendPositive={enquiriesTrend.positive}
           href="/admin/enquiries?filter=unread"
         />
         <StatCard
@@ -194,8 +290,8 @@ export default function Dashboard() {
           label="Assessments this month"
           value={thisMonthAssessments}
           attention={false}
-          trend="+12% vs last month"
-          trendPositive={true}
+          trend={monthLabel}
+          trendPositive={monthTrend.positive}
           href="/admin/assessments?filter=month"
         />
       </div>
@@ -227,16 +323,18 @@ export default function Dashboard() {
                 const initial = name[0]?.toUpperCase() ?? "?";
 
                 let timeStr = "";
+                let timeShort = "";
                 if (assessment.submittedAt) {
                   const d = toMillis(assessment.submittedAt);
                   timeStr = formatDistanceToNow(d, { addSuffix: true });
+                  timeShort = compactAgo(d);
                 }
 
                 return (
                   <Link
                     key={assessment.id}
                     to={`/admin/assessments/${assessment.id}`}
-                    className="h-[64px] px-[22px] border-b border-border last:border-b-0 flex items-center hover:bg-surface-alt transition-colors group cursor-pointer"
+                    className="h-[64px] px-4 sm:px-[22px] border-b border-border last:border-b-0 flex items-center hover:bg-surface-alt transition-colors group cursor-pointer"
                   >
                     <div className="w-[36px] h-[36px] rounded-full bg-primary-soft text-primary flex items-center justify-center font-bold text-[13px] mr-[14px] shrink-0">
                       {initial.toUpperCase()}
@@ -253,7 +351,7 @@ export default function Dashboard() {
                         {MODE_LABELS[assessment.details?.preferredMode ?? "online"]}
                       </span>
                     </div>
-                    <div className="flex flex-col items-end shrink-0 ml-4">
+                    <div className="flex flex-col items-end shrink-0 ml-2 sm:ml-4">
                       {assessment.verificationStatus === "verified" && (
                         <span className="text-[12px] uppercase tracking-wider font-bold text-[var(--success)] bg-[var(--success)]/10 px-2 py-0.5 rounded-full mb-1">
                           Paid
@@ -264,7 +362,10 @@ export default function Dashboard() {
                           Pending
                         </span>
                       )}
-                      <span className="text-[12.5px] text-text-muted">{timeStr}</span>
+                      <span className="text-[12.5px] text-text-muted">
+                        <span className="sm:hidden">{timeShort}</span>
+                        <span className="hidden sm:inline">{timeStr}</span>
+                      </span>
                     </div>
                   </Link>
                 );

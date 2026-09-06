@@ -94,6 +94,30 @@ service cloud.firestore {
       allow write: if isAdmin();
     }
 
+    // ── push tokens ──────────────────────────────────────────────────────
+    // One document per admin device, keyed by its FCM token. Only an admin
+    // may register or remove a device, and nobody may enumerate them: the
+    // list of tokens is what a sender would need to reach every device.
+    match /adminPushTokens/{token} {
+      allow read: if false;
+      allow list: if false;
+      allow create, update, delete: if isAdmin();
+    }
+
+    // ── patient push tokens ──────────────────────────────────────────────
+    // One document per application, keyed by its submission id, so the patient
+    // can be told when their payment is verified or their assessment moves on.
+    //
+    // Writable by the patient (they have no account, and they already hold the
+    // reference), but never readable or listable by anyone: the token list is
+    // what a sender would need. Only the server reads these, and it does so
+    // with admin credentials which bypass these rules.
+    match /patientPushTokens/{submissionId} {
+      allow read, list: if false;
+      allow create, update: if true;
+      allow delete: if isAdmin();
+    }
+
     // ── activity log ─────────────────────────────────────────────────────
     // Append-only from the admin panel. Entries are never edited or removed, so
     // the trail cannot be quietly rewritten.

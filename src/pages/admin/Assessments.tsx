@@ -701,6 +701,7 @@ export default function AssessmentsList() {
                         <DropdownMenu.Root>
                           <DropdownMenu.Trigger asChild>
                             <button
+                              aria-label="More actions"
                               style={{
                                 background: "transparent",
                                 border: "none",

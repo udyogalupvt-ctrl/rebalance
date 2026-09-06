@@ -16,6 +16,8 @@ import { useAuth } from "@/context/AuthContext";
 import { Logo } from "@/components/ui/Logo";
 import { collection, query, where, onSnapshot, limit } from "firebase/firestore";
 import { db } from "@/lib/firebase";
+import { AppSettings } from "@/components/admin/AppSettings";
+import { useAdminAlerts } from "@/hooks/use-admin-alerts";
 
 const BASE_ROUTES = [
   { path: "/admin", name: "Dashboard", icon: LayoutDashboard },
@@ -32,6 +34,10 @@ export default function AdminLayout() {
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [counts, setCounts] = useState({ assessments: 0, enquiries: 0 });
+
+  // Notify on new assessments and enquiries while the panel is open. No-ops
+  // until the practice has granted notification permission.
+  useAdminAlerts(Boolean(user));
 
   useEffect(() => {
     // Badge counts. Both are bounded: a badge only needs to distinguish
@@ -153,6 +159,7 @@ export default function AdminLayout() {
       </nav>
 
       <div className="af-admin-sidebar-footer">
+        <AppSettings />
         <div className="af-admin-user-info">
           <div className="af-admin-user-avatar">{user?.email?.charAt(0).toUpperCase() || "A"}</div>
           <span className="af-admin-user-email">{user?.email}</span>

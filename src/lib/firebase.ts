@@ -22,7 +22,7 @@ const firebaseConfig = {
   appId: env["VITE_FIREBASE_APP_ID"] || "placeholder-app-id",
 };
 
-const app = initializeApp(firebaseConfig);
+export const app = initializeApp(firebaseConfig);
 
 /*
  * ignoreUndefinedProperties is required, not a preference.

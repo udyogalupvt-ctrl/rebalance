@@ -158,7 +158,8 @@ export function Footer() {
                   {treatments.map((t) => (
                     <li key={t.id}>
                       <Link
-                        to={`/treatments/${t.slug}`}
+                        to="/treatments"
+                        search={{ program: t.slug }}
                         className="group relative flex items-center min-h-[44px] w-fit py-[7px] text-[14.5px] leading-[1.5] text-on-dark-muted transition-all duration-250 hover:text-accent-contrast hover:translate-x-1.25 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-[3px]"
                       >
                         <span className="absolute left-[-14px] top-1/2 -translate-y-1/2 w-2 h-[1.5px] bg-accent origin-left scale-x-0 transition-transform duration-250 group-hover:scale-x-100" />
@@ -311,15 +312,6 @@ export function Footer() {
                       )}
                     </React.Fragment>
                   ))}
-
-                  {/* Developed line at Desktop */}
-                  <span className="hidden lg:inline-flex items-center ml-auto">
-                    <span
-                      className="mx-3.5 w-[3px] h-[3px] rounded-full bg-on-dark-glass"
-                      aria-hidden="true"
-                    />
-                    <span className="text-on-dark-faint">Designed & developed with care.</span>
-                  </span>
                 </div>
               </div>
 

@@ -288,6 +288,7 @@ export default function TreatmentsManager() {
                   <div style={{ display: "flex", gap: 8 }}>
                     <button
                       onClick={() => openEditor(item)}
+                      aria-label="Edit"
                       style={{
                         width: 36,
                         height: 36,
@@ -305,6 +306,7 @@ export default function TreatmentsManager() {
                     </button>
                     <button
                       onClick={() => setDeleteId(item.id)}
+                      aria-label="Delete"
                       style={{
                         width: 36,
                         height: 36,

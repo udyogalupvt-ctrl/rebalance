@@ -13,6 +13,7 @@ import {
   getDoc,
 } from "firebase/firestore";
 import { db } from "./firebase";
+import { iconNameOf } from "./icons";
 import {
   treatments as staticTreatments,
   testimonialsFull as staticTestimonials,
@@ -43,6 +44,57 @@ type SeedItem = { id?: unknown };
 
 const SEED_LOCKS: Record<string, boolean> = {};
 
+/**
+ * Makes a static seed record safe to write to Firestore.
+ *
+ * The treatments array carries `icon: Activity` -- a Lucide React component,
+ * i.e. a function. Firestore cannot store one, and this SDK version does not
+ * reject it cleanly: it threw
+ *
+ *   FIRESTORE INTERNAL ASSERTION FAILED: Unexpected state (ID: 3029)
+ *   CONTEXT: {"type":"symbol"}
+ *
+ * which aborted the whole batch. The result was that `treatments` never
+ * seeded, so the admin's treatments manager was permanently empty and the
+ * public page silently fell back to the static list.
+ *
+ * Components are stored as their name instead, which resolveIcon() turns back
+ * into a component at render time. Anything else unserialisable is dropped
+ * rather than allowed to poison the batch.
+ */
+function toFirestoreSafe(value: unknown): unknown {
+  if (value === null) return null;
+  if (value === undefined) return undefined;
+
+  const t = typeof value;
+  if (t === "string" || t === "number" || t === "boolean") return value;
+  if (t === "symbol" || t === "bigint") return undefined;
+
+  // React components arrive as plain functions OR as forwardRef/memo objects
+  // carrying a $$typeof symbol. Both are stored as their name; walking into
+  // the object instead produced `{ render: "Activity" }`.
+  if (t === "function" || (t === "object" && "$$typeof" in (value as object))) {
+    return iconNameOf(value);
+  }
+
+  if (value instanceof Date) return value;
+
+  if (Array.isArray(value)) {
+    return value.map(toFirestoreSafe).filter((v) => v !== undefined);
+  }
+
+  if (t === "object") {
+    const out: Record<string, unknown> = {};
+    for (const [k, v] of Object.entries(value as Record<string, unknown>)) {
+      const safe = toFirestoreSafe(v);
+      if (safe !== undefined) out[k] = safe;
+    }
+    return out;
+  }
+
+  return undefined;
+}
+
 export async function ensureSeeded(collectionName: string, staticData: readonly SeedItem[]) {
   if (SEED_LOCKS[collectionName]) return;
   SEED_LOCKS[collectionName] = true;
@@ -61,7 +113,7 @@ export async function ensureSeeded(collectionName: string, staticData: readonly 
         const docRef = doc(db, collectionName, docId);
 
         batch.set(docRef, {
-          ...item,
+          ...(toFirestoreSafe(item) as Record<string, unknown>),
           id: docId,
           order: index,
           published: true, // published by default during seed

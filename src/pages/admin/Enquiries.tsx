@@ -520,7 +520,10 @@ function ActionsDropdown({
   return (
     <DropdownMenu.Root>
       <DropdownMenu.Trigger asChild>
-        <button className="w-[32px] h-[32px] rounded-[8px] bg-transparent text-text-muted hover:bg-surface-alt hover:text-text flex items-center justify-center border-none cursor-pointer outline-none transition-colors">
+        <button
+          aria-label="More actions"
+          className="w-[32px] h-[32px] rounded-[8px] bg-transparent text-text-muted hover:bg-surface-alt hover:text-text flex items-center justify-center border-none cursor-pointer outline-none transition-colors"
+        >
           <MoreVertical size={18} />
         </button>
       </DropdownMenu.Trigger>

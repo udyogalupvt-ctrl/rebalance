@@ -2395,3 +2395,96 @@
   color: var(--text-muted);
   margin: 10px 0 0;
 }
+
+/* ==========================================================================
+   LEGAL PAGES (privacy / terms / disclaimer)
+   ========================================================================== */
+
+.af-legal-page {
+  /* Clears the fixed header, as on the tracking page. */
+  padding: clamp(108px, 12vw, 150px) 0 clamp(64px, 9vw, 110px);
+  background: var(--bg);
+}
+
+.af-legal-eyebrow {
+  color: var(--accent-contrast);
+  margin: 0 0 12px;
+}
+
+.af-legal-title {
+  color: var(--text);
+  margin: 0 0 14px;
+}
+
+.af-legal-intro {
+  max-width: 56ch;
+  margin: 0 0 10px;
+}
+
+.af-legal-updated {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin: 0 0 40px;
+}
+
+.af-legal-section {
+  margin-bottom: 34px;
+  max-width: 68ch;
+}
+
+.af-legal-heading {
+  color: var(--text);
+  margin: 0 0 12px;
+}
+
+.af-legal-body {
+  font-family: var(--font-jakarta);
+  font-size: 15px;
+  line-height: 1.75;
+  color: var(--text-muted);
+  margin: 0 0 12px;
+}
+
+.af-legal-body a {
+  color: var(--accent-contrast);
+  font-weight: 600;
+}
+
+.af-legal-notice {
+  max-width: 68ch;
+  margin-top: 44px;
+  padding: 16px 18px;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  background: var(--surface-alt);
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: var(--text-muted);
+}
+
+/* Enable status alerts, on the tracking result card. */
+.af-track-alerts {
+  margin-top: 24px;
+  min-height: 46px;
+  padding: 0 18px;
+  border-radius: 999px;
+  border: 1.5px solid var(--border);
+  background: var(--surface-alt);
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  transition: background 150ms ease;
+}
+
+.af-track-alerts:hover:not(:disabled) {
+  background: var(--primary-soft);
+}
+
+.af-track-alerts:disabled {
+  cursor: not-allowed;
+  opacity: 0.75;
+}

@@ -14,7 +14,10 @@ import { Route as AboutRouteImport } from './routes/about'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AssessmentRouteImport } from './routes/assessment'
 import { Route as ContactRouteImport } from './routes/contact'
+import { Route as DisclaimerRouteImport } from './routes/disclaimer'
 import { Route as GalleryRouteImport } from './routes/gallery'
+import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as TermsRouteImport } from './routes/terms'
 import { Route as TestimonialsRouteImport } from './routes/testimonials'
 import { Route as TrackRouteImport } from './routes/track'
 import { Route as TreatmentsRouteImport } from './routes/treatments'
@@ -53,9 +56,24 @@ const ContactRoute = ContactRouteImport.update({
   path: '/contact',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DisclaimerRoute = DisclaimerRouteImport.update({
+  id: '/disclaimer',
+  path: '/disclaimer',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const GalleryRoute = GalleryRouteImport.update({
   id: '/gallery',
   path: '/gallery',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
   getParentRoute: () => rootRouteImport,
 } as any)
 const TestimonialsRoute = TestimonialsRouteImport.update({
@@ -125,7 +143,10 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AdminRouteWithChildren
   '/assessment': typeof AssessmentRoute
   '/contact': typeof ContactRoute
+  '/disclaimer': typeof DisclaimerRoute
   '/gallery': typeof GalleryRoute
+  '/privacy': typeof PrivacyRoute
+  '/terms': typeof TermsRoute
   '/testimonials': typeof TestimonialsRoute
   '/track': typeof TrackRoute
   '/treatments': typeof TreatmentsRoute
@@ -144,7 +165,10 @@ export interface FileRoutesByTo {
   '/about': typeof AboutRoute
   '/assessment': typeof AssessmentRoute
   '/contact': typeof ContactRoute
+  '/disclaimer': typeof DisclaimerRoute
   '/gallery': typeof GalleryRoute
+  '/privacy': typeof PrivacyRoute
+  '/terms': typeof TermsRoute
   '/testimonials': typeof TestimonialsRoute
   '/track': typeof TrackRoute
   '/treatments': typeof TreatmentsRoute
@@ -165,7 +189,10 @@ export interface FileRoutesById {
   '/admin': typeof AdminRouteWithChildren
   '/assessment': typeof AssessmentRoute
   '/contact': typeof ContactRoute
+  '/disclaimer': typeof DisclaimerRoute
   '/gallery': typeof GalleryRoute
+  '/privacy': typeof PrivacyRoute
+  '/terms': typeof TermsRoute
   '/testimonials': typeof TestimonialsRoute
   '/track': typeof TrackRoute
   '/treatments': typeof TreatmentsRoute
@@ -187,7 +214,10 @@ export interface FileRouteTypes {
     | '/admin'
     | '/assessment'
     | '/contact'
+    | '/disclaimer'
     | '/gallery'
+    | '/privacy'
+    | '/terms'
     | '/testimonials'
     | '/track'
     | '/treatments'
@@ -206,7 +236,10 @@ export interface FileRouteTypes {
     | '/about'
     | '/assessment'
     | '/contact'
+    | '/disclaimer'
     | '/gallery'
+    | '/privacy'
+    | '/terms'
     | '/testimonials'
     | '/track'
     | '/treatments'
@@ -226,7 +259,10 @@ export interface FileRouteTypes {
     | '/admin'
     | '/assessment'
     | '/contact'
+    | '/disclaimer'
     | '/gallery'
+    | '/privacy'
+    | '/terms'
     | '/testimonials'
     | '/track'
     | '/treatments'
@@ -247,7 +283,10 @@ export interface RootRouteChildren {
   AdminRoute: typeof AdminRouteWithChildren
   AssessmentRoute: typeof AssessmentRoute
   ContactRoute: typeof ContactRoute
+  DisclaimerRoute: typeof DisclaimerRoute
   GalleryRoute: typeof GalleryRoute
+  PrivacyRoute: typeof PrivacyRoute
+  TermsRoute: typeof TermsRoute
   TestimonialsRoute: typeof TestimonialsRoute
   TrackRoute: typeof TrackRoute
   TreatmentsRoute: typeof TreatmentsRoute
@@ -290,11 +329,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ContactRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/disclaimer': {
+      id: '/disclaimer'
+      path: '/disclaimer'
+      fullPath: '/disclaimer'
+      preLoaderRoute: typeof DisclaimerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/gallery': {
       id: '/gallery'
       path: '/gallery'
       fullPath: '/gallery'
       preLoaderRoute: typeof GalleryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/testimonials': {
@@ -416,7 +476,10 @@ const rootRouteChildren: RootRouteChildren = {
   AdminRoute: AdminRouteWithChildren,
   AssessmentRoute: AssessmentRoute,
   ContactRoute: ContactRoute,
+  DisclaimerRoute: DisclaimerRoute,
   GalleryRoute: GalleryRoute,
+  PrivacyRoute: PrivacyRoute,
+  TermsRoute: TermsRoute,
   TestimonialsRoute: TestimonialsRoute,
   TrackRoute: TrackRoute,
   TreatmentsRoute: TreatmentsRoute,

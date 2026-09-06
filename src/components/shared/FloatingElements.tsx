@@ -1,7 +1,7 @@
 import * as React from "react";
 import { useState, useEffect } from "react";
 import { motion, useScroll, useReducedMotion, AnimatePresence } from "framer-motion";
-import { ArrowUp, X } from "lucide-react";
+import { ArrowUp } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 /**
@@ -21,38 +21,9 @@ const WhatsAppIcon = ({ className }: { className?: string }) => (
 export function WhatsAppButton() {
   const reduce = useReducedMotion();
   const [isExpanded, setIsExpanded] = useState(false);
-  const [showTooltip, setShowTooltip] = useState(false);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setShowTooltip(true);
-    }, 8000);
-    return () => clearTimeout(timer);
-  }, []);
 
   return (
     <div className="floating-action fixed bottom-6 right-6 z-[60] flex items-center justify-end gap-3 sm:bottom-8 sm:right-8 transition-opacity duration-200">
-      <AnimatePresence>
-        {showTooltip && (
-          <motion.div
-            initial={{ opacity: 0, x: 8, scale: 0.96 }}
-            animate={{ opacity: 1, x: 0, scale: 1 }}
-            exit={{ opacity: 0, x: 8, scale: 0.96 }}
-            className="relative hidden sm:flex items-center gap-2 bg-surface px-4 py-2.5 pr-9 rounded-pill shadow-lg border border-border text-sm font-medium text-text whitespace-nowrap"
-          >
-            Questions? We&apos;re here.
-            <button
-              type="button"
-              onClick={() => setShowTooltip(false)}
-              aria-label="Dismiss"
-              className="absolute right-1.5 top-1/2 -translate-y-1/2 grid place-items-center w-6 h-6 rounded-full text-text-muted hover:bg-surface-alt transition-colors"
-            >
-              <X className="w-3.5 h-3.5" />
-            </button>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
       <motion.a
         href="https://wa.me/919390414536?text=Hi%20GoRebalance%2C%20I%27d%20like%20to%20know%20more%20about%20your%20gut%20health%20programs."
         target="_blank"

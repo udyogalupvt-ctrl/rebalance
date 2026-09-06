@@ -5,7 +5,9 @@ import { SectionWrapper } from "@/components/shared/SectionWrapper";
 import { SectionHeading } from "@/components/shared/SectionHeading";
 import { Reveal } from "@/components/shared/Reveal";
 import { AutoScroller } from "@/components/shared/AutoScroller";
-import { treatments } from "@/data/content";
+import { treatments as fallbackTreatments } from "@/data/content";
+import { fetchPublished } from "@/lib/cms";
+import { toIconComponent } from "@/lib/icons";
 import { cn } from "@/lib/utils";
 import { Link } from "@tanstack/react-router";
 import type { Treatment } from "@/types/content";
@@ -26,6 +28,19 @@ const getImageForTreatment = (slug: string) => {
 
 export function TreatmentsPreview() {
   const shouldReduceMotion = useReducedMotion();
+
+  // Same as the treatments page: show what the practice has published, with
+  // the static list as the fallback.
+  const [treatments, setTreatments] = React.useState<Treatment[]>([...fallbackTreatments]);
+  React.useEffect(() => {
+    let live = true;
+    void fetchPublished<Treatment>("treatments", fallbackTreatments).then((rows) => {
+      if (live && rows.length) setTreatments(rows);
+    });
+    return () => {
+      live = false;
+    };
+  }, []);
 
   return (
     <SectionWrapper id="treatments" bg="alt" labelledBy="treatments-heading">
@@ -130,11 +145,14 @@ function TreatmentCard({
   treatment: Treatment;
   shouldReduceMotion: boolean | null;
 }) {
-  const Icon = treatment.icon;
+  // Firestore stores the icon name; the static fallback holds the component.
+  const Icon = toIconComponent(treatment.icon);
 
   return (
     <Link
-      to={`/treatments/${treatment.slug}`}
+      // /treatments/<slug> has no route; this opens the matching card instead.
+      to="/treatments"
+      search={{ program: treatment.slug }}
       aria-label={`${treatment.title} — view program details`}
       className={cn(
         "group relative flex flex-col h-full bg-surface border border-border rounded-[24px] overflow-hidden transition-all duration-300",

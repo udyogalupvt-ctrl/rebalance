@@ -677,6 +677,7 @@ function GalleryTile({
             }}
           >
             <button
+              aria-label="Edit"
               onClick={onEdit}
               style={{
                 width: 48,
@@ -695,6 +696,7 @@ function GalleryTile({
               <Pencil size={18} />
             </button>
             <button
+              aria-label="Delete"
               onClick={onDelete}
               style={{
                 width: 48,

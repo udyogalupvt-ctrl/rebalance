@@ -792,3 +792,143 @@
   gap: 8px;
   cursor: pointer;
 }
+
+/* ==========================================================================
+   INSTALL & ALERTS
+   ========================================================================== */
+
+.af-appsettings {
+  display: grid;
+  gap: 4px;
+  margin-bottom: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+.af-appsettings-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 40px;
+  padding: 0 10px;
+  border-radius: 10px;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 13.5px;
+  font-weight: 500;
+  cursor: pointer;
+  text-align: left;
+  transition: background 150ms ease, color 150ms ease;
+}
+
+.af-appsettings-row:hover:not(:disabled) {
+  background: var(--surface-alt);
+  color: var(--text);
+}
+
+.af-appsettings-row:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.af-appsettings-icon {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 8px;
+  background: var(--primary-soft);
+  color: var(--primary);
+  flex-shrink: 0;
+}
+
+.af-appsettings-label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.af-appsettings-help {
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--text-muted);
+  margin: 2px 0 4px 10px;
+}
+
+.af-appsettings-help--ok {
+  color: var(--success);
+}
+
+/* --- dashboard banner --- */
+.af-install-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  flex-wrap: wrap;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 16px 18px;
+  margin-bottom: 20px;
+}
+
+.af-install-banner-icon {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  background: var(--primary-soft);
+  color: var(--primary);
+  flex-shrink: 0;
+}
+
+.af-install-banner-copy {
+  flex: 1 1 220px;
+  min-width: 0;
+}
+
+.af-install-banner-title {
+  font-size: 14.5px;
+  font-weight: 600;
+  color: var(--text);
+  margin: 0;
+}
+
+.af-install-banner-body {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin: 4px 0 0;
+  line-height: 1.5;
+}
+
+.af-install-banner-actions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.af-install-banner-cta,
+.af-install-banner-dismiss {
+  min-height: 40px;
+  padding: 0 16px;
+  border-radius: 999px;
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.af-install-banner-cta {
+  background: var(--primary-strong);
+  color: var(--on-primary);
+  border: none;
+}
+
+.af-install-banner-dismiss {
+  background: transparent;
+  color: var(--text-muted);
+  border: 1.5px solid var(--border);
+}

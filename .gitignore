@@ -35,3 +35,9 @@ dist-ssr
 .env
 .env.*
 !.env.example
+
+# Firebase Admin SDK service account keys.
+# These grant FULL admin access to the project and bypass every security
+# rule. They are server-side only and must never be committed or bundled.
+*-firebase-adminsdk-*.json
+serviceAccount*.json

@@ -126,6 +126,7 @@ export function EditorDrawer({
             {title}
           </h2>
           <button
+            aria-label="Close"
             onClick={handleCloseRequest}
             style={{
               width: 36,

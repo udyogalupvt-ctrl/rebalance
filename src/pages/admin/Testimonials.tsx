@@ -368,6 +368,7 @@ export default function TestimonialsManager() {
                   <div style={{ display: "flex", gap: 4 }}>
                     <button
                       onClick={() => openEditor(item)}
+                      aria-label="Edit"
                       style={{
                         width: 36,
                         height: 36,
@@ -385,6 +386,7 @@ export default function TestimonialsManager() {
                     </button>
                     <button
                       onClick={() => setDeleteId(item.id)}
+                      aria-label="Delete"
                       style={{
                         width: 36,
                         height: 36,

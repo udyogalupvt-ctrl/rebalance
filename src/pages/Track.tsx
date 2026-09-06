@@ -1,11 +1,20 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { doc, getDoc } from "firebase/firestore";
+import { doc, getDoc, onSnapshot } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { brand } from "@/data/content";
 import { toDate } from "@/lib/runtime";
 import { format } from "date-fns";
 import {
+  notify,
+  notificationState,
+  requestNotificationPermission,
+  registerServiceWorker,
+  type NotificationState,
+} from "@/lib/pwa";
+import { registerPatientForPush } from "@/lib/push";
+import {
+  Bell,
   Search,
   Loader2,
   AlertCircle,
@@ -114,12 +123,93 @@ export default function TrackPage({ initialRef = "" }: { initialRef?: string }) 
           return;
         }
         setResult({ kind: "found", doc: data });
+        setWatching(r);
       } catch {
         setResult({ kind: "error" });
       }
     },
     [phone, reference],
   );
+
+  /*
+   * Watch the record after a successful lookup.
+   *
+   * Two things depend on this: the page updates itself the moment the practice
+   * verifies a payment or moves the application on, and -- if the patient has
+   * allowed notifications -- they are told about it without refreshing.
+   *
+   * Delivery when this page is CLOSED needs the Cloud Function in functions/
+   * to be deployed; this covers the page being open or backgrounded.
+   */
+  const [watching, setWatching] = useState<string | null>(null);
+  const lastSeen = useRef<{ status?: string; verificationStatus?: string } | null>(null);
+
+  useEffect(() => {
+    if (!watching) return;
+    return onSnapshot(
+      doc(db, "assessmentStatus", watching),
+      (snap) => {
+        if (!snap.exists()) return;
+        const next = snap.data() as StatusDoc;
+        setResult((prev) => (prev.kind === "found" ? { kind: "found", doc: next } : prev));
+
+        const before = lastSeen.current;
+        lastSeen.current = {
+          ...(next.status !== undefined && { status: next.status }),
+          ...(next.verificationStatus !== undefined && {
+            verificationStatus: next.verificationStatus,
+          }),
+        };
+        if (!before) return; // first snapshot is the current state, not a change
+
+        if (before.verificationStatus !== next.verificationStatus) {
+          void notify({
+            title:
+              next.verificationStatus === "verified"
+                ? "Payment verified"
+                : next.verificationStatus === "not_verified"
+                  ? "Payment needs attention"
+                  : "Payment status updated",
+            body:
+              next.verificationStatus === "verified"
+                ? "Your payment has been confirmed. Your assessment is with the clinic."
+                : next.verificationStatus === "not_verified"
+                  ? "We couldn't match your payment. Message the clinic and we'll sort it out."
+                  : "The status of your payment has changed.",
+            url: `/track?ref=${watching}`,
+            tag: `status-${watching}`,
+          });
+        } else if (before.status !== next.status) {
+          void notify({
+            title:
+              next.status === "completed"
+                ? "Consultation scheduled"
+                : "Your assessment is in review",
+            body:
+              next.status === "completed"
+                ? "The clinic has been in touch to book your consultation."
+                : "Dt. Sai Sowjanya is reviewing your assessment.",
+            url: `/track?ref=${watching}`,
+            tag: `status-${watching}`,
+          });
+        }
+      },
+      (err) => console.error("Status updates stopped:", err),
+    );
+  }, [watching]);
+
+  /** Ask for permission, then register this device against the application. */
+  const [alertState, setAlertState] = useState<NotificationState>("default");
+  useEffect(() => setAlertState(notificationState()), []);
+
+  const enableAlerts = useCallback(async () => {
+    await registerServiceWorker();
+    const granted = await requestNotificationPermission();
+    setAlertState(granted);
+    if (granted === "granted" && watching) {
+      await registerPatientForPush(watching);
+    }
+  }, [watching]);
 
   // Auto-run when arriving with a reference AND a remembered phone is typed.
   const canSubmit = normalisePhone(phone).length === 10 && normaliseRef(reference).length >= 6;
@@ -269,6 +359,21 @@ export default function TrackPage({ initialRef = "" }: { initialRef?: string }) 
                 );
               })}
             </ol>
+
+            {/* Alerts. Hidden once granted — there is nothing left to offer. */}
+            {alertState !== "granted" && alertState !== "unsupported" && (
+              <button
+                type="button"
+                className="af-track-alerts"
+                onClick={enableAlerts}
+                disabled={alertState === "denied"}
+              >
+                <Bell size={16} />
+                {alertState === "denied"
+                  ? "Notifications are blocked in your browser"
+                  : "Notify me when this changes"}
+              </button>
+            )}
 
             <div className="af-track-actions">
               <a
