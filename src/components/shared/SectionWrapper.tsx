@@ -9,6 +9,16 @@ interface SectionWrapperProps {
   className?: string;
   /** Use the tighter vertical rhythm (for short, secondary sections). */
   size?: "default" | "sm";
+  /**
+   * The signature arc behind the content.
+   *
+   * Taken from the logo mark — a circle with an inner curve — rather than the
+   * floating leaves every other nutrition site uses. One per section, very
+   * large and almost invisible, so it reads as depth rather than decoration.
+   *
+   * "none" for sections that already carry their own imagery.
+   */
+  arc?: "none" | "left" | "right" | "center";
 }
 
 export function SectionWrapper({
@@ -18,6 +28,7 @@ export function SectionWrapper({
   children,
   className,
   size = "default",
+  arc = "none",
 }: SectionWrapperProps) {
   const bgClass = {
     base: "bg-bg",
@@ -36,6 +47,24 @@ export function SectionWrapper({
         className,
       )}
     >
+      {arc !== "none" && (
+        <div className="arc-field" aria-hidden="true">
+          {/* The wash: brand light in the room, so the section is not a flat fill. */}
+          <div
+            className={cn(
+              "arc-glow arc--drift",
+              arc === "left" && "-left-[30%] -top-[45%]",
+              arc === "right" && "-right-[30%] -bottom-[45%] arc-glow--accent",
+              arc === "center" && "left-1/2 -top-[55%] -translate-x-1/2",
+            )}
+          />
+          {/* No outline. A hairline circle large enough to feel gentle also
+              runs diagonally through the copy, and a stray line across text
+              reads as a rendering fault rather than a motif. The wash alone
+              gives the depth; restraint is what makes it look deliberate. */}
+        </div>
+      )}
+
       <div className="container-x relative z-10">{children}</div>
     </section>
   );

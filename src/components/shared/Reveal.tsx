@@ -1,10 +1,23 @@
 import * as React from "react";
 import { motion, useInView, useReducedMotion } from "framer-motion";
 import { cn } from "@/lib/utils";
+import { EASE_SETTLE, DUR, RISE } from "@/lib/motion";
 
-const EASE = [0.22, 1, 0.36, 1] as const;
-const DURATION = 0.55;
-const DISTANCE = 20;
+/*
+ * Motion comes from the shared system, not from numbers invented here.
+ *
+ * The old values (a generic 0.22/1/0.36/1 over 0.55s) were the same ones used
+ * in a dozen other places with a dozen other durations, which is why nothing
+ * on the site felt like it shared an author. EASE_SETTLE is the signature:
+ * decelerate hard, then rest -- weight coming to balance.
+ */
+const EASE = EASE_SETTLE;
+const DURATION = DUR.lg;
+const DISTANCE = RISE;
+
+/** A whisper of blur, resolving as the element settles. */
+const BLUR_FROM = "blur(5px)";
+const BLUR_TO = "blur(0px)";
 
 interface RevealProps {
   children: React.ReactNode;
@@ -108,8 +121,12 @@ export function Reveal({
               // <button>, an inline <a>) collapses to its text width now that
               // it is no longer the grid item directly.
               className={cn("grid h-full min-w-0", childClassName)}
-              initial={{ opacity: 0, y: DISTANCE }}
-              animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: DISTANCE }}
+              initial={{ opacity: 0, y: DISTANCE, filter: BLUR_FROM }}
+              animate={
+                isInView
+                  ? { opacity: 1, y: 0, filter: BLUR_TO }
+                  : { opacity: 0, y: DISTANCE, filter: BLUR_FROM }
+              }
               transition={{
                 duration: DURATION,
                 delay: delay + i * stagger,
@@ -127,8 +144,12 @@ export function Reveal({
   return (
     <Component ref={ref} className={className}>
       <motion.div
-        initial={{ opacity: 0, y: DISTANCE }}
-        animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: DISTANCE }}
+        initial={{ opacity: 0, y: DISTANCE, filter: BLUR_FROM }}
+        animate={
+          isInView
+            ? { opacity: 1, y: 0, filter: BLUR_TO }
+            : { opacity: 0, y: DISTANCE, filter: BLUR_FROM }
+        }
         transition={{ duration: DURATION, delay, ease: EASE }}
       >
         {children}

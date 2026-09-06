@@ -13,7 +13,7 @@ export function WhatsIncluded() {
   return (
     <>
       <CurveDivider fill="alt" />
-      <SectionWrapper id="whats-included" bg="alt" labelledBy="included-heading">
+      <SectionWrapper arc="left" id="whats-included" bg="alt" labelledBy="included-heading">
         {/* Decorative Glow */}
         <div
           className="absolute right-0 bottom-0 w-[560px] h-[560px] bg-primary/4 rounded-full blur-[150px] translate-x-1/2 translate-y-1/2 pointer-events-none"

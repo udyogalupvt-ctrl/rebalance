@@ -25,7 +25,13 @@ export const ProcessSteps: React.FC = () => {
   });
 
   return (
-    <SectionWrapper id="method" bg="base" labelledBy="method-heading" className="relative">
+    <SectionWrapper
+      arc="left"
+      id="method"
+      bg="base"
+      labelledBy="method-heading"
+      className="relative"
+    >
       {/* Decorative Dot Grid */}
       <div
         className="absolute top-0 left-0 w-full h-[40%] pointer-events-none opacity-6 z-0"

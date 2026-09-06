@@ -26,7 +26,7 @@ export function Testimonials() {
   }, []);
 
   return (
-    <SectionWrapper id="testimonials" bg="base" labelledBy="testimonials-heading">
+    <SectionWrapper arc="left" id="testimonials" bg="base" labelledBy="testimonials-heading">
       <div ref={containerRef}>
         <SectionHeading
           align="center"
@@ -85,7 +85,7 @@ export function Testimonials() {
 
 function TestimonialCard({ testimonial: t }: { testimonial: Testimonial }) {
   return (
-    <article className="relative flex h-full w-full flex-col overflow-hidden rounded-[24px] border border-border bg-surface p-[28px_22px] transition-[border-color,box-shadow,transform] duration-300 hover:-translate-y-[3px] hover:border-primary/30 hover:shadow-[0_16px_40px_rgba(var(--primary-rgb),0.10)] sm:p-[32px_28px]">
+    <article className="relative flex h-full w-full flex-col overflow-hidden rounded-[24px] border border-border bg-surface p-[28px_22px] transition-[border-color,box-shadow,transform] duration-300 hover:-translate-y-[3px] hover:border-primary/30 surface-raise sm:p-[32px_28px]">
       <Quote
         aria-hidden="true"
         className="pointer-events-none absolute right-[24px] top-[20px] z-0 h-[72px] w-[72px] text-primary opacity-[0.08]"

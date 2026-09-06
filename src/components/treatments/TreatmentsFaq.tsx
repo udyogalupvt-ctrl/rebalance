@@ -21,7 +21,7 @@ export function TreatmentsFaq() {
   return (
     <>
       <CurveDivider fill="alt" />
-      <SectionWrapper id="treatments-faq" bg="alt" labelledBy="treatments-faq-heading">
+      <SectionWrapper arc="right" id="treatments-faq" bg="alt" labelledBy="treatments-faq-heading">
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}

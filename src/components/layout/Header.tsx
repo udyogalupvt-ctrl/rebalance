@@ -184,7 +184,7 @@ export function Header({ overHero = true }: HeaderProps = {}) {
 
             <Link
               to="/assessment"
-              className="hidden sm:inline-flex items-center gap-2 h-11 px-6 bg-accent-strong text-on-accent rounded-pill font-jakarta text-[14px] font-semibold transition-transform hover:scale-[1.03] active:scale-95 group"
+              className="hidden sm:inline-flex items-center gap-2 h-11 px-6 bg-accent-strong text-on-accent rounded-pill font-jakarta text-[14px] font-semibold press group"
             >
               Start My Assessment
               <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />

@@ -43,7 +43,7 @@ export function TreatmentsPreview() {
   }, []);
 
   return (
-    <SectionWrapper id="treatments" bg="alt" labelledBy="treatments-heading">
+    <SectionWrapper arc="right" id="treatments" bg="alt" labelledBy="treatments-heading">
       {/* Decorative Glow */}
       <div
         className="absolute top-0 left-0 w-[600px] h-[600px] bg-primary/5 rounded-full blur-[140px] pointer-events-none -z-10 translate-x-[-20%] translate-y-[-20%]"
@@ -123,7 +123,7 @@ export function TreatmentsPreview() {
 
             <Link
               to="/assessment"
-              className="group h-[52px] px-7 rounded-full bg-accent-strong text-on-accent font-semibold text-[15px] flex items-center justify-center gap-2 shadow-[0_4px_20px_rgba(var(--accent-rgb), 0.15)] hover:shadow-[0_8px_30px_rgba(var(--accent-rgb), 0.25)] hover:-translate-y-0.5 transition-all duration-300 w-full md:w-auto"
+              className="group h-[52px] px-7 rounded-full bg-accent-strong text-on-accent font-semibold text-[15px] flex items-center justify-center gap-2 shadow-[0_4px_20px_rgba(var(--accent-rgb), 0.15)] hover:shadow-[0_8px_30px_rgba(var(--accent-rgb), 0.25)] press w-full md:w-auto"
             >
               <span>Take the Assessment</span>
               <ArrowRight
@@ -156,7 +156,7 @@ function TreatmentCard({
       aria-label={`${treatment.title} — view program details`}
       className={cn(
         "group relative flex flex-col h-full bg-surface border border-border rounded-[24px] overflow-hidden transition-all duration-300",
-        "hover:-translate-y-[6px] hover:border-primary/40 hover:shadow-[0_16px_40px_rgba(var(--primary-rgb), 0.1)] dark:hover:shadow-[0_16px_40px_rgba(var(--shadow-rgb), 0.35)]",
+        "surface-raise hover:border-primary/40",
         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-[3px] focus-visible:rounded-[24px]",
       )}
     >

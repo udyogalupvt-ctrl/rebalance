@@ -29,7 +29,7 @@ export function WhoWeHelp() {
             const Icon = resolveIcon(item.icon);
             return (
               <li key={item.title} className="h-full">
-                <div className="group h-full flex flex-col bg-surface border border-border rounded-[22px] p-5 sm:p-[30px_26px] transition-[transform,border-color,box-shadow] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-[5px] hover:border-primary/35 hover:shadow-[0_14px_36px_rgba(var(--primary-rgb), 0.09)]">
+                <div className="group h-full flex flex-col bg-surface border border-border rounded-[22px] p-5 sm:p-[30px_26px] transition-[transform,border-color,box-shadow] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-[5px] hover:border-primary/35 surface-raise">
                   <div
                     aria-hidden="true"
                     className="w-[52px] h-[52px] rounded-[15px] bg-primary-soft flex items-center justify-center mb-[22px] transition-[background-color,transform] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:bg-primary group-hover:rotate-[6deg]"
@@ -64,7 +64,7 @@ export function WhoWeHelp() {
           const Icon = resolveIcon(item.icon);
           return (
             <li key={item.title} className="h-full">
-              <div className="group h-full flex flex-col bg-surface border border-border rounded-[22px] p-5 sm:p-[30px_26px] transition-[transform,border-color,box-shadow] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-[5px] hover:border-primary/35 hover:shadow-[0_14px_36px_rgba(var(--primary-rgb), 0.09)]">
+              <div className="group h-full flex flex-col bg-surface border border-border rounded-[22px] p-5 sm:p-[30px_26px] transition-[transform,border-color,box-shadow] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-[5px] hover:border-primary/35 surface-raise">
                 <div
                   aria-hidden="true"
                   className="w-[52px] h-[52px] rounded-[15px] bg-primary-soft flex items-center justify-center mb-[22px] transition-[background-color,transform] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:bg-primary group-hover:rotate-[6deg]"

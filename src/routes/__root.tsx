@@ -11,6 +11,8 @@ import * as React from "react";
 import { useEffect, type ReactNode } from "react";
 import { WhatsAppButton, BackToTop } from "@/components/shared/FloatingElements";
 import { Scripts } from "@tanstack/react-router";
+import { motion, useReducedMotion } from "framer-motion";
+import { DUR, EASE_SETTLE } from "@/lib/motion";
 
 import appCss from "../styles.css?url";
 
@@ -91,7 +93,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         rel: "stylesheet",
         href: appCss,
       },
-      { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
+      { rel: "icon", href: "/favicon-32.png", type: "image/png" },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "" },
       {
@@ -120,6 +122,29 @@ function RootShell({ children }: { children: ReactNode }) {
   );
 }
 
+/**
+ * A short rise-and-settle on every route change.
+ *
+ * Keyed on the pathname so it replays per page. There is deliberately no exit
+ * animation: AnimatePresence with mode="wait" would hold the old page on
+ * screen for the length of its exit before the new one begins, which reads as
+ * lag. Incoming-only keeps navigation instant but no longer abrupt.
+ */
+function PageTransition({ pathname, children }: { pathname: string; children: ReactNode }) {
+  const reduce = useReducedMotion();
+  if (reduce) return <>{children}</>;
+  return (
+    <motion.div
+      key={pathname}
+      initial={{ opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: DUR.md, ease: EASE_SETTLE }}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const { pathname } = useRouterState({ select: (s) => s.location });
@@ -131,7 +156,9 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
-        <Outlet />
+        <PageTransition pathname={pathname}>
+          <Outlet />
+        </PageTransition>
         {!isAppRoute && (
           <>
             <WhatsAppButton />

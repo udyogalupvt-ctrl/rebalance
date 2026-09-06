@@ -22,7 +22,7 @@ export function ClinicLocations() {
       >
         {clinics.map((clinic) => (
           <li key={clinic.id} className="h-full">
-            <article className="group h-full flex flex-col bg-surface border border-border rounded-[24px] overflow-hidden transition-[transform,border-color,box-shadow] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-1 hover:border-primary/30 hover:shadow-[0_16px_40px_rgba(var(--primary-rgb), 0.10)]">
+            <article className="group h-full flex flex-col bg-surface border border-border rounded-[24px] overflow-hidden transition-[transform,border-color,box-shadow] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-1 hover:border-primary/30 surface-raise">
               {/* City image strip */}
               <div className="relative h-[110px] md:h-[140px] overflow-hidden">
                 <img

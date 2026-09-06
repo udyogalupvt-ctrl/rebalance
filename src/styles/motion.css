@@ -1,0 +1,240 @@
+/* ==========================================================================
+   MOTION & DEPTH — the site's signature.
+   ==========================================================================
+
+   The brand promise is "Rebalance": things that come to rest. So the motion
+   language is weight settling, not elements snapping into place.
+
+   Before this file the site used `duration-300` in 85 places and half a dozen
+   ad-hoc easing curves. That is what made it read as competent but anonymous —
+   nothing was recognisably *this* site. Every duration and curve now comes
+   from here.
+
+   USE:
+     transition: transform var(--dur-2) var(--ease-settle);
+     box-shadow: var(--lift-2);
+
+   Never write a raw ms value or a bare cubic-bezier in a component again.
+   ========================================================================== */
+
+:root {
+  /* ---- easing -----------------------------------------------------------
+     --ease-settle   the signature. Decelerates hard, then rests. Use for
+                     anything arriving: reveals, panels, cards.
+     --ease-balance  a whisper of overshoot, like a scale tipping level.
+                     Use sparingly, for things that should feel physical.
+     --ease-exit     the mirror: leaves quickly, no lingering.
+     --ease-glide    symmetric, for continuous states (colour, opacity).      */
+  --ease-settle: cubic-bezier(0.16, 0.84, 0.24, 1);
+  --ease-balance: cubic-bezier(0.34, 1.32, 0.44, 1);
+  --ease-exit: cubic-bezier(0.4, 0, 0.9, 0.35);
+  --ease-glide: cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* ---- duration ---------------------------------------------------------
+     A scale, not a pile of numbers. Larger movements take longer, which is
+     what makes motion feel weighted rather than uniform.                    */
+  --dur-1: 160ms; /* colour, opacity, tiny state changes   */
+  --dur-2: 260ms; /* buttons, chips, hovers                */
+  --dur-3: 420ms; /* cards, panels, drawers                */
+  --dur-4: 680ms; /* section reveals                       */
+  --dur-5: 1100ms; /* hero, deliberate set-pieces           */
+
+  /* ---- depth ------------------------------------------------------------
+     Shadows as LIGHT, not boxes: two layers each — a tight contact shadow
+     that grounds the element, and a wide soft one that lifts it. A single
+     flat shadow is the thing that makes a card look like a rectangle.       */
+  --lift-1:
+    0 1px 2px rgba(var(--shadow-rgb), calc(0.04 * var(--shadow-strength))),
+    0 2px 8px rgba(var(--shadow-rgb), calc(0.03 * var(--shadow-strength)));
+  --lift-2:
+    0 2px 4px rgba(var(--shadow-rgb), calc(0.05 * var(--shadow-strength))),
+    0 8px 24px rgba(var(--shadow-rgb), calc(0.05 * var(--shadow-strength)));
+  --lift-3:
+    0 4px 8px rgba(var(--shadow-rgb), calc(0.06 * var(--shadow-strength))),
+    0 18px 44px rgba(var(--shadow-rgb), calc(0.07 * var(--shadow-strength)));
+  --lift-4:
+    0 8px 16px rgba(var(--shadow-rgb), calc(0.07 * var(--shadow-strength))),
+    0 32px 72px rgba(var(--shadow-rgb), calc(0.10 * var(--shadow-strength)));
+
+  /* A warm rim, as if lit from above. Pairs with --lift-* on raised cards. */
+  --rim: inset 0 1px 0 rgba(var(--on-dark-rgb), 0.06);
+}
+
+/* ==========================================================================
+   INTERACTION PRIMITIVES
+   Applied by class so every button and card in the app behaves identically.
+   ========================================================================== */
+
+/* --- raised surfaces ---------------------------------------------------- */
+.surface-raise {
+  box-shadow: var(--lift-1);
+  transition:
+    transform var(--dur-3) var(--ease-settle),
+    box-shadow var(--dur-3) var(--ease-settle),
+    border-color var(--dur-2) var(--ease-glide);
+  /* No will-change here. This class lands on dozens of cards per page, and
+     will-change forces a compositor layer for each one whether or not it is
+     ever hovered — real memory cost on a mid-range phone, for no gain: a
+     transform transition is composited anyway once it starts. */
+}
+
+@media (hover: hover) {
+  .surface-raise:hover {
+    transform: translate3d(0, -4px, 0);
+    box-shadow: var(--lift-3);
+  }
+}
+
+.surface-raise:active {
+  transform: translate3d(0, -1px, 0);
+  transition-duration: var(--dur-1);
+}
+
+/* --- pressable controls -------------------------------------------------
+   A button should feel like it takes the press. Scale alone reads as a
+   cartoon; a small vertical give plus a tightened shadow reads as physical. */
+.press {
+  transition:
+    transform var(--dur-2) var(--ease-balance),
+    box-shadow var(--dur-2) var(--ease-settle),
+    background-color var(--dur-2) var(--ease-glide),
+    color var(--dur-2) var(--ease-glide);
+}
+
+@media (hover: hover) {
+  .press:hover {
+    transform: translate3d(0, -2px, 0);
+  }
+}
+
+.press:active {
+  transform: translate3d(0, 1px, 0);
+  transition-duration: var(--dur-1);
+}
+
+/* --- links that draw ---------------------------------------------------- */
+.link-draw {
+  position: relative;
+  text-decoration: none;
+}
+
+.link-draw::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -2px;
+  height: 1.5px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--dur-3) var(--ease-settle);
+}
+
+.link-draw:hover::after,
+.link-draw:focus-visible::after {
+  transform: scaleX(1);
+}
+
+/* --- focus ring ---------------------------------------------------------
+   One ring for the whole site, so keyboard users get a consistent signal.  */
+.ring-brand:focus-visible {
+  outline: none;
+  box-shadow:
+    0 0 0 2px var(--bg),
+    0 0 0 4px var(--accent-strong);
+}
+
+/* ==========================================================================
+   THE ARC — the signature shape, taken from the logo mark.
+
+   Two parts, because an outline on its own reads as a stray hairline:
+
+     .arc-glow  a soft wash of brand light. This is what gives a section
+                atmosphere instead of a flat fill. Pure radial-gradient, so
+                there is no blur filter and nothing for the GPU to composite.
+     .arc-line  one thin curve for structure. Its radius is deliberately huge
+                and most of the circle sits off-canvas, so what shows is a
+                gentle sweep that frames the content rather than cutting
+                across it.
+
+   One of each per section, at most.
+   ========================================================================== */
+
+.arc-field {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.arc-glow {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at center,
+    rgba(var(--primary-rgb), 0.10) 0%,
+    rgba(var(--primary-rgb), 0.045) 42%,
+    transparent 68%
+  );
+  width: min(120vw, 1000px);
+  aspect-ratio: 1;
+}
+
+.arc-glow--accent {
+  background: radial-gradient(
+    circle at center,
+    rgba(var(--accent-rgb), 0.09) 0%,
+    rgba(var(--accent-rgb), 0.04) 42%,
+    transparent 68%
+  );
+}
+
+.arc-line {
+  position: absolute;
+  border-radius: 50%;
+  border: 1px solid rgba(var(--primary-rgb), 0.10);
+  /* Huge, so the visible arc is nearly straight and reads as considered. */
+  width: min(210vw, 2000px);
+  aspect-ratio: 1;
+}
+
+/* Very slow drift, so the page feels alive without ever asking for attention.
+   Transform-only, so it stays on the compositor. */
+@keyframes arc-drift {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    transform: translate3d(0, -18px, 0);
+  }
+}
+
+.arc--drift {
+  animation: arc-drift 24s var(--ease-glide) infinite alternate;
+}
+
+/* ==========================================================================
+   REDUCED MOTION
+   Everything above is decoration on top of a working page, so it all goes.
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .arc--drift {
+    animation: none;
+  }
+
+  .surface-raise,
+  .press,
+  .link-draw::after {
+    transition-duration: 1ms;
+  }
+
+  .surface-raise:hover,
+  .press:hover,
+  .press:active,
+  .surface-raise:active {
+    transform: none;
+  }
+}

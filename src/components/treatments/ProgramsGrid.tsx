@@ -74,7 +74,7 @@ export function ProgramsGrid() {
   }, [requested, treatments]);
 
   return (
-    <SectionWrapper id="programs" bg="base" labelledBy="programs-heading">
+    <SectionWrapper arc="left" id="programs" bg="base" labelledBy="programs-heading">
       {/* Decorative Glow */}
       <div
         className="absolute left-0 top-0 w-[620px] h-[620px] bg-primary/4 rounded-full blur-[150px] -translate-x-1/2 -translate-y-1/2 pointer-events-none"
@@ -160,8 +160,7 @@ function ProgramCard({
       onOpenChange={onToggle}
       className={cn(
         "group relative flex flex-col bg-surface border border-border rounded-[26px] overflow-hidden transition-all duration-350",
-        !isOpen &&
-          "hover:-translate-y-1.25 hover:border-primary/35 hover:shadow-[0_18px_44px_rgba(var(--primary-rgb), 0.10)]",
+        !isOpen && "surface-raise hover:border-primary/35",
       )}
     >
       {/* Accent Bar */}

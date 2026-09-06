@@ -28,7 +28,7 @@ export function FaqSection() {
   };
 
   return (
-    <SectionWrapper id="faq" bg="base" labelledBy="faq-heading" className="relative">
+    <SectionWrapper arc="right" id="faq" bg="base" labelledBy="faq-heading" className="relative">
       {/* Decorative Glow */}
       <div
         aria-hidden="true"

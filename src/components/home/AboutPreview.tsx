@@ -29,6 +29,7 @@ export function AboutPreview() {
     <>
       <CurveDivider fill="alt" />
       <SectionWrapper
+        arc="right"
         id="about"
         bg="alt"
         labelledBy="about-heading"
@@ -230,7 +231,7 @@ export function AboutPreview() {
 
               <Link
                 to="/about"
-                className="group h-[52px] px-7 rounded-pill border-[1.5px] border-primary text-primary font-semibold text-[15px] flex items-center gap-2 hover:bg-primary-soft hover:-translate-y-0.5 transition-all duration-300"
+                className="group h-[52px] px-7 rounded-pill border-[1.5px] border-primary text-primary font-semibold text-[15px] flex items-center gap-2 hover:bg-primary-soft press"
               >
                 Read My Full Story
                 <ArrowRight size={18} className="transition-transform group-hover:translate-x-1" />

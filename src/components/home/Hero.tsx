@@ -146,7 +146,7 @@ export function Hero() {
             <div className="flex w-full flex-col items-stretch gap-3 sm:w-auto sm:flex-row sm:items-center sm:gap-4">
               <Link
                 to="/assessment"
-                className="group h-14 px-9 bg-accent-strong text-on-accent rounded-pill font-semibold inline-flex items-center justify-center gap-2 transition-transform hover:scale-[1.03] active:scale-95"
+                className="group h-14 px-9 bg-accent-strong text-on-accent rounded-pill font-semibold inline-flex items-center justify-center gap-2 press"
               >
                 Get My Gut Assessment
                 <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
