@@ -226,7 +226,10 @@ export default function StepNutrition() {
 
       {/* ─── Heading block ─── */}
       <div className="af-heading-block" style={{ position: "relative" }}>
-        <p className="af-eyebrow">Step 4 of 4</p>
+        {/* The step counter lives in <StepProgress> now — it was
+            printing "Step 4 of 4" twice on phones, once in the progress bar
+            and once here. */}
+        <span className="sr-only">Step 4 of 4</span>
         <h2 className="af-title">What did you eat yesterday?</h2>
         <p className="af-subtitle">
           A single honest day tells us more than a week of what you think you should have eaten.

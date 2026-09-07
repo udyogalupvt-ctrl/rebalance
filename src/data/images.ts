@@ -60,3 +60,55 @@ export const SUPPORTING = {
   /** Two women cooking flatbreads together. */
   cookingTogether: unsplash("photo-1783245255807-cdc7ccb20942", 1200),
 };
+
+/**
+ * The hero's photographic ground and its floating detail chips.
+ *
+ * Kept here rather than inline in the component for the same reason as
+ * everything else in this file: so the whole set of photographs the site uses
+ * can be reviewed in one place and swapped for the practice's own.
+ */
+export const HERO_BACKDROP = {
+  src: unsplash("photo-1591586116988-62fe65164f8d", 1400),
+  alt: "Fresh vegetables on a market table",
+};
+
+export const HERO_CHIPS = [
+  {
+    src: unsplash("photo-1543362906-acfc16c67564", 320),
+    alt: "Fresh green vegetables laid out",
+    caption: "Real food",
+  },
+  {
+    src: unsplash("photo-1512621776951-a57141f2eefd", 320),
+    alt: "A balanced wholegrain bowl",
+    caption: "Your kitchen",
+  },
+];
+
+/**
+ * One photograph per step of the method, on the home page.
+ *
+ * The four steps were icon-and-text only. People recognise a picture before
+ * they read a heading, so each step now leads with an image — and the four
+ * together tell the story in sequence, from the market to the finished plan
+ * being cooked at home. Keyed by the step number in src/data/content.ts.
+ */
+export const PROCESS_STEP_IMAGES: Record<string, { src: string; alt: string }> = {
+  "01": {
+    src: unsplash("photo-1591586116988-62fe65164f8d", 640),
+    alt: "Fresh vegetables laid out on a market table",
+  },
+  "02": {
+    src: unsplash("photo-1543362906-acfc16c67564", 640),
+    alt: "Green vegetables arranged in a grid, ready to be sorted",
+  },
+  "03": {
+    src: unsplash("photo-1547592180-85f173990554", 640),
+    alt: "A portioned grain and vegetable bowl on a linen cloth",
+  },
+  "04": {
+    src: unsplash("photo-1556911220-e15b29be8c8f", 640),
+    alt: "A woman cooking at the stove in a bright home kitchen",
+  },
+};

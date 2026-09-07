@@ -6,6 +6,7 @@ import { SectionHeading } from "../shared/SectionHeading";
 import { Reveal } from "../shared/Reveal";
 import { processSteps } from "../../data/content";
 import type { MotionValue } from "framer-motion";
+import { PROCESS_STEP_IMAGES } from "@/data/images";
 
 export const ProcessSteps: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -221,6 +222,11 @@ const StepItem: React.FC<StepItemProps> = ({ step, index, total, scrollYProgress
           whileHover={{ y: active ? -4 : 0 }}
         >
           <div className="space-y-4">
+            {/* The picture leads. People recognise an image before they read a
+                heading, and across the four steps these run in sequence — the
+                market, the sorting, the plan, the cooking — so the method is
+                legible before a word of it has been read. */}
+            <StepImage number={step.number} />
             <div className="flex flex-col items-start gap-3">
               <Icon
                 className={`w-5 h-5 transition-transform duration-300 ${active ? "text-accent group-hover:rotate-8 group-hover:scale-110" : "text-accent-contrast"}`}
@@ -291,6 +297,7 @@ const MobileStepItem: React.FC<MobileStepItemProps> = ({ step, index, scrollYPro
         }}
       >
         <div className="space-y-3">
+          <StepImage number={step.number} className="mb-1" />
           <div className="flex flex-col items-start gap-2">
             <Icon className="w-5 h-5 text-accent" strokeWidth={1.75} />
             <h3 className="fs-h4 text-text">{step.title}</h3>
@@ -304,3 +311,27 @@ const MobileStepItem: React.FC<MobileStepItemProps> = ({ step, index, scrollYPro
     </li>
   );
 };
+
+/** The photograph at the top of a step card. */
+function StepImage({ number, className }: { number: string; className?: string }) {
+  const image = PROCESS_STEP_IMAGES[number];
+  if (!image) return null;
+  return (
+    <div
+      className={
+        "relative w-full overflow-hidden rounded-[16px] border border-border bg-surface-alt " +
+        (className ?? "")
+      }
+    >
+      <img
+        src={image.src}
+        alt={image.alt}
+        loading="lazy"
+        decoding="async"
+        width={640}
+        height={360}
+        className="block aspect-[16/9] w-full object-cover transition-transform duration-[600ms] ease-[cubic-bezier(0.16,0.84,0.24,1)] group-hover:scale-[1.04]"
+      />
+    </div>
+  );
+}

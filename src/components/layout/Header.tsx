@@ -128,7 +128,7 @@ export function Header({ overHero = true }: HeaderProps = {}) {
           )}
         >
           <Link to="/" aria-label="GoRebalance — home" className="shrink-0">
-            <Logo tone={onDark ? "light" : "dark"} size={44} collapseTextOnNarrow />
+            <Logo tone={onDark ? "light" : "dark"} size={44} shrinkOnNarrow />
           </Link>
 
           {/* Desktop nav */}

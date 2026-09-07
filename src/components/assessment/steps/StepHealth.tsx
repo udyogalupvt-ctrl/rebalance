@@ -170,7 +170,10 @@ export default function StepHealth() {
 
       {/* ─── Heading block ─── */}
       <div className="af-heading-block" style={{ position: "relative" }}>
-        <p className="af-eyebrow">Step 3 of 4</p>
+        {/* The step counter lives in <StepProgress> now — it was
+            printing "Step 3 of 4" twice on phones, once in the progress bar
+            and once here. */}
+        <span className="sr-only">Step 3 of 4</span>
         <h2 className="af-title">Tell us what's been going on.</h2>
         <p className="af-subtitle">
           The more detail you give here, the more precise your plan will be. Write in your own words

@@ -195,7 +195,10 @@ export default function StepDetails() {
     <>
       {/* ─── Heading block ─── */}
       <div className="af-heading-block">
-        <p className="af-eyebrow">Step 1 of 4</p>
+        {/* The step counter lives in <StepProgress> now — it was
+            printing "Step 1 of 4" twice on phones, once in the progress bar
+            and once here. */}
+        <span className="sr-only">Step 1 of 4</span>
         <h2 className="af-title">Let's start with you.</h2>
         <p className="af-subtitle">
           Basic details so we know who we're speaking with and how to reach you. This takes about

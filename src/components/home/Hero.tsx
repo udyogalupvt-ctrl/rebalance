@@ -5,6 +5,7 @@ import { Link } from "@tanstack/react-router";
 import { CountUp } from "@/components/shared/CountUp";
 import { useBooking } from "@/context/BookingContext";
 import { brand } from "@/data/content";
+import { HERO_BACKDROP, HERO_CHIPS } from "@/data/images";
 
 const HEADLINE = "Heal the gut. Rebalance the whole you.";
 
@@ -38,17 +39,62 @@ export function Hero() {
   return (
     <section
       id="hero"
-      className="relative w-full overflow-hidden bg-bg pt-[calc(var(--header-h)+40px)] pb-16 sm:pb-20 lg:flex lg:min-h-[100svh] lg:items-center lg:pb-24 lg:pt-[calc(var(--header-h)+56px)]"
+      className="relative isolate w-full overflow-hidden bg-bg pt-[calc(var(--header-h)+40px)] pb-16 sm:pb-20 lg:flex lg:min-h-[100svh] lg:items-center lg:pb-24 lg:pt-[calc(var(--header-h)+56px)]"
     >
       {/* ---- ground ---------------------------------------------------------
-          A warm blush wash rising from the bottom-right, with the brand's
-          eucalyptus held back to a whisper on the left. Pure gradients: no
-          network request, no decode, nothing to lay out. */}
-      <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10">
+          A warm blush wash, a related photograph, and two rings taken from the
+          round brand mark.
+
+          The photograph is deliberately handled as GROUND, not as a picture:
+          it is confined to the right of the frame, softly masked at every
+          edge, and held at a low opacity over the wash. That is what keeps it
+          from becoming the dark full-bleed hero the practice rejected — the
+          headline still sits on clean porcelain and measures 15:1, while the
+          frame as a whole reads as fresh produce and a clinic rather than as
+          an empty gradient. */}
+      {/*
+        z-0, not -z-10.
+
+        A negative z-index child only paints in front of its parent's
+        background when the parent establishes a stacking context. #hero does
+        not — and the route transition wrapper above it does — so this whole
+        layer was being painted BEHIND the section's own `bg-bg` fill and was
+        invisible. Which is why raising the photograph's opacity three times
+        changed nothing.
+      */}
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-0">
+        {/*
+          Two masks, intersected.
+
+          A single radial mask put the visible core of the photograph at 76%
+          across and 45% down — which is precisely where the portrait card
+          sits, so the image was fully hidden behind it and the hero looked
+          exactly as it had before. The horizontal mask reveals the right of
+          the frame; the vertical one keeps the top clear so the nav never
+          sits on texture, and fades the foot into the page.
+        */}
+        <img
+          src={HERO_BACKDROP.src}
+          alt=""
+          decoding="async"
+          fetchPriority="low"
+          className="absolute inset-0 h-full w-full object-cover opacity-[0.26] dark:opacity-[0.16]"
+          style={{
+            maskImage:
+              "linear-gradient(to right, transparent 40%, black 76%), linear-gradient(to bottom, transparent 150px, black 300px, black 72%, transparent 97%)",
+            WebkitMaskImage:
+              "linear-gradient(to right, transparent 40%, black 76%), linear-gradient(to bottom, transparent 150px, black 300px, black 72%, transparent 97%)",
+            maskComposite: "intersect",
+            WebkitMaskComposite: "source-in",
+          }}
+        />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_120%_90%_at_78%_18%,rgba(var(--accent-rgb),0.16),transparent_62%)]" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_90%_70%_at_6%_92%,rgba(var(--primary-rgb),0.13),transparent_60%)]" />
+        {/* Keeps the copy column on flat page colour whatever the photograph
+            is doing behind it. */}
+        <div className="absolute inset-y-0 left-0 w-[62%] bg-[linear-gradient(to_right,rgba(var(--bg-rgb),0.99)_0%,rgba(var(--bg-rgb),0.95)_62%,transparent_100%)]" />
         <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-bg to-transparent" />
-        {/* One quiet ring, echoing the round mark. Sits behind the portrait. */}
+        {/* Two quiet rings, echoing the round mark. Behind the portrait. */}
         <div className="absolute -right-[14%] top-[6%] hidden aspect-square w-[52vw] rounded-full border border-[rgba(var(--primary-rgb),0.16)] lg:block" />
         <div className="absolute -right-[6%] top-[20%] hidden aspect-square w-[34vw] rounded-full border border-[rgba(var(--accent-rgb),0.14)] lg:block" />
       </div>
@@ -193,6 +239,31 @@ export function Hero() {
                 </span>
               </div>
             </div>
+
+            {/* A detail from the work itself, tucked into the arch's top
+                corner. Small and specific: it says "fresh food" in a way the
+                portrait cannot, without competing with her. Hidden below sm,
+                where there is no room to place it clear of the frame. */}
+            <motion.figure
+              initial={reduce ? false : { opacity: 0, scale: 0.9, y: -8 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              transition={{
+                duration: reduce ? 0 : 0.6,
+                delay: reduce ? 0 : 0.85,
+                ease: [0.22, 1, 0.36, 1],
+              }}
+              className="absolute -right-4 top-[18%] m-0 hidden overflow-hidden rounded-[16px] border border-border bg-surface p-1.5 shadow-[0_14px_36px_rgba(var(--shadow-rgb),0.16)] sm:block lg:-right-7"
+            >
+              <img
+                src={HERO_CHIPS[0]!.src}
+                alt={HERO_CHIPS[0]!.alt}
+                loading="lazy"
+                decoding="async"
+                width={320}
+                height={320}
+                className="block h-[74px] w-[74px] rounded-[11px] object-cover lg:h-[88px] lg:w-[88px]"
+              />
+            </motion.figure>
 
             {/* Floating proof. Anchored to the frame's edge so it reads as
                 belonging to the portrait rather than drifting near it. */}

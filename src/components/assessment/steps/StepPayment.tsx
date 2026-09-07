@@ -253,7 +253,10 @@ export default function StepPayment() {
     <>
       {/* ─── Heading block ─── */}
       <div className="af-heading-block">
-        <p className="af-eyebrow">Step 2 of 4</p>
+        {/* The step counter lives in <StepProgress> now — it was
+            printing "Step 2 of 4" twice on phones, once in the progress bar
+            and once here. */}
+        <span className="sr-only">Step 2 of 4</span>
         <h2 className="af-title">Confirm your consultation.</h2>
         <p className="af-subtitle">
           Scan the QR code to pay the consultation fee, then upload the payment screenshot. You'll

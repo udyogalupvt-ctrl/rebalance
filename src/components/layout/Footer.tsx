@@ -104,10 +104,19 @@ export function Footer() {
         </div>
 
         <div className="container-x relative z-10">
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-[2.2fr_1fr_1.2fr_1.4fr] gap-x-10 gap-y-12 lg:gap-x-14 xl:gap-x-14">
+          {/*
+            Two columns from the very smallest screen, not one.
+
+            Stacked, the footer ran 2,069px on a 390px phone — two and a half
+            screens of scrolling past a wall of links to reach the copyright
+            line. Explore and Programs are single-word links, so they sit side
+            by side comfortably at 390px and the footer loses roughly a third
+            of its height without shrinking a single tap target.
+          */}
+          <div className="grid grid-cols-2 gap-x-6 gap-y-10 md:grid-cols-2 md:gap-x-10 md:gap-y-12 lg:gap-x-14 xl:grid-cols-[2.2fr_1fr_1.2fr_1.4fr] xl:gap-x-14">
             {/* Column 1: Brand */}
-            <Reveal delay={0}>
-              <div className="col-span-1 md:col-span-2 xl:col-span-1">
+            <Reveal delay={0} className="col-span-2 xl:col-span-1">
+              <div>
                 <Link
                   to="/"
                   aria-label="GoRebalance - home"
@@ -118,29 +127,32 @@ export function Footer() {
                 <p className="mt-2.5 text-[12.5px] font-semibold uppercase tracking-[0.14em] text-on-dark-accent">
                   Gut Health · Nutrition · Balance
                 </p>
-                <p className="mt-5 text-[14.5px] leading-[1.7] text-on-dark-muted max-w-[42ch]">
+                <p className="mt-5 hidden max-w-[42ch] text-[14.5px] leading-[1.7] text-on-dark-muted sm:block">
                   Root-cause nutrition and gut health care by Dt. N. Sai Sowjanya. We treat
                   bloating, acidity, hormonal imbalance and low energy where they actually begin —
                   so the results hold without the plan.
                 </p>
 
+                {/* Only the accounts the practice has actually given us. */}
                 <div className="mt-7 flex flex-row gap-2.5">
-                  {socials.map((social) => (
-                    <a
-                      key={social.label}
-                      href={social.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      aria-label={`GoRebalance on ${social.label}`}
-                      className="w-11 h-11 rounded-full bg-on-dark-glass border border-on-dark-border grid place-items-center text-[var(--on-dark)] transition-all duration-300 hover:bg-accent-strong hover:border-accent hover:text-white hover:-translate-y-0.75 hover:shadow-[0_8px_20px_rgba(var(--accent-rgb), 0.28)]"
-                    >
-                      {social.icon === "MessageCircle" ? (
-                        <MessageCircle className="w-[18px] h-[18px]" aria-hidden="true" />
-                      ) : (
-                        <BrandIcon name={social.icon} className="w-[18px] h-[18px]" />
-                      )}
-                    </a>
-                  ))}
+                  {socials
+                    .filter((social) => social.href)
+                    .map((social) => (
+                      <a
+                        key={social.label}
+                        href={social.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label={`GoRebalance on ${social.label}`}
+                        className="w-11 h-11 rounded-full bg-on-dark-glass border border-on-dark-border grid place-items-center text-[var(--on-dark)] transition-all duration-300 hover:bg-accent-strong hover:border-accent hover:text-white hover:-translate-y-0.75 hover:shadow-[0_8px_20px_rgba(var(--accent-rgb), 0.28)]"
+                      >
+                        {social.icon === "MessageCircle" ? (
+                          <MessageCircle className="w-[18px] h-[18px]" aria-hidden="true" />
+                        ) : (
+                          <BrandIcon name={social.icon} className="w-[18px] h-[18px]" />
+                        )}
+                      </a>
+                    ))}
                 </div>
               </div>
             </Reveal>
@@ -155,13 +167,13 @@ export function Footer() {
                 <ul className="list-none p-0 m-0">
                   {navLinks.map((link) => (
                     <li key={link.label}>
-                      <a
-                        href={link.href}
-                        className="group relative flex items-center min-h-[44px] w-fit py-[7px] text-[14.5px] leading-[1.5] text-on-dark-muted transition-all duration-250 hover:text-accent-contrast hover:translate-x-1.25 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-[3px]"
+                      <Link
+                        to={link.href}
+                        className="group relative flex items-center min-h-[44px] w-fit py-0 text-[14px] sm:text-[14.5px] leading-[1.5] text-on-dark-muted transition-all duration-250 hover:text-accent-contrast hover:translate-x-1.25 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-[3px]"
                       >
                         <span className="absolute left-[-14px] top-1/2 -translate-y-1/2 w-2 h-[1.5px] bg-accent origin-left scale-x-0 transition-transform duration-250 group-hover:scale-x-100" />
                         {link.label}
-                      </a>
+                      </Link>
                     </li>
                   ))}
                   {/* Not in navLinks: this belongs to people who have already
@@ -170,7 +182,7 @@ export function Footer() {
                   <li>
                     <Link
                       to="/track"
-                      className="group relative flex items-center min-h-[44px] w-fit py-[7px] text-[14.5px] leading-[1.5] text-on-dark-muted transition-all duration-250 hover:text-on-dark-accent hover:translate-x-1.25 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-[3px]"
+                      className="group relative flex items-center min-h-[44px] w-fit py-0 text-[14px] sm:text-[14.5px] leading-[1.5] text-on-dark-muted transition-all duration-250 hover:text-on-dark-accent hover:translate-x-1.25 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-[3px]"
                     >
                       <span className="absolute left-[-14px] top-1/2 -translate-y-1/2 w-2 h-[1.5px] bg-accent origin-left scale-x-0 transition-transform duration-250 group-hover:scale-x-100" />
                       Track your application
@@ -193,7 +205,7 @@ export function Footer() {
                       <Link
                         to="/treatments"
                         search={{ program: t.slug }}
-                        className="group relative flex items-center min-h-[44px] w-fit py-[7px] text-[14.5px] leading-[1.5] text-on-dark-muted transition-all duration-250 hover:text-accent-contrast hover:translate-x-1.25 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-[3px]"
+                        className="group relative flex items-center min-h-[44px] w-fit py-0 text-[14px] sm:text-[14.5px] leading-[1.5] text-on-dark-muted transition-all duration-250 hover:text-accent-contrast hover:translate-x-1.25 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-[3px]"
                       >
                         <span className="absolute left-[-14px] top-1/2 -translate-y-1/2 w-2 h-[1.5px] bg-accent origin-left scale-x-0 transition-transform duration-250 group-hover:scale-x-100" />
                         {t.shortTitle || t.title}
@@ -205,7 +217,7 @@ export function Footer() {
             </Reveal>
 
             {/* Column 4: Contact */}
-            <Reveal delay={0.24}>
+            <Reveal delay={0.24} className="col-span-2 md:col-span-2 xl:col-span-1">
               <div className="flex flex-col gap-[18px]">
                 <h3 className="text-[12px] font-semibold uppercase tracking-[0.14em] text-on-dark-faint mb-0.5">
                   GET IN TOUCH
@@ -309,7 +321,11 @@ export function Footer() {
 
           {/* Bottom Bar */}
           <Reveal delay={0.4}>
-            <div className="mt-10 md:mt-8 border-t border-on-dark-border py-[26px] md:py-[22px]">
+            {/* The extra bottom padding on phones clears the floating
+                WhatsApp and back-to-top buttons, which were sitting on top of
+                the credit line — the last thing on the page was permanently
+                half-covered. */}
+            <div className="mt-10 border-t border-on-dark-border py-[26px] pb-[104px] md:mt-8 md:py-[22px]">
               <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-5">
                 {/* Copyright (Bottom on mobile) */}
                 <div className="order-2 md:order-1 flex flex-col items-center md:items-start gap-1.5 text-[13px] text-on-dark-faint">
@@ -320,7 +336,7 @@ export function Footer() {
                       href="https://thedreamteamservices.com"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex min-h-[44px] items-center font-semibold text-on-dark-muted underline decoration-on-dark-border underline-offset-4 transition-colors hover:text-on-dark-accent hover:decoration-on-dark-accent"
+                      className="inline-flex min-h-[44px] items-center text-[11.5px] font-semibold uppercase tracking-[0.1em] text-on-dark-muted underline decoration-on-dark-border underline-offset-4 transition-colors hover:text-on-dark-accent hover:decoration-on-dark-accent"
                     >
                       Dream Team Services
                     </a>

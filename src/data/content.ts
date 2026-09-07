@@ -456,10 +456,20 @@ export const treatments = [
   },
 ];
 
+/**
+ * Social profiles.
+ *
+ * An empty `href` means "the practice has not given us this account yet", and
+ * the footer SKIPS those rather than rendering an icon that goes nowhere.
+ * They were previously all `href="#"`, so three of the four buttons in the
+ * footer looked live, invited a click, and did nothing.
+ *
+ * TO ENABLE: paste the profile URL in place of the empty string.
+ */
 export const socials = [
-  { label: "Instagram", href: "#", icon: "Instagram" },
-  { label: "Facebook", href: "#", icon: "Facebook" },
-  { label: "Youtube", href: "#", icon: "Youtube" },
+  { label: "Instagram", href: "", icon: "Instagram" },
+  { label: "Facebook", href: "", icon: "Facebook" },
+  { label: "Youtube", href: "", icon: "Youtube" },
   { label: "WhatsApp", href: brand.whatsapp, icon: "MessageCircle" },
 ];
 
@@ -656,13 +666,26 @@ export const testimonials = [
 
 export const testimonialsFull = testimonials;
 export * from "./gallery";
+/**
+ * The footer's Explore column.
+ *
+ * These were anchor links — "#about", "#treatments" — pointing at section ids
+ * on the home page. That made every one of them dead on the seven pages that
+ * do not contain those sections: from /privacy, /terms, /disclaimer or
+ * /track, clicking "About" in the footer did nothing at all. On the home page
+ * they merely scrolled, which also disagreed with the header nav going to the
+ * real page.
+ *
+ * They are routes now, and the footer renders them with <Link>, so they work
+ * from anywhere and navigate client-side.
+ */
 export const navLinks = [
   { label: "Home", href: "/" },
-  { label: "About", href: "#about" },
-  { label: "Treatments", href: "#treatments" },
-  { label: "Gallery", href: "#gallery" },
-  { label: "Testimonials", href: "#testimonials" },
-  { label: "Contact", href: "#contact" },
+  { label: "About", href: "/about" },
+  { label: "Treatments", href: "/treatments" },
+  { label: "Gallery", href: "/gallery" },
+  { label: "Testimonials", href: "/testimonials" },
+  { label: "Contact", href: "/contact" },
 ];
 
 // === ABOUT PAGE — PRACTITIONER STORY ===
