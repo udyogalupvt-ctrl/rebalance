@@ -2,13 +2,14 @@ import * as React from "react";
 import { useState, useEffect, useMemo } from "react";
 import { motion, useScroll, useTransform, useReducedMotion } from "framer-motion";
 import { TrendingUp, MapPin, Star } from "lucide-react";
-import { fetchPublished } from "@/lib/cms";
+import { fetchPublished } from "@/lib/cms-public";
 import { testimonialsFull as fallbackTestimonials } from "@/data/content";
 import { SectionWrapper } from "@/components/shared/SectionWrapper";
 import { SectionHeading } from "@/components/shared/SectionHeading";
 import { CurveDivider } from "@/components/shared/CurveDivider";
 import { Reveal } from "@/components/shared/Reveal";
 import { cn } from "@/lib/utils";
+import { StoryMedia, hasStoryMedia } from "@/components/shared/StoryMedia";
 import type { Testimonial } from "@/types/content";
 
 export function FeaturedStories() {
@@ -66,11 +67,20 @@ function SpotlightBlock({ item, index }: { item: Testimonial; index: number }) {
 
   const imageY = useTransform(scrollYProgress, [0, 1], [20, -20]);
 
-  // PLACEHOLDER IMAGERY — replace only with photographs the client has written consent to publish. Do not use client photos without explicit written permission.
-  const placeholderImages = [
-    "https://images.unsplash.com/photo-1547592166-23ac45744acd?auto=format&fit=crop&q=80&w=1200", // Cooking
-    "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&q=80&w=1200", // Morning/Meal
-    "https://images.unsplash.com/photo-1597958792579-bd3517df6399?auto=format&fit=crop&q=80&w=1200", // Working/Coffee
+  /*
+   * The story's own media, when the practice has attached any.
+   *
+   * These fall back to stand-in photography, and the fallbacks are food, not
+   * faces: a stock portrait next to a named client's quote implies it is a
+   * photograph OF that client, which would be a fabrication. Real client
+   * photographs are uploaded per story in the admin panel, and only with the
+   * written consent the editor requires before it will save.
+   */
+  const media = hasStoryMedia(item);
+  const standIns = [
+    "https://images.unsplash.com/photo-1547592166-23ac45744acd?auto=format&fit=crop&q=75&w=1000",
+    "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&q=75&w=1000",
+    "https://images.unsplash.com/photo-1602881916963-5daf2d97c06e?auto=format&fit=crop&q=75&w=1000",
   ];
 
   return (
@@ -98,15 +108,29 @@ function SpotlightBlock({ item, index }: { item: Testimonial; index: number }) {
             )}
           />
 
-          {/* Photo container */}
-          <div className="relative h-full w-full rounded-[26px] overflow-hidden border border-white/10 ring-1 ring-inset ring-black/5">
-            <motion.img
-              src={placeholderImages[index]}
-              alt={`A client during their journey with GoRebalance`}
-              className="w-full h-full object-cover scale-[1.08]"
-              style={{ y: shouldReduceMotion ? 0 : imageY }}
+          {/* Photo or video container */}
+          {media ? (
+            <StoryMedia
+              photoUrl={item.photoUrl}
+              videoUrl={item.videoUrl}
+              alt={`${item.name}'s story`}
+              ratio="4/5"
+              rounded="rounded-[26px]"
+              className="h-full border border-white/10 ring-1 ring-inset ring-black/5"
             />
-          </div>
+          ) : (
+            <div className="relative h-full w-full overflow-hidden rounded-[26px] border border-white/10 ring-1 ring-inset ring-black/5">
+              <motion.img
+                src={standIns[index % standIns.length]}
+                alt=""
+                aria-hidden="true"
+                loading="lazy"
+                decoding="async"
+                className="h-full w-full scale-[1.08] object-cover"
+                style={{ y: shouldReduceMotion ? 0 : imageY }}
+              />
+            </div>
+          )}
 
           {/* Floating Result Card */}
           <Reveal
@@ -129,12 +153,11 @@ function SpotlightBlock({ item, index }: { item: Testimonial; index: number }) {
                 <TrendingUp className="text-white w-[18px] h-[18px]" />
               </div>
               <div className="min-w-0">
-                <p className="text-[14.5px] font-semibold text-text leading-tight truncate">
-                  {index === 0
-                    ? "Bloating resolved by week six"
-                    : index === 1
-                      ? "Reflux gone, sleep restored"
-                      : "Steady energy, weight rebalanced"}
+                {/* Taken from the story's own "after" list. It used to be
+                    chosen by array position, so reordering the stories in the
+                    admin panel relabelled them with someone else's result. */}
+                <p className="truncate text-[14.5px] font-semibold leading-tight text-text">
+                  {item.after?.length ? item.after.join(" · ") : item.condition}
                 </p>
                 <p className="text-[12.5px] text-text-muted mt-0.5">
                   {item.duration} program · {item.location.split(",")[0]}

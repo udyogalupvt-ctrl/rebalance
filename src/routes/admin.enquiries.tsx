@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import EnquiriesManager from "@/pages/admin/Enquiries";
+import { lazyRoute } from "@/components/shared/lazyRoute";
 
 export const Route = createFileRoute("/admin/enquiries")({
-  component: EnquiriesManager,
+  component: lazyRoute(() => import("@/pages/admin/Enquiries")),
 });

@@ -95,6 +95,20 @@ function toFirestoreSafe(value: unknown): unknown {
   return undefined;
 }
 
+/**
+ * Bump when the static seed data changes in a way the practice should see.
+ *
+ * Seeding used to run once — `if (snap.empty)` — and never again. That was
+ * fine until the treatments were rewritten: a site that had already seeded the
+ * old six programs would keep serving them forever, because the collection was
+ * no longer empty. The practice would have had to retype seven programs by
+ * hand to get the change the rewrite was for.
+ *
+ * With a version, a collection that was seeded under an older version is
+ * RECONCILED rather than left alone (see below).
+ */
+const SEED_VERSION = 2;
+
 export async function ensureSeeded(collectionName: string, staticData: readonly SeedItem[]) {
   if (SEED_LOCKS[collectionName]) return;
   SEED_LOCKS[collectionName] = true;
@@ -103,27 +117,79 @@ export async function ensureSeeded(collectionName: string, staticData: readonly 
     const collRef = collection(db, collectionName);
     const snap = await getDocs(query(collRef, orderBy("order", "asc")));
 
+    const seedDoc = (item: SeedItem, index: number, batch: ReturnType<typeof writeBatch>) => {
+      const docId = typeof item.id === "string" && item.id ? item.id : `item_${index}`;
+      batch.set(doc(db, collectionName, docId), {
+        ...(toFirestoreSafe(item) as Record<string, unknown>),
+        id: docId,
+        order: index,
+        published: true,
+        seedVersion: SEED_VERSION,
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
+      });
+    };
+
     if (snap.empty) {
-      console.log(`Seeding ${collectionName}...`);
       const batch = writeBatch(db);
+      staticData.forEach((item, index) => seedDoc(item, index, batch));
+      await batch.commit();
+      console.info(`Seeded ${collectionName} with ${staticData.length} items.`);
+      return;
+    }
 
-      staticData.forEach((item, index) => {
-        // Use the existing ID if present, otherwise let Firestore generate one (or use a simple hash/index)
-        const docId = typeof item.id === "string" && item.id ? item.id : `item_${index}`;
-        const docRef = doc(db, collectionName, docId);
+    /*
+     * Reconcile a collection seeded under an older version.
+     *
+     * Two rules, both chosen so nothing the practice typed is ever destroyed:
+     *
+     *   1. A static item whose id is MISSING is added. That is how the new
+     *      programs arrive.
+     *   2. A document that came from an OLD SEED and is no longer in the
+     *      static list is UNPUBLISHED, never deleted. It disappears from the
+     *      public site but is still in the admin panel, so the change is
+     *      reversible with one toggle.
+     *
+     * A document the practice created or edited themselves has no seedVersion
+     * below the current one — hand-made rows are left completely alone.
+     */
+    const existing = new Map(snap.docs.map((d) => [d.id, d.data() as Record<string, unknown>]));
+    const staticIds = new Set(
+      staticData.map((item, i) => (typeof item.id === "string" && item.id ? item.id : `item_${i}`)),
+    );
 
-        batch.set(docRef, {
-          ...(toFirestoreSafe(item) as Record<string, unknown>),
-          id: docId,
-          order: index,
-          published: true, // published by default during seed
-          createdAt: serverTimestamp(),
+    const alreadyCurrent = snap.docs.some(
+      (d) => (d.data()["seedVersion"] as number) >= SEED_VERSION,
+    );
+    if (alreadyCurrent) return;
+
+    const batch = writeBatch(db);
+    let changes = 0;
+
+    staticData.forEach((item, index) => {
+      const docId = typeof item.id === "string" && item.id ? item.id : `item_${index}`;
+      if (!existing.has(docId)) {
+        seedDoc(item, index, batch);
+        changes += 1;
+      }
+    });
+
+    for (const [id, data] of existing) {
+      const fromOldSeed =
+        typeof data["seedVersion"] === "number" || data["seedVersion"] === undefined;
+      if (!staticIds.has(id) && fromOldSeed && data["published"] !== false) {
+        batch.update(doc(db, collectionName, id), {
+          published: false,
+          seedVersion: SEED_VERSION,
           updatedAt: serverTimestamp(),
         });
-      });
+        changes += 1;
+      }
+    }
 
+    if (changes > 0) {
       await batch.commit();
-      console.log(`Seeded ${collectionName} with ${staticData.length} items.`);
+      console.info(`Reconciled ${collectionName}: ${changes} document(s) updated.`);
     }
   } catch (err) {
     console.error(`Error seeding ${collectionName}:`, err);
@@ -151,38 +217,10 @@ export function subscribeToCMS(
   );
 }
 
-// Caching layer for public site
-const publicCache: Record<string, { data: unknown[]; timestamp: number }> = {};
-const CACHE_TTL = 1000 * 60 * 5; // 5 minutes
-
-export async function fetchPublished<T>(
-  collectionName: string,
-  fallbackData: readonly T[],
-): Promise<T[]> {
-  const now = Date.now();
-  const cached = publicCache[collectionName];
-  if (cached && now - cached.timestamp < CACHE_TTL) {
-    return cached.data as T[];
-  }
-
-  try {
-    const q = query(collection(db, collectionName), orderBy("order", "asc"));
-    const snap = await getDocs(q);
-
-    if (snap.empty) {
-      return [...fallbackData];
-    }
-
-    const docs = snap.docs
-      .map((d) => ({ ...d.data(), id: d.id }) as CMSDocument)
-      .filter((d) => d.published !== false);
-
-    publicCache[collectionName] = { data: docs, timestamp: now };
-    // Documents are seeded from the same static shape the caller passes as a
-    // fallback, so they are interchangeable at the call site.
-    return docs as unknown as T[];
-  } catch {
-    console.warn(`Failed to fetch ${collectionName} from Firestore, using fallback.`);
-    return [...fallbackData];
-  }
-}
+/*
+ * fetchPublished used to live here. It now lives in cms-public.ts, which
+ * imports Firebase dynamically so the marketing pages do not carry the SDK on
+ * their critical path. This module stays statically bound to Firebase because
+ * it is only ever loaded inside the admin console.
+ */
+export { fetchPublished } from "./cms-public";

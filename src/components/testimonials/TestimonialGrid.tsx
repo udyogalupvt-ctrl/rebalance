@@ -1,9 +1,10 @@
 import * as React from "react";
 import { useState, useMemo, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { fetchPublished } from "@/lib/cms";
+import { fetchPublished } from "@/lib/cms-public";
 import { testimonialsFull as fallbackTestimonials } from "@/data/content";
 import { Star, BadgeCheck, MapPin, ChevronDown, Quote } from "lucide-react";
+import { StoryMedia, hasStoryMedia } from "@/components/shared/StoryMedia";
 import * as Collapsible from "@radix-ui/react-collapsible";
 import { SectionWrapper } from "@/components/shared/SectionWrapper";
 import { SectionHeading } from "@/components/shared/SectionHeading";
@@ -12,13 +13,21 @@ import { CurveDivider } from "@/components/shared/CurveDivider";
 import { Reveal } from "@/components/shared/Reveal";
 import { cn } from "@/lib/utils";
 
+/*
+ * Kept in step with the programme names on the treatments page and in the
+ * admin's category picker. They had drifted: the filter still offered
+ * "PCOS & Hormonal" and "Thyroid & Metabolic" after the programmes were
+ * renamed, so a visitor filtering by the condition they had just read about
+ * got an empty grid.
+ */
 const CATEGORIES = [
   "All",
   "Gut & Digestion",
-  "PCOS & Hormonal",
-  "Weight",
-  "Thyroid & Metabolic",
-  "Skin & Hair",
+  "Acid Reflux & GERD",
+  "PCOS & PCOD",
+  "Pregnancy",
+  "Diabetes & Metabolic",
+  "Weight Loss",
 ];
 
 interface Testimonial {
@@ -35,6 +44,9 @@ interface Testimonial {
   before?: string[];
   after?: string[];
   featured?: boolean;
+  /** Attached in the admin panel — see StoryMedia. */
+  photoUrl?: string;
+  videoUrl?: string;
 }
 
 export function TestimonialGrid() {
@@ -146,10 +158,19 @@ function TestimonialCard({ testimonial }: { testimonial: Testimonial }) {
           "hover:-translate-y-[3px] hover:border-primary/30 hover:shadow-[0_14px_36px_rgba(var(--primary-rgb), 0.08)]",
       )}
     >
-      <Quote
-        aria-hidden="true"
-        className="absolute right-[22px] top-[18px] z-0 h-16 w-16 text-primary opacity-[0.07]"
-      />
+      {!hasStoryMedia(testimonial) ? (
+        <Quote
+          aria-hidden="true"
+          className="absolute right-[22px] top-[18px] z-0 h-16 w-16 text-primary opacity-[0.07]"
+        />
+      ) : (
+        <StoryMedia
+          photoUrl={testimonial.photoUrl}
+          videoUrl={testimonial.videoUrl}
+          alt={`${testimonial.name}'s story`}
+          className="relative z-10 mb-6"
+        />
+      )}
 
       <div className="relative z-10 flex items-start justify-between gap-[14px] mb-5">
         <div className="flex gap-[3px]" aria-label={`Rated ${testimonial.rating} out of 5 stars`}>

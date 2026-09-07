@@ -13,7 +13,7 @@ import { HoursAndFaq } from "@/components/contact/HoursAndFaq";
 const Contact = () => {
   return (
     <>
-      <Header />
+      <Header overHero={false} />
       <main className="relative">
         <PageHero
           variant="image"
@@ -26,8 +26,10 @@ const Contact = () => {
             { label: "Contact", href: "/contact" },
           ]}
           image={{
-            src: "https://images.unsplash.com/photo-1556911220-e15b29be8c8f?auto=format&fit=crop&q=80&w=1400",
-            alt: "A calm, warm clinic reception space with natural light",
+            src: "https://images.unsplash.com/photo-1556911220-e15b29be8c8f?auto=format&fit=crop&q=75&w=1200",
+            alt: "A woman preparing food in a bright kitchen",
+            width: 1200,
+            height: 900,
           }}
         >
           <MetaChip icon={Clock} label="Replies within 24 hours" />

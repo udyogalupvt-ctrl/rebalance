@@ -9,7 +9,9 @@ import { PublishToggle } from "@/components/admin/shared/PublishToggle";
 import { DeleteDialog } from "@/components/admin/shared/DeleteDialog";
 import { TextInput, SelectField, TextArea } from "@/components/assessment/fields";
 import { logActivity } from "@/lib/activityLog";
-import { Pencil, Trash2, X, Plus, Star } from "lucide-react";
+import { Pencil, Trash2, X, Plus, Star, Image as ImageIcon, Video } from "lucide-react";
+import { StoryMediaFields } from "@/components/admin/shared/StoryMediaFields";
+import { isYouTubeUrl } from "@/lib/youtube";
 
 interface TestimonialDoc extends CMSDocument {
   name: string;
@@ -25,14 +27,20 @@ interface TestimonialDoc extends CMSDocument {
   after?: string[];
   featured: boolean;
   consent?: boolean;
+  /** A photograph of the client, uploaded by the practice. */
+  photoUrl?: string;
+  /** A YouTube link. Played inline on the site — see StoryMedia. */
+  videoUrl?: string;
 }
 
 const CATEGORIES = [
   "Gut & Digestion",
-  "PCOS & Hormonal",
-  "Weight",
-  "Thyroid & Metabolic",
-  "Skin & Hair",
+  "Acid Reflux & GERD",
+  "IBD Support",
+  "PCOS & PCOD",
+  "Pregnancy",
+  "Diabetes & Metabolic",
+  "Weight Loss",
 ];
 const LOCATIONS = ["Kakinada, Andhra Pradesh", "Online consultation", "Other"];
 
@@ -50,6 +58,8 @@ const emptyTestimonial = (): Partial<TestimonialDoc> => ({
   after: [],
   featured: false,
   consent: false,
+  photoUrl: "",
+  videoUrl: "",
   published: true,
 });
 
@@ -164,6 +174,13 @@ export default function TestimonialsManager() {
 
     if (!editingItem.consent) {
       alert("You must confirm written consent before saving.");
+      return;
+    }
+
+    // A link that does not embed would render as an empty rectangle on the
+    // public page, and nobody would notice until a client complained.
+    if (editingItem.videoUrl?.trim() && !isYouTubeUrl(editingItem.videoUrl)) {
+      alert("The YouTube link isn't valid. Paste the address of the video itself, or clear it.");
       return;
     }
 
@@ -554,6 +571,40 @@ export default function TestimonialsManager() {
               style={{ minHeight: 140 }}
               helperText="Shown when the client expands the card. Leave blank for a short testimonial."
             />
+
+            {/* Media. A story can carry a photograph, a YouTube video, or a
+                video with the practice's own photograph as its cover. */}
+            <div
+              style={{
+                padding: 20,
+                borderRadius: 16,
+                border: "1px solid var(--border)",
+                background: "var(--surface-alt)",
+              }}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 8,
+                  marginBottom: 16,
+                  color: "var(--text)",
+                  fontSize: 14.5,
+                  fontWeight: 600,
+                }}
+              >
+                <ImageIcon size={16} />
+                <span>Photo &amp; video</span>
+                <Video size={16} style={{ color: "var(--text-muted)" }} />
+              </div>
+              <StoryMediaFields
+                photoUrl={editingItem.photoUrl}
+                videoUrl={editingItem.videoUrl}
+                onPhotoChange={(url) => updateEditField("photoUrl", url ?? "")}
+                onVideoChange={(url) => updateEditField("videoUrl", url ?? "")}
+                alt={editingItem.name ? `${editingItem.name}'s story` : "Client story"}
+              />
+            </div>
 
             <div style={{ display: "flex", gap: 24 }}>
               {/* Before */}

@@ -7,6 +7,7 @@ import { useTheme } from "@/components/shared/ThemeProvider";
 import { cn } from "@/lib/utils";
 import { Link, useRouterState } from "@tanstack/react-router";
 import { DUR, EASE_SETTLE } from "@/lib/motion";
+import { setScrollLocked } from "@/components/shared/SmoothScroll";
 
 const navLinks = [
   { name: "Home", href: "/" },
@@ -48,6 +49,9 @@ export function Header({ overHero = true }: HeaderProps = {}) {
     if (!isMenuOpen) return;
     const prev = document.body.style.overflow;
     document.body.style.overflow = "hidden";
+    // `overflow: hidden` alone does not stop Lenis — it drives the scroll
+    // offset itself, so the page kept moving behind the open panel.
+    setScrollLocked(true);
     // The floating WhatsApp / back-to-top buttons sit above the menu and
     // overlapped its contact details.
     document.body.dataset["menuOpen"] = "true";
@@ -55,6 +59,7 @@ export function Header({ overHero = true }: HeaderProps = {}) {
     window.addEventListener("keydown", onKey);
     return () => {
       document.body.style.overflow = prev;
+      setScrollLocked(false);
       delete document.body.dataset["menuOpen"];
       window.removeEventListener("keydown", onKey);
     };
@@ -99,26 +104,31 @@ export function Header({ overHero = true }: HeaderProps = {}) {
             paddingRight: isScrolled ? 22 : 40,
             marginTop: isScrolled ? 16 : 0,
             borderRadius: isScrolled ? 999 : 0,
-            backgroundColor:
-              isScrolled && !isMenuOpen
-                ? "rgba(var(--surface-rgb), 0.72)"
-                : "rgba(var(--surface-rgb), 0)",
-            borderColor:
-              isScrolled && !isMenuOpen ? "var(--border)" : "rgba(var(--surface-rgb), 0)",
-            boxShadow:
-              isScrolled && !isMenuOpen
-                ? "0 8px 32px rgba(var(--text-rgb), 0.10), 0 2px 8px rgba(var(--text-rgb), 0.05)"
-                : "0 0 0 rgba(var(--shadow-rgb), 0)",
           }}
           transition={spring}
           style={{ borderWidth: 1, borderStyle: "solid", maxWidth: "100%" }}
+          /*
+           * Geometry is animated by the spring above; COLOUR is animated by
+           * CSS below.
+           *
+           * They used to share the spring, with values like
+           * `rgba(var(--surface-rgb), 0)`. Motion cannot interpolate a colour
+           * expressed through a CSS variable — it logged
+           * "is not an animatable color" on every page load and simply
+           * snapped between the two states, so the bar's fill appeared
+           * instantly while its shape was still easing. A plain CSS
+           * transition handles var() fine, and runs off the main thread.
+           */
           className={cn(
-            "flex items-center justify-between pointer-events-auto",
-            isScrolled && "backdrop-blur-[20px]",
+            "pointer-events-auto flex items-center justify-between",
+            "[transition:background-color_var(--dur-3)_var(--ease-glide),border-color_var(--dur-3)_var(--ease-glide),box-shadow_var(--dur-3)_var(--ease-glide)]",
+            isScrolled && !isMenuOpen
+              ? "border-[var(--border)] bg-[rgba(var(--surface-rgb),0.72)] shadow-[0_8px_32px_rgba(var(--text-rgb),0.10),0_2px_8px_rgba(var(--text-rgb),0.05)] backdrop-blur-[20px]"
+              : "border-transparent bg-transparent shadow-none",
           )}
         >
           <Link to="/" aria-label="GoRebalance — home" className="shrink-0">
-            <Logo tone={onDark ? "light" : "dark"} size={44} />
+            <Logo tone={onDark ? "light" : "dark"} size={44} collapseTextOnNarrow />
           </Link>
 
           {/* Desktop nav */}

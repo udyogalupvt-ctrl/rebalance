@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import AdminLogin from "@/pages/admin/Login";
+import { lazyRoute } from "@/components/shared/lazyRoute";
 import { safeRedirect } from "@/lib/utils";
 
 export const Route = createFileRoute("/admin/login")({
@@ -13,5 +13,5 @@ export const Route = createFileRoute("/admin/login")({
     const safe = safeRedirect(raw, "");
     return safe ? { redirect: safe } : {};
   },
-  component: AdminLogin,
+  component: lazyRoute(() => import("@/pages/admin/Login")),
 });

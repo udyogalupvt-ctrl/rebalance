@@ -29,6 +29,7 @@ export const ContactMethods = () => {
           speed={22}
           gap="14px"
           itemWidth="min(78vw, 320px)"
+          autoScroll={false}
         >
           {contactMethods.map((method) => (
             <a

@@ -24,6 +24,7 @@ import { Route as TreatmentsRouteImport } from './routes/treatments'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as AdminEnquiriesRouteImport } from './routes/admin.enquiries'
 import { Route as AdminGalleryRouteImport } from './routes/admin.gallery'
+import { Route as AdminLeadsRouteImport } from './routes/admin.leads'
 import { Route as AdminLoginRouteImport } from './routes/admin.login'
 import { Route as AdminPaymentsRouteImport } from './routes/admin.payments'
 import { Route as AdminTestimonialsRouteImport } from './routes/admin.testimonials'
@@ -106,6 +107,11 @@ const AdminGalleryRoute = AdminGalleryRouteImport.update({
   path: '/gallery',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminLeadsRoute = AdminLeadsRouteImport.update({
+  id: '/leads',
+  path: '/leads',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminLoginRoute = AdminLoginRouteImport.update({
   id: '/login',
   path: '/login',
@@ -152,6 +158,7 @@ export interface FileRoutesByFullPath {
   '/treatments': typeof TreatmentsRoute
   '/admin/enquiries': typeof AdminEnquiriesRoute
   '/admin/gallery': typeof AdminGalleryRoute
+  '/admin/leads': typeof AdminLeadsRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/payments': typeof AdminPaymentsRoute
   '/admin/testimonials': typeof AdminTestimonialsRoute
@@ -174,6 +181,7 @@ export interface FileRoutesByTo {
   '/treatments': typeof TreatmentsRoute
   '/admin/enquiries': typeof AdminEnquiriesRoute
   '/admin/gallery': typeof AdminGalleryRoute
+  '/admin/leads': typeof AdminLeadsRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/payments': typeof AdminPaymentsRoute
   '/admin/testimonials': typeof AdminTestimonialsRoute
@@ -198,6 +206,7 @@ export interface FileRoutesById {
   '/treatments': typeof TreatmentsRoute
   '/admin/enquiries': typeof AdminEnquiriesRoute
   '/admin/gallery': typeof AdminGalleryRoute
+  '/admin/leads': typeof AdminLeadsRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/payments': typeof AdminPaymentsRoute
   '/admin/testimonials': typeof AdminTestimonialsRoute
@@ -223,6 +232,7 @@ export interface FileRouteTypes {
     | '/treatments'
     | '/admin/enquiries'
     | '/admin/gallery'
+    | '/admin/leads'
     | '/admin/login'
     | '/admin/payments'
     | '/admin/testimonials'
@@ -245,6 +255,7 @@ export interface FileRouteTypes {
     | '/treatments'
     | '/admin/enquiries'
     | '/admin/gallery'
+    | '/admin/leads'
     | '/admin/login'
     | '/admin/payments'
     | '/admin/testimonials'
@@ -268,6 +279,7 @@ export interface FileRouteTypes {
     | '/treatments'
     | '/admin/enquiries'
     | '/admin/gallery'
+    | '/admin/leads'
     | '/admin/login'
     | '/admin/payments'
     | '/admin/testimonials'
@@ -399,6 +411,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminGalleryRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/leads': {
+      id: '/admin/leads'
+      path: '/leads'
+      fullPath: '/admin/leads'
+      preLoaderRoute: typeof AdminLeadsRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/login': {
       id: '/admin/login'
       path: '/login'
@@ -447,6 +466,7 @@ declare module '@tanstack/react-router' {
 interface AdminRouteChildren {
   AdminEnquiriesRoute: typeof AdminEnquiriesRoute
   AdminGalleryRoute: typeof AdminGalleryRoute
+  AdminLeadsRoute: typeof AdminLeadsRoute
   AdminLoginRoute: typeof AdminLoginRoute
   AdminPaymentsRoute: typeof AdminPaymentsRoute
   AdminTestimonialsRoute: typeof AdminTestimonialsRoute
@@ -459,6 +479,7 @@ interface AdminRouteChildren {
 const AdminRouteChildren: AdminRouteChildren = {
   AdminEnquiriesRoute: AdminEnquiriesRoute,
   AdminGalleryRoute: AdminGalleryRoute,
+  AdminLeadsRoute: AdminLeadsRoute,
   AdminLoginRoute: AdminLoginRoute,
   AdminPaymentsRoute: AdminPaymentsRoute,
   AdminTestimonialsRoute: AdminTestimonialsRoute,

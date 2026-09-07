@@ -1,7 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
-import TrackPage from "@/pages/Track";
+import * as React from "react";
+import { RouteFallback } from "@/components/shared/lazyRoute";
+
+/* Track reads Firestore directly; nobody browsing the site needs that code. */
+const TrackPage = React.lazy(() => import("@/pages/Track"));
 
 type TrackSearch = { ref?: string };
 
@@ -37,7 +41,9 @@ function TrackRoute() {
       {/* This page opens on the light page background, not a dark hero. */}
       <Header overHero={false} />
       <main>
-        <TrackPage initialRef={ref ?? ""} />
+        <React.Suspense fallback={<RouteFallback />}>
+          <TrackPage initialRef={ref ?? ""} />
+        </React.Suspense>
       </main>
       <Footer />
     </>

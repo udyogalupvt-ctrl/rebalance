@@ -10,8 +10,7 @@ import { DeleteDialog } from "@/components/admin/shared/DeleteDialog";
 import { TextInput, SelectField, TextArea } from "@/components/assessment/fields";
 import { logActivity } from "@/lib/activityLog";
 import { Pencil, Trash2, X, Plus } from "lucide-react";
-import * as LucideIcons from "lucide-react";
-import { resolveIcon } from "@/lib/icons";
+import { resolveIcon, ICON_NAMES } from "@/lib/icons";
 
 // Fields from requirements
 interface TreatmentDoc extends CMSDocument {
@@ -27,18 +26,14 @@ interface TreatmentDoc extends CMSDocument {
 }
 
 const CATEGORIES = ["Gut & Digestion", "Hormonal", "Metabolic", "Skin & Immunity", "Preventive"];
-const ICONS = [
-  "Activity",
-  "CalendarHeart",
-  "Scale",
-  "Gauge",
-  "Sparkles",
-  "ShieldCheck",
-  "HeartPulse",
-  "Microscope",
-  "Salad",
-  "Stethoscope",
-];
+/*
+ * The picker's options come from the icon registry itself.
+ *
+ * They used to be a separate hand-written list, which meant the picker could
+ * offer a name the registry did not carry — the admin would choose it, save,
+ * and the public page would render the fallback instead.
+ */
+const ICONS = ICON_NAMES;
 
 const emptyTreatment = (): Partial<TreatmentDoc> => ({
   title: "",
@@ -255,7 +250,7 @@ export default function TreatmentsManager() {
           disabled={search !== "" || statusFilter !== "all"}
           onReorder={handleReorder}
           renderItem={(item: TreatmentDoc, isDragging) => {
-            const Icon = resolveIcon(item.icon, LucideIcons.Activity);
+            const Icon = resolveIcon(item.icon);
             return (
               <div style={{ display: "flex", alignItems: "center", gap: 16, width: "100%" }}>
                 <div
@@ -381,7 +376,7 @@ export default function TreatmentsManager() {
               </label>
               <div style={{ display: "flex", flexWrap: "wrap", gap: 10 }}>
                 {ICONS.map((iconName) => {
-                  const Icon = resolveIcon(iconName, LucideIcons.Activity);
+                  const Icon = resolveIcon(iconName);
                   const isSelected = editingItem.icon === iconName;
                   return (
                     <button

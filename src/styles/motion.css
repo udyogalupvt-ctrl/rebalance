@@ -54,7 +54,7 @@
     0 18px 44px rgba(var(--shadow-rgb), calc(0.07 * var(--shadow-strength)));
   --lift-4:
     0 8px 16px rgba(var(--shadow-rgb), calc(0.07 * var(--shadow-strength))),
-    0 32px 72px rgba(var(--shadow-rgb), calc(0.10 * var(--shadow-strength)));
+    0 32px 72px rgba(var(--shadow-rgb), calc(0.1 * var(--shadow-strength)));
 
   /* A warm rim, as if lit from above. Pairs with --lift-* on raised cards. */
   --rim: inset 0 1px 0 rgba(var(--on-dark-rgb), 0.06);
@@ -174,7 +174,7 @@
   border-radius: 50%;
   background: radial-gradient(
     circle at center,
-    rgba(var(--primary-rgb), 0.10) 0%,
+    rgba(var(--primary-rgb), 0.1) 0%,
     rgba(var(--primary-rgb), 0.045) 42%,
     transparent 68%
   );
@@ -194,7 +194,7 @@
 .arc-line {
   position: absolute;
   border-radius: 50%;
-  border: 1px solid rgba(var(--primary-rgb), 0.10);
+  border: 1px solid rgba(var(--primary-rgb), 0.1);
   /* Huge, so the visible arc is nearly straight and reads as considered. */
   width: min(210vw, 2000px);
   aspect-ratio: 1;

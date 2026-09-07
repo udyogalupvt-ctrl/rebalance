@@ -5,12 +5,11 @@ import { motion, AnimatePresence } from "framer-motion";
 import * as Collapsible from "@radix-ui/react-collapsible";
 import { CheckCircle2, Plus, Clock, Video, Dot, ArrowRight } from "lucide-react";
 import { treatments as fallbackTreatments } from "@/data/content";
-import { fetchPublished } from "@/lib/cms";
+import { fetchPublished } from "@/lib/cms-public";
 import { toIconComponent } from "@/lib/icons";
 import { SectionWrapper } from "@/components/shared/SectionWrapper";
 import { SectionHeading } from "@/components/shared/SectionHeading";
 import { Reveal } from "@/components/shared/Reveal";
-import { AutoScroller } from "@/components/shared/AutoScroller";
 import { cn } from "@/lib/utils";
 
 import { FilterBar } from "@/components/shared/FilterBar";
@@ -102,31 +101,20 @@ export function ProgramsGrid() {
         onCategoryChange={setActiveTab}
       />
 
-      {/* Rail on phones. Auto-scroll halts once a card is expanded, so the
-          card being read does not slide away. */}
-      <div className="lg:hidden -mx-5 px-5 mt-8" role="tabpanel" aria-live="polite">
-        <AutoScroller
-          label="Treatment programs"
-          speed={22}
-          gap="14px"
-          itemWidth="min(84vw, 360px)"
-          autoScroll={openCardId === null}
-        >
-          {filteredPrograms.map((program) => (
-            <ProgramCard
-              key={program.id}
-              program={program}
-              isOpen={openCardId === program.id}
-              onToggle={() => setOpenCardId(openCardId === program.id ? null : program.id)}
-            />
-          ))}
-        </AutoScroller>
-      </div>
+      {/*
+        One stacked column on phones, two from lg.
 
+        This used to be an auto-scrolling rail on phones and a grid above it —
+        two separate trees rendering the same card. The rail was the problem:
+        these cards EXPAND, so the thing a visitor is reading would slide out
+        from under their thumb, and a card only ever showed at 84vw meaning
+        the one either side was always half-cut. Stacking them costs vertical
+        space and gains a list you can actually read.
+      */}
       <div
         role="tabpanel"
         aria-live="polite"
-        className="hidden lg:grid lg:grid-cols-2 gap-6 xl:gap-7 items-stretch mt-8 lg:mt-10"
+        className="mt-8 grid grid-cols-1 items-stretch gap-4 sm:gap-5 lg:mt-10 lg:grid-cols-2 lg:gap-6 xl:gap-7"
       >
         <AnimatePresence mode="popLayout">
           {filteredPrograms.map((program, idx) => (

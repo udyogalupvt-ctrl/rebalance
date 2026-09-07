@@ -44,10 +44,43 @@ const iconMap: Record<string, React.ElementType> = {
 
 export function Footer() {
   const currentYear = new Date().getFullYear();
+  const ref = React.useRef<HTMLElement>(null);
+
+  /*
+   * Whether to draw the curve at all.
+   *
+   * The curve is a shape cut into the section ABOVE the footer, so the part
+   * of its box the path does not cover shows the page background through it.
+   * That is correct when the section above is light. It is badly wrong when
+   * the section above is the dark CTA band — which is the case on About,
+   * Treatments, Gallery, Testimonials and Contact, where `<AssessmentCTA />`
+   * is the last thing in <main>. There the uncovered area painted a band of
+   * near-white page background BETWEEN two dark bands: a light wave wedged
+   * into the dark, with a 15:1 edge on both sides.
+   *
+   * In dark mode the page background is nearly the same value as the footer,
+   * so the same markup was almost invisible — which is exactly why the
+   * practice reported it as "looks different in light and dark mode, mainly
+   * the white in light mode".
+   *
+   * Rather than adding a prop to eight call sites (and getting it wrong the
+   * next time a page is composed), the footer asks: is the element directly
+   * above me a dark band? Dark bands mark themselves with `data-dark-band`.
+   * If so, the two dark surfaces simply butt together and there is no seam
+   * to design around.
+   */
+  const [afterDarkBand, setAfterDarkBand] = React.useState(false);
+  React.useLayoutEffect(() => {
+    const previous = ref.current?.previousElementSibling;
+    const inMain = previous?.tagName === "MAIN" ? previous.lastElementChild : previous;
+    setAfterDarkBand(!!inMain?.hasAttribute?.("data-dark-band"));
+  }, []);
 
   return (
-    <footer role="contentinfo" className="relative overflow-hidden isolate" id="contact">
-      <CurveDivider fill="custom" className="text-[var(--dark-surface)]" />
+    <footer ref={ref} role="contentinfo" className="relative overflow-hidden isolate" id="contact">
+      {!afterDarkBand && (
+        <CurveDivider fill="custom" toDark className="text-[var(--dark-surface)]" />
+      )}
 
       <div className="bg-[var(--dark-surface)] dark:border-t dark:border-white/10 pt-[clamp(72px,9vw,112px)] pb-0">
         {/* Decorative Layers */}

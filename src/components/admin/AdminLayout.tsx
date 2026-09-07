@@ -4,6 +4,7 @@ import {
   LayoutDashboard,
   ClipboardList,
   Receipt,
+  UserPlus,
   Stethoscope,
   Quote,
   Images,
@@ -21,6 +22,7 @@ import { useAdminAlerts } from "@/hooks/use-admin-alerts";
 
 const BASE_ROUTES = [
   { path: "/admin", name: "Dashboard", icon: LayoutDashboard },
+  { path: "/admin/leads", name: "Leads", icon: UserPlus, badgeKey: "leads" },
   { path: "/admin/assessments", name: "Assessments", icon: ClipboardList, badgeKey: "assessments" },
   { path: "/admin/payments", name: "Payments", icon: Receipt },
   { path: "/admin/treatments", name: "Treatments", icon: Stethoscope },
@@ -33,7 +35,7 @@ export default function AdminLayout() {
   const { user, signOut } = useAuth();
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [counts, setCounts] = useState({ assessments: 0, enquiries: 0 });
+  const [counts, setCounts] = useState({ assessments: 0, enquiries: 0, leads: 0 });
 
   // Notify on new assessments and enquiries while the panel is open. No-ops
   // until the practice has granted notification permission.
@@ -59,9 +61,18 @@ export default function AdminLayout() {
       () => setCounts((prev) => ({ ...prev, enquiries: 0 })),
     );
 
+    // Leads not yet worked. The badge is what tells the practice that
+    // somebody abandoned the booking form ten minutes ago.
+    const unsubLeads = onSnapshot(
+      query(collection(db, "leads"), where("followUpStatus", "==", "new"), limit(BADGE_CAP)),
+      (snap) => setCounts((prev) => ({ ...prev, leads: snap.size })),
+      () => setCounts((prev) => ({ ...prev, leads: 0 })),
+    );
+
     return () => {
       unsubAssessments();
       unsubEnquiries();
+      unsubLeads();
     };
   }, []);
 

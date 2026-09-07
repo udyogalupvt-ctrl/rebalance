@@ -2,48 +2,59 @@
    GoRebalance design tokens — single source of truth for colour.
    Every colour used anywhere in the app must resolve to one of these.
 
+   PALETTE: "Blush & Eucalyptus".
+   The previous scheme leaned on deep forest green for every large surface —
+   the hero scrim, the CTA band and the whole footer — which the practice read
+   as "too much dark green". Green is the brand (it is the logo), so it stays,
+   but it has been demoted: it now appears in the mark, icons, hairlines and
+   small accents, never as a full-bleed ground. The big surfaces are warm
+   porcelain and blush linen, and the permanently-dark bands are a deep PLUM
+   INK rather than green.
+
    Contrast contract (verified with WCAG 2.1 relative luminance):
      --text            on --bg / --surface / --surface-alt   >= 4.5:1
      --text-muted      on --bg / --surface / --surface-alt   >= 4.5:1
      --on-accent       on --accent-strong                    >= 4.5:1
      --on-primary      on --primary-strong                   >= 4.5:1
-     --border          against its surface                   >= 3:1 (non-text)
+     --border-input    against its surface                   >= 3:1 (non-text)
 
-   IMPORTANT: --accent and --primary are DECORATIVE fills only (icons, dots,
-   rules, hovers, large display type). They are too light to carry small text.
-   Anything that renders text on a filled background must use the *-strong
-   pair together with its matching --on-* colour.
+   IMPORTANT: --accent is a DECORATIVE fill only (icons, dots, rules, hovers,
+   large display type). It is too light to carry small text. Anything that
+   renders text on a filled background must use the *-strong pair together
+   with its matching --on-* colour.
    ========================================================================== */
 
 :root {
   /* --- surfaces --------------------------------------------------------- */
-  --bg: #fbf9f5;
+  --bg: #fdfbf9; /* warm porcelain                          */
   --surface: #ffffff;
-  --surface-alt: #f3efe7;
+  --surface-alt: #f7f1ee; /* blush linen                             */
 
   /* --- text ------------------------------------------------------------- */
-  --text: #1b2420;
-  --text-muted: #55615a; /* 6.16:1 on --bg                          */
+  --text: #241f22; /* plum ink — 15.72:1 on --bg              */
+  --text-muted: #605559; /* 6.92:1 on --bg, 6.38:1 on --alt         */
 
-  /* --- brand green ------------------------------------------------------ */
-  --primary: #1f4d3d; /* decorative + text-on-light: 9.60:1      */
-  --primary-strong: #1b4536; /* text-bearing fill, white on it: 10.76:1 */
+  /* --- brand eucalyptus -------------------------------------------------
+     Lighter and softer than the old forest green (#1F4D3D). Still passes as
+     small text on every light surface, so `text-primary` call sites are safe. */
+  --primary: #357056; /* 5.65:1 on --bg, 5.21:1 on --alt         */
+  --primary-strong: #2a5f4b; /* text-bearing fill, white on it: 7.40:1  */
   --on-primary: #ffffff;
-  --primary-soft: #e6efe9;
-  --primary-contrast: #17392c; /* --primary as small text on --surface-alt */
+  --primary-soft: #e9f1ec;
+  --primary-contrast: #2a5f4b; /* 7.17:1 on --bg, 6.62:1 on --alt         */
 
-  /* --- accent clay ------------------------------------------------------ */
-  --accent: #c97b4a; /* decorative fills, rules, dots           */
-  --accent-strong: #a85c2f; /* text-bearing fill, white on it: 4.96:1  */
+  /* --- accent rose-clay -------------------------------------------------- */
+  --accent: #c4674b; /* decorative fills, rules, dots           */
+  --accent-strong: #b85a3c; /* text-bearing fill, white on it: 4.60:1  */
   --on-accent: #ffffff;
-  --accent-contrast: #9a5228; /* accent as small text: 5.81:1 on surface */
-  --accent-soft: rgba(201, 123, 74, 0.12);
+  --accent-contrast: #a64f33; /* accent as small text: 5.37:1 on --bg    */
+  --accent-soft: rgba(196, 103, 75, 0.12);
 
   /* --- status ----------------------------------------------------------- */
   --danger: #b3261e; /* 6.54:1 on --surface                     */
   --danger-contrast: #b3261e;
   --success: #146c36; /* 6.51:1 on --surface                     */
-  --whatsapp: #11883c; /* text-bearing; white on it: 4.56:1       */
+  --whatsapp: #11883c; /* text-bearing; white on it: 4.55:1       */
   --on-whatsapp: #ffffff;
 
   /* --- lines -------------------------------------------------------------
@@ -51,36 +62,41 @@
      card edges that also have a fill difference). --border-input is the
      functional one: it hits 3:1 and must be used wherever the border is the
      only thing identifying a control (inputs, selects, outline buttons).    */
-  --border: rgba(27, 36, 32, 0.14);
-  --border-strong: rgba(27, 36, 32, 0.3);
-  --border-input: rgba(27, 36, 32, 0.5); /* 3.05:1 on --bg          */
+  --border: rgba(36, 31, 34, 0.13);
+  --border-strong: rgba(36, 31, 34, 0.28);
+  --border-input: rgba(36, 31, 34, 0.5); /* 3.18:1 on --bg          */
 
   /* --- channel-split copies (for rgba(var(--x-rgb), a) call sites) ------- */
-  --bg-rgb: 251, 249, 245;
+  --bg-rgb: 253, 251, 249;
   --surface-rgb: 255, 255, 255;
-  --surface-alt-rgb: 243, 239, 231;
-  --text-rgb: 27, 36, 32;
-  --primary-rgb: 31, 77, 61;
-  --accent-rgb: 201, 123, 74;
+  --surface-alt-rgb: 247, 241, 238;
+  --text-rgb: 36, 31, 34;
+  --primary-rgb: 53, 112, 86;
+  --accent-rgb: 196, 103, 75;
   --danger-rgb: 179, 38, 30;
   /* Shadow tint. Dark themes need a deeper, more opaque shadow than light. */
-  --shadow-rgb: 27, 36, 32;
+  --shadow-rgb: 36, 31, 34;
   --shadow-strength: 1;
 
   /* --- the permanently-dark surface (footer, CTA band, image heroes) -----
      These do NOT flip with the theme: the footer and hero scrims are dark in
-     both modes, so text on them needs one fixed on-dark ramp.               */
-  --dark-surface: #14201b;
-  --dark-surface-rgb: 20, 32, 27;
-  --on-dark-rgb: 244, 248, 245;
+     both modes, so text on them needs one fixed on-dark ramp.
+
+     Plum ink, not green. This is the single biggest change in the palette:
+     the footer and the "Your first step" band used to be the largest areas of
+     dark green on the site.                                                 */
+  --dark-surface: #241c21;
+  --dark-surface-rgb: 36, 28, 33;
+  --on-dark-rgb: 247, 242, 244;
   --whatsapp-rgb: 17, 136, 60;
   --success-rgb: 20, 108, 54;
-  --on-dark: #f4f8f5; /* 15.65:1 on --dark-surface */
-  --on-dark-muted: rgba(244, 248, 245, 0.78); /* 9.92:1 — body copy       */
-  --on-dark-faint: rgba(244, 248, 245, 0.62); /* 6.74:1 — smallest text   */
-  --on-dark-border: rgba(244, 248, 245, 0.35); /* 3.07:1 — non-text        */
-  --on-dark-glass: rgba(244, 248, 245, 0.12);
-  --on-dark-accent: #e8a472; /* 7.97:1 on --dark-surface */
+  --on-dark: #f7f2f4; /* 15.01:1 on --dark-surface */
+  --on-dark-muted: rgba(247, 242, 244, 0.78); /* 9.57:1 — body copy       */
+  --on-dark-faint: rgba(247, 242, 244, 0.62); /* 6.53:1 — smallest text   */
+  --on-dark-border: rgba(247, 242, 244, 0.35); /* 3.02:1 — non-text        */
+  --on-dark-glass: rgba(247, 242, 244, 0.12);
+  --on-dark-accent: #e9a183; /* 7.83:1 on --dark-surface */
+  --on-dark-primary: #8ccbb0; /* 8.93:1 on --dark-surface */
 
   /* --- shadcn/radix compatibility aliases -------------------------------- */
   --background: var(--bg);
@@ -104,48 +120,48 @@
 }
 
 .dark {
-  --bg: #0e1512;
-  --surface: #141d19;
-  --surface-alt: #1a2621;
+  --bg: #17131a;
+  --surface: #1e1922;
+  --surface-alt: #261f2a;
 
-  --text: #edf2ee;
-  --text-muted: #a6b4ac; /* 7.4:1 on --bg (was #9AA9A1 = 6.4:1)     */
+  --text: #f0eaee; /* 15.47:1 on --bg                         */
+  --text-muted: #b0a4ac; /* 7.65:1 on --bg                          */
 
-  --primary: #6fbf9a; /* decorative + text-on-dark: 8.7:1        */
-  --primary-strong: #4e9e7b; /* white on it fails, so on-primary flips  */
-  --on-primary: #06120d; /* 7.6:1 on --primary-strong               */
-  --primary-soft: rgba(111, 191, 154, 0.14);
-  --primary-contrast: #7fcca8;
+  --primary: #7fc4a6; /* decorative + text-on-dark: 9.04:1       */
+  --primary-strong: #58a585; /* white on it fails, so on-primary flips  */
+  --on-primary: #06120d; /* 6.49:1 on --primary-strong              */
+  --primary-soft: rgba(127, 196, 166, 0.13);
+  --primary-contrast: #8ccfb1;
 
-  --accent: #e0955f;
-  --accent-strong: #c97b4a; /* dark text on it: 7.1:1                  */
-  --on-accent: #170d06;
-  --accent-contrast: #eda875; /* accent as small text on dark: 7.9:1     */
-  --accent-soft: rgba(224, 149, 95, 0.16);
+  --accent: #e5a184;
+  --accent-strong: #c4674b; /* dark text on it: 4.83:1                 */
+  --on-accent: #1a0f0a;
+  --accent-contrast: #edaf92; /* accent as small text on dark: 9.74:1    */
+  --accent-soft: rgba(229, 161, 132, 0.15);
 
-  --danger: #f1948a; /* 7.3:1 on --surface                      */
-  --danger-contrast: #f1948a;
-  --success: #6bcb8e;
+  --danger: #f2968e; /* 7.83:1 on --surface                     */
+  --danger-contrast: #f2968e;
+  --success: #6fcf97;
   --whatsapp: #3dd37e;
   --whatsapp-rgb: 61, 211, 126;
-  --success-rgb: 107, 203, 142;
+  --success-rgb: 111, 207, 151;
   --on-whatsapp: #06120d;
 
-  --border: rgba(237, 242, 238, 0.16);
-  --border-strong: rgba(237, 242, 238, 0.34);
-  --border-input: rgba(237, 242, 238, 0.36); /* 3.08:1 on --bg          */
+  --border: rgba(240, 234, 238, 0.15);
+  --border-strong: rgba(240, 234, 238, 0.32);
+  --border-input: rgba(240, 234, 238, 0.42); /* 3.64:1 on --bg          */
 
-  --bg-rgb: 14, 21, 18;
-  --surface-rgb: 20, 29, 25;
-  --surface-alt-rgb: 26, 38, 33;
-  --text-rgb: 237, 242, 238;
-  --primary-rgb: 111, 191, 154;
-  --accent-rgb: 224, 149, 95;
-  --danger-rgb: 241, 148, 138;
+  --bg-rgb: 23, 19, 26;
+  --surface-rgb: 30, 25, 34;
+  --surface-alt-rgb: 38, 31, 42;
+  --text-rgb: 240, 234, 238;
+  --primary-rgb: 127, 196, 166;
+  --accent-rgb: 229, 161, 132;
+  --danger-rgb: 242, 150, 142;
   --shadow-rgb: 0, 0, 0;
   --shadow-strength: 2.2;
 
-  /* the dark surface stays dark; only its glow shifts */
-  --dark-surface: #101a16;
-  --dark-surface-rgb: 16, 26, 22;
+  /* the dark surface stays dark; it only deepens */
+  --dark-surface: #1f181c;
+  --dark-surface-rgb: 31, 24, 28;
 }

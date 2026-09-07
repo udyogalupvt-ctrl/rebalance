@@ -6,25 +6,12 @@ import { SectionHeading } from "@/components/shared/SectionHeading";
 import { Reveal } from "@/components/shared/Reveal";
 import { AutoScroller } from "@/components/shared/AutoScroller";
 import { treatments as fallbackTreatments } from "@/data/content";
-import { fetchPublished } from "@/lib/cms";
+import { fetchPublished } from "@/lib/cms-public";
 import { toIconComponent } from "@/lib/icons";
 import { cn } from "@/lib/utils";
 import { Link } from "@tanstack/react-router";
 import type { Treatment } from "@/types/content";
-
-// PLACEHOLDER IMAGERY — replace with the client's own photography before launch.
-const getImageForTreatment = (slug: string) => {
-  const images: Record<string, string> = {
-    "gut-health": "https://images.unsplash.com/photo-1767114915989-c6ab3c8fc42e?q=80&w=800", // fermented foods/probiotics
-    "pcos-hormonal": "https://images.unsplash.com/photo-1547592180-85f173990554?q=80&w=800", // wellness journal/calm
-    "weight-management": "https://images.unsplash.com/photo-1490645935967-10de6ba17061?q=80&w=800", // balanced Indian plate
-    "thyroid-metabolic": "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?q=80&w=800", // whole grains and greens
-    "skin-hair-immunity": "https://images.unsplash.com/photo-1610832958506-aa56368176cf?q=80&w=800", // fresh fruit and nuts
-    "preventive-nutrition":
-      "https://images.unsplash.com/photo-1783245255807-cdc7ccb20942?q=80&w=800", // family meal
-  };
-  return images[slug] || images["gut-health"];
-};
+import { treatmentImage } from "@/data/images";
 
 export function TreatmentsPreview() {
   const shouldReduceMotion = useReducedMotion();
@@ -87,6 +74,7 @@ export function TreatmentsPreview() {
             speed={24}
             gap="14px"
             itemWidth="min(80vw, 340px)"
+            autoScroll={false}
           >
             {treatments.map((treatment) => (
               <TreatmentCard
@@ -175,7 +163,7 @@ function TreatmentCard({
       {/* Image Strip (Issue 4) */}
       <div className="relative w-full h-[160px] overflow-hidden shrink-0 z-0">
         <img
-          src={getImageForTreatment(treatment.slug)}
+          src={treatmentImage(treatment.slug)}
           alt={`Image representing ${treatment.title}`}
           className="w-full h-full object-cover transition-transform duration-600 group-hover:scale-[1.06]"
           loading="lazy"

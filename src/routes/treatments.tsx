@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import TreatmentsPage from "@/pages/Treatments";
+import { lazyRoute } from "@/components/shared/lazyRoute";
 
 type TreatmentsSearch = { program?: string };
 
@@ -19,5 +19,5 @@ export const Route = createFileRoute("/treatments")({
     const slug = raw.trim().slice(0, 64);
     return /^[a-z0-9-]{2,64}$/i.test(slug) ? { program: slug } : {};
   },
-  component: TreatmentsPage,
+  component: lazyRoute(() => import("@/pages/Treatments")),
 });

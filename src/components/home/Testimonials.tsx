@@ -6,20 +6,20 @@ import { SectionWrapper } from "@/components/shared/SectionWrapper";
 import { SectionHeading } from "@/components/shared/SectionHeading";
 import { AutoScroller } from "@/components/shared/AutoScroller";
 import { useState, useEffect } from "react";
-import { fetchPublished } from "@/lib/cms";
+import { fetchPublished } from "@/lib/cms-public";
 import { testimonials as fallbackTestimonials } from "@/data/content";
 import { cn } from "@/lib/utils";
+import { StoryMedia, hasStoryMedia } from "@/components/shared/StoryMedia";
+import type { Testimonial } from "@/types/content";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
-
-type Testimonial = (typeof fallbackTestimonials)[number];
 
 export function Testimonials() {
   const reduceMotion = useReducedMotion();
   const containerRef = React.useRef<HTMLDivElement>(null);
   const inView = useInView(containerRef, { once: true, margin: "-80px" });
 
-  const [testimonials, setTestimonials] = useState<Testimonial[]>(fallbackTestimonials);
+  const [testimonials, setTestimonials] = useState<Testimonial[]>([...fallbackTestimonials]);
 
   useEffect(() => {
     fetchPublished("testimonials", fallbackTestimonials).then(setTestimonials);
@@ -90,12 +90,28 @@ export function Testimonials() {
 }
 
 function TestimonialCard({ testimonial: t }: { testimonial: Testimonial }) {
+  const media = hasStoryMedia(t);
+
   return (
     <article className="relative flex h-full w-full flex-col overflow-hidden rounded-[24px] border border-border bg-surface p-[28px_22px] transition-[border-color,box-shadow,transform] duration-300 hover:-translate-y-[3px] hover:border-primary/30 surface-raise sm:p-[32px_28px]">
-      <Quote
-        aria-hidden="true"
-        className="pointer-events-none absolute right-[24px] top-[20px] z-0 h-[72px] w-[72px] text-primary opacity-[0.08]"
-      />
+      {!media && (
+        <Quote
+          aria-hidden="true"
+          className="pointer-events-none absolute right-[24px] top-[20px] z-0 h-[72px] w-[72px] text-primary opacity-[0.08]"
+        />
+      )}
+
+      {/* A photograph or a video the practice attached to this story. Nothing
+          is rendered when there is neither, so written stories keep the
+          quote-mark treatment they had. */}
+      {media && (
+        <StoryMedia
+          photoUrl={t.photoUrl}
+          videoUrl={t.videoUrl}
+          alt={`${t.name}'s story`}
+          className="relative z-10 mb-6"
+        />
+      )}
 
       <div className="relative z-10 mb-5 flex gap-[3px]">
         {Array.from({ length: 5 }).map((_, s) => (

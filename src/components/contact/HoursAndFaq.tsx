@@ -74,7 +74,7 @@ const HoursCard = () => {
       <span className="text-[12px] font-semibold uppercase tracking-[0.12em] text-text-muted mb-2 block">
         CONSULTATION HOURS
       </span>
-      <h3 className="fraunces text-[clamp(1.25rem,2vw,1.5rem)] font-medium text-text mb-6">
+      <h3 className="font-fraunces text-[clamp(1.25rem,2vw,1.5rem)] font-medium text-text mb-6">
         When we're available.
       </h3>
 
@@ -163,7 +163,7 @@ const FaqAccordion = () => {
           </span>
         </Reveal>
         <Reveal delay={0.1}>
-          <h2 className="fraunces text-[clamp(1.375rem,2.2vw,1.75rem)] font-medium text-text mt-3">
+          <h2 className="font-fraunces text-[clamp(1.375rem,2.2vw,1.75rem)] font-medium text-text mt-3">
             Before you get in *touch*.
           </h2>
         </Reveal>

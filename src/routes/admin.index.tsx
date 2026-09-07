@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import Dashboard from "@/pages/admin/Dashboard";
+import { lazyRoute } from "@/components/shared/lazyRoute";
 
 export const Route = createFileRoute("/admin/")({
-  component: Dashboard,
+  component: lazyRoute(() => import("@/pages/admin/Dashboard")),
 });

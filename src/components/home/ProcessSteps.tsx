@@ -142,13 +142,13 @@ export const ProcessSteps: React.FC = () => {
               className="group inline-flex items-center justify-center bg-accent-strong text-on-accent font-semibold text-[15px] h-[54px] px-[30px] rounded-full shadow-lg shadow-accent/10 transition-transform active:scale-95 w-full md:w-auto"
             >
               <span>Start Step One</span>
-              <motion.span
-                className="ml-2"
-                animate={{ x: [0, 4, 0] }}
-                transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
-              >
+              {/* Moves on hover, not forever. An arrow sliding back and forth
+                  every 1.5 seconds for as long as the section is on screen is
+                  the same restlessness the practice objected to on the
+                  floating WhatsApp button. */}
+              <span className="ml-2 transition-transform duration-300 group-hover:translate-x-1">
                 →
-              </motion.span>
+              </span>
             </Link>
           </div>
         </Reveal>
@@ -191,12 +191,15 @@ const StepItem: React.FC<StepItemProps> = ({ step, index, total, scrollYProgress
             style={{ backgroundColor: active ? "var(--primary-strong)" : "var(--surface)" }}
             transition={{ type: "spring", stiffness: 320, damping: 20 }}
           >
+            {/* A halo that settles, rather than pulsing forever. With four
+                steps on screen this was four perpetual animations running at
+                once, all saying the same thing the filled node already says. */}
             {active && (
               <motion.div
                 className="absolute inset-0 rounded-full bg-primary/8"
-                initial={{ scale: 1 }}
-                animate={{ scale: 1.25 }}
-                transition={{ duration: 1, repeat: Infinity, repeatType: "reverse" }}
+                initial={{ scale: 1, opacity: 0.9 }}
+                animate={{ scale: 1.3, opacity: 0 }}
+                transition={{ duration: 0.9, ease: "easeOut" }}
               />
             )}
             <span

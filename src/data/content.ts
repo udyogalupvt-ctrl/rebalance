@@ -69,8 +69,6 @@ export const locations = [
       "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d122046.22384214589!2d82.16488344933994!3d16.95874284895697!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a382841300ad8c7%3A0x11cc714d6423377b!2sKakinada%2C%20Andhra%20Pradesh!5e0!3m2!1sen!2sin!4v1709123456790!5m2!1sen!2sin",
     mapDirectionsUrl:
       "https://www.google.com/maps/search/?api=1&query=Kakinada%2C%20Andhra%20Pradesh",
-    mapPoster:
-      "https://images.unsplash.com/photo-1786640442878-0c216561af21?auto=format&fit=crop&q=80&w=1400",
     hours: ["Mon – Sat · 10:00 AM – 7:00 PM", "Sunday · Closed"],
     note: "Consultation Clinic",
   },
@@ -175,8 +173,8 @@ export const processSteps = [
 export const practitioner = {
   name: "Dt. N. Sai Sowjanya",
   role: "Clinical Nutritionist & Gut Health Specialist",
-  image:
-    "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&q=80&w=800",
+  /* The real photograph, not a stock portrait of someone else. */
+  image: "/founder.jpg",
   bio: [
     "I'm Dt. N. Sai Sowjanya, a clinical nutritionist specialising in gut health, digestive disorders and hormonal balance. I consult from my clinic in Kakinada, Andhra Pradesh — and online with clients across India.",
     "My approach is simple: symptoms are messages, not problems to be silenced. Before I build a single meal plan, I want to understand your digestion, your sleep, your stress, your cycle and what your day actually looks like. That's where the real answers live.",
@@ -232,6 +230,20 @@ export const faqs = [
   },
 ];
 
+/**
+ * The programs the practice actually runs.
+ *
+ * Rewritten from the practice's own list of treatments, with the conditions
+ * named the way a clinician would write them (the brief carried a few
+ * transcription slips: "Gred" -> GERD, "PMOS" -> PCOS, "Sibo" -> SIBO,
+ * "Diabetics" -> Diabetes).
+ *
+ * Grouped into seven programs rather than listed as ten loose conditions:
+ * someone arriving with reflux does not want to choose between "acid reflux"
+ * and "GERD", and someone with IBS and irregular stools has one problem, not
+ * two. Every condition on the practice's list appears in exactly one
+ * program's `conditions` array, so nothing is lost to the grouping.
+ */
 export const treatments = [
   {
     id: "gut-health",
@@ -241,49 +253,107 @@ export const treatments = [
     title: "Gut Health & Digestion",
     shortTitle: "Gut Health & Digestion",
     summary:
-      "Rebuilding the gut lining, digestive capacity and microbiome balance — so food stops being something you brace for.",
+      "H. pylori, IBS, SIBO and stool irregularities — treated by rebuilding the gut lining and the microbiome, not by silencing the symptom.",
     description:
-      "IBS, bloating, acidity, constipation and food intolerances — treated by rebuilding the gut lining and microbiome, not by masking symptoms.",
+      "H. pylori, IBS, SIBO, bloating and irregular stools, treated by rebuilding the gut lining and microbiome rather than masking symptoms.",
     conditions: [
-      "IBS (constipation & diarrhoea predominant)",
-      "Chronic bloating & flatulence",
-      "Acid reflux & GERD",
-      "Constipation",
-      "Food intolerances",
-      "Leaky gut & dysbiosis",
-      "H. pylori support",
+      "H. pylori — nutritional support alongside treatment",
+      "IBS (constipation and diarrhoea predominant)",
+      "SIBO — small intestinal bacterial overgrowth",
+      "Stool irregularities — constipation, urgency, incomplete evacuation",
+      "Chronic bloating and flatulence",
+      "Food intolerances and sensitivities",
+      "Leaky gut and dysbiosis",
       "Post-antibiotic gut recovery",
     ],
     involves: [
       "A staged elimination and reintroduction protocol built around your regular meals",
       "Meal timing and portion restructuring before any food is removed",
       "Targeted gut-repair nutrition, with supplements only where a gap is clear",
-      "Fortnightly reviews to track symptom shifts and adjust",
+      "Fortnightly reviews to track stool, bloating and symptom shifts",
     ],
     timeline:
       "Digestive symptoms usually ease within 3–5 weeks. Full gut repair and stable tolerance typically takes 4–6 months.",
-    tags: ["IBS", "Bloating", "Acid Reflux", "Constipation", "Intolerances"],
+    tags: ["H. pylori", "IBS", "SIBO", "Bloating", "Constipation"],
   },
   {
-    id: "pcos-hormonal",
-    slug: "pcos-hormonal",
-    category: "Hormonal",
+    id: "acid-reflux-gerd",
+    slug: "acid-reflux-gerd",
+    category: "Gut & Digestion",
+    icon: Flame,
+    title: "Acid Reflux & GERD",
+    shortTitle: "Acid Reflux & GERD",
+    summary:
+      "Closing the antacid drawer by fixing what drives the reflux — meal timing, meal composition and the pressure underneath it.",
+    description:
+      "Acid reflux, GERD, gastritis and chronic hyperacidity addressed through meal timing, composition and gut repair.",
+    conditions: [
+      "Acid reflux and heartburn",
+      "GERD — gastro-oesophageal reflux disease",
+      "Gastritis and chronic hyperacidity",
+      "Sour burps, throat burn and night-time reflux",
+      "Long-term antacid and PPI dependence",
+      "Reflux alongside hiatus hernia (supportive nutrition)",
+    ],
+    involves: [
+      "Rebuilding meal timing and portion size before any food is taken away",
+      "Identifying your specific triggers rather than removing the usual suspects",
+      "Nutrition to repair the stomach lining and restore digestive capacity",
+      "A structured, physician-coordinated taper off long-term antacids",
+    ],
+    timeline:
+      "Night-time reflux usually settles in 2–4 weeks. Coming off long-term antacids safely takes 3–4 months.",
+    tags: ["Acid Reflux", "GERD", "Gastritis", "Hyperacidity"],
+  },
+  {
+    id: "ibd-support",
+    slug: "ibd-support",
+    category: "Gut & Digestion",
+    icon: ShieldCheck,
+    title: "IBD Nutrition Support",
+    shortTitle: "IBD Support",
+    summary:
+      "Nutrition through flares and remission for Crohn's and ulcerative colitis — alongside your gastroenterologist, never instead of them.",
+    description:
+      "Crohn's disease and ulcerative colitis: flare-phase nutrition, remission maintenance and correction of the deficiencies IBD causes.",
+    conditions: [
+      "Crohn's disease",
+      "Ulcerative colitis",
+      "Indeterminate colitis",
+      "Flare-phase and low-residue nutrition",
+      "Remission maintenance",
+      "IBD-related anaemia and nutrient deficiencies",
+      "Weight and muscle loss during active disease",
+    ],
+    involves: [
+      "Phase-aware plans: what to eat during a flare is not what to eat in remission",
+      "Correcting the iron, B12, D and protein gaps that active disease creates",
+      "Rebuilding tolerance food by food as inflammation settles",
+      "Working to your gastroenterologist's plan — medication is never adjusted here",
+    ],
+    timeline:
+      "Flare-phase nutrition is adjusted weekly. Remission plans are reviewed monthly and held long-term.",
+    tags: ["Crohn's", "Ulcerative Colitis", "Flare Care", "Remission"],
+  },
+  {
+    id: "pcos-pcod",
+    slug: "pcos-pcod",
+    category: "Women's Health",
     icon: CalendarHeart,
-    title: "PCOS & Hormonal Balance",
-    shortTitle: "PCOS & Hormonal Balance",
+    title: "PCOS & PCOD",
+    shortTitle: "PCOS & PCOD",
     summary:
       "Cycle regulation and insulin support through nutrition that works with your hormones rather than overriding them.",
     description:
-      "Cycle regulation, insulin resistance and fertility-supportive nutrition, built around how your hormones actually behave.",
+      "PCOS and PCOD: cycle regulation, insulin resistance and fertility-supportive nutrition, built around how your hormones actually behave.",
     conditions: [
-      "PCOS & PCOD",
+      "PCOS — polycystic ovary syndrome",
+      "PCOD — polycystic ovarian disease",
       "Irregular or absent cycles",
-      "Painful periods & PMS",
-      "Insulin resistance",
-      "Unexplained weight gain",
-      "Hirsutism & hormonal acne",
+      "Painful periods and PMS",
+      "Insulin resistance and unexplained weight gain",
+      "Hirsutism and hormonal acne",
       "Fertility-supportive nutrition",
-      "Perimenopause support",
     ],
     involves: [
       "Insulin-first meal structuring to stabilise blood sugar across the day",
@@ -293,127 +363,96 @@ export const treatments = [
     ],
     timeline:
       "Energy and PMS often improve in 4–6 weeks. Cycle regularity typically returns between months 3 and 6.",
-    tags: ["PCOS", "Irregular Cycles", "Insulin Resistance", "Fertility"],
+    tags: ["PCOS", "PCOD", "Irregular Cycles", "Fertility"],
   },
   {
-    id: "weight-management",
-    slug: "weight-management",
+    id: "pregnancy-nutrition",
+    slug: "pregnancy-nutrition",
+    category: "Women's Health",
+    icon: HeartPulse,
+    title: "Pregnancy Nutrition",
+    shortTitle: "Pregnancy Nutrition",
+    summary:
+      "Trimester-by-trimester nutrition through pregnancy and after it — including the nausea, reflux and constipation nobody warns you about.",
+    description:
+      "Pre-conception, trimester-wise and postnatal nutrition, including gestational diabetes and the digestive symptoms of pregnancy.",
+    conditions: [
+      "Pre-conception nutrition",
+      "Trimester-wise pregnancy nutrition",
+      "Gestational diabetes",
+      "Pregnancy nausea, reflux and constipation",
+      "Anaemia and deficiencies in pregnancy",
+      "Healthy weight gain in pregnancy",
+      "Postnatal recovery and lactation nutrition",
+    ],
+    involves: [
+      "Plans built around what you can actually keep down this trimester",
+      "Blood-sugar structuring where gestational diabetes is diagnosed",
+      "Iron, calcium, folate and B12 addressed through food first",
+      "Coordination with your obstetrician throughout",
+    ],
+    timeline:
+      "Reviewed every 3–4 weeks through pregnancy, then monthly for as long as you are feeding.",
+    tags: ["Pregnancy", "Gestational Diabetes", "Postnatal", "Lactation"],
+  },
+  {
+    id: "diabetes-metabolic",
+    slug: "diabetes-metabolic",
+    category: "Metabolic",
+    icon: Gauge,
+    title: "Diabetes & Metabolic Health",
+    shortTitle: "Diabetes & Metabolic",
+    summary:
+      "Blood sugar, thyroid and fatty liver — the three that usually travel together, worked on as one problem rather than three.",
+    description:
+      "Type 2 diabetes, pre-diabetes, insulin resistance, thyroid dysfunction and fatty liver, supported through nutrition alongside your physician.",
+    conditions: [
+      "Type 2 diabetes — nutritional management and reversal support",
+      "Pre-diabetes and insulin resistance",
+      "Hypothyroidism and Hashimoto's thyroiditis",
+      "Fatty liver (NAFLD)",
+      "High cholesterol and triglycerides",
+      "Diabetes prevention where it runs in the family",
+    ],
+    involves: [
+      "Blood sugar stabilisation through meal composition, order and timing",
+      "Nutrient repletion for the cofactors thyroid function depends on",
+      "Gut support, since absorption and hormone conversion both depend on it",
+      "Coordination with your physician's prescribed medication — never replacing it",
+    ],
+    timeline:
+      "Energy and post-meal crashes usually improve within 4–8 weeks. HbA1c and lipids are best reassessed at 3–6 months.",
+    tags: ["Diabetes", "Pre-diabetes", "Thyroid", "Fatty Liver"],
+  },
+  {
+    id: "weight-loss",
+    slug: "weight-loss",
     category: "Metabolic",
     icon: Scale,
-    title: "Weight Management",
-    shortTitle: "Weight Management",
+    title: "Weight Loss & Management",
+    shortTitle: "Weight Loss",
     summary:
-      "Fat loss or healthy weight gain built on metabolic repair — not restriction that your body eventually undoes.",
+      "Fat loss built on metabolic repair and real Indian meals — not restriction your body eventually undoes.",
     description:
-      "Sustainable fat loss and healthy weight gain that works with your metabolism instead of starving it into shutdown.",
+      "Sustainable weight loss, plateau-breaking and healthy weight gain that works with your metabolism instead of starving it into shutdown.",
     conditions: [
-      "Stubborn weight plateaus",
+      "Weight loss and stubborn plateaus",
       "Post-pregnancy weight",
-      "Underweight & healthy weight gain",
+      "Underweight and healthy weight gain",
       "Yo-yo dieting recovery",
       "Metabolic adaptation from prolonged dieting",
-      "Emotional & stress eating",
+      "Emotional and stress eating",
       "Visceral fat reduction",
     ],
     involves: [
-      "Metabolic assessment before any calorie change is considered",
-      "Adequate protein and fibre structured into your existing meals",
+      "A metabolic assessment before any calorie change is considered",
+      "Adequate protein and fibre structured into the meals you already cook",
       "Habit and hunger work alongside the plan, not after it",
       "Progress tracked through measurements, energy and adherence — not the scale alone",
     ],
     timeline:
       "Consistent, sustainable change appears from week 6 onward. Most clients work over 4–6 months to make it hold.",
-    tags: ["Fat Loss", "Healthy Gain", "Plateaus", "Metabolism"],
-  },
-  {
-    id: "thyroid-metabolic",
-    slug: "thyroid-metabolic",
-    category: "Metabolic",
-    icon: Gauge,
-    title: "Thyroid & Metabolic Health",
-    shortTitle: "Thyroid & Metabolic Health",
-    summary:
-      "Nutrition support for thyroid function, insulin sensitivity and the fatigue that comes with both.",
-    description:
-      "Hypothyroidism, insulin resistance and pre-diabetes — nutrition that supports energy, mood and metabolic repair.",
-    conditions: [
-      "Hypothyroidism",
-      "Hashimoto's thyroiditis",
-      "Subclinical thyroid dysfunction",
-      "Insulin resistance & pre-diabetes",
-      "Type 2 diabetes support",
-      "Fatty liver (NAFLD)",
-      "High cholesterol & triglycerides",
-    ],
-    involves: [
-      "Nutrient repletion for the cofactors thyroid function depends on",
-      "Blood sugar stabilisation through meal composition and timing",
-      "Gut support, since absorption and conversion both depend on it",
-      "Coordination with your physician's prescribed medication — never replacing it",
-    ],
-    timeline:
-      "Energy and digestion usually improve within 4–8 weeks. Metabolic markers are best reassessed at 3–6 months.",
-    tags: ["Thyroid", "Insulin Resistance", "Fatty Liver", "Cholesterol"],
-  },
-  {
-    id: "skin-hair-immunity",
-    slug: "skin-hair-immunity",
-    category: "Skin & Immunity",
-    icon: Sparkles,
-    title: "Skin, Hair & Immunity",
-    shortTitle: "Skin, Hair & Immunity",
-    summary:
-      "Treating acne, hair fall and recurring infections through the gut–skin axis and the nutrient gaps underneath them.",
-    description:
-      "Acne, hair fall, eczema and recurring infections addressed through the gut–skin axis and targeted nutrient repletion.",
-    conditions: [
-      "Hormonal & inflammatory acne",
-      "Diffuse hair fall & thinning",
-      "Eczema & psoriasis support",
-      "Chronic urticaria & skin allergies",
-      "Recurrent infections",
-      "Low immunity & frequent illness",
-      "Nutritional deficiencies (iron, B12, D, zinc)",
-    ],
-    involves: [
-      "Identifying dietary and gut triggers before removing anything broadly",
-      "Anti-inflammatory nutrition adapted to Indian home cooking",
-      "Correcting the specific deficiencies your history and reports point to",
-      "Photographic and symptom tracking across the plan",
-    ],
-    timeline:
-      "Skin often responds between weeks 6 and 10. Hair growth cycles mean visible change usually takes 3–5 months.",
-    tags: ["Acne", "Hair Fall", "Allergies", "Immunity"],
-  },
-  {
-    id: "lifestyle-preventive",
-    slug: "lifestyle-preventive",
-    category: "Preventive",
-    icon: ShieldCheck,
-    title: "Lifestyle & Preventive Nutrition",
-    shortTitle: "Preventive Nutrition",
-    summary:
-      "Getting ahead of a family history, or building nutrition into a household before anything goes wrong.",
-    description:
-      "Diabetes reversal support, cholesterol management, and family or corporate nutrition plans for long-term prevention.",
-    conditions: [
-      "Diabetes prevention & reversal support",
-      "Cardiovascular risk reduction",
-      "Family nutrition planning",
-      "Corporate & workplace nutrition",
-      "Elderly nutrition support",
-      "Sports & active-lifestyle nutrition",
-      "General wellness optimisation",
-    ],
-    involves: [
-      "A risk review across family history, current markers and lifestyle",
-      "Practical household-level changes rather than individual restriction",
-      "Sustainable habit design built around how your week actually runs",
-      "Quarterly reviews to keep the plan current",
-    ],
-    timeline:
-      "Habits stabilise within 6–8 weeks. Preventive programs are usually reviewed quarterly over a year.",
-    tags: ["Diabetes", "Cholesterol", "Family Plans", "Corporate"],
+    tags: ["Weight Loss", "Plateaus", "Healthy Gain", "Metabolism"],
   },
 ];
 
@@ -455,7 +494,7 @@ export const testimonials = [
     initials: "HM",
     location: "Kakinada, Andhra Pradesh",
     condition: "PCOS",
-    category: "PCOS & Hormonal",
+    category: "PCOS & PCOD",
     duration: "6 months",
     rating: 5,
     before: ["Irregular cycles", "Hormonal acne"],
@@ -484,7 +523,7 @@ export const testimonials = [
     initials: "DV",
     location: "Kakinada, Andhra Pradesh",
     condition: "Weight Management",
-    category: "Weight",
+    category: "Weight Loss",
     duration: "5 months",
     rating: 5,
     before: ["Constant fatigue", "Weight plateau"],
@@ -499,7 +538,7 @@ export const testimonials = [
     initials: "AT",
     location: "Kakinada, Andhra Pradesh",
     condition: "Hair Fall & Gut Health",
-    category: "Skin & Hair",
+    category: "Gut & Digestion",
     duration: "3 months",
     rating: 5,
   },
@@ -510,7 +549,7 @@ export const testimonials = [
     initials: "A",
     location: "Online consultation",
     condition: "PCOS",
-    category: "PCOS & Hormonal",
+    category: "PCOS & PCOD",
     duration: "3m",
     rating: 5,
   },
@@ -521,7 +560,7 @@ export const testimonials = [
     initials: "B",
     location: "Kakinada",
     condition: "Weight",
-    category: "Weight",
+    category: "Weight Loss",
     duration: "4m",
     rating: 5,
   },
@@ -532,7 +571,7 @@ export const testimonials = [
     initials: "C",
     location: "Online consultation",
     condition: "Thyroid",
-    category: "Thyroid & Metabolic",
+    category: "Diabetes & Metabolic",
     duration: "6m",
     rating: 5,
   },
@@ -554,7 +593,7 @@ export const testimonials = [
     initials: "E",
     location: "Kakinada",
     condition: "Metabolic",
-    category: "Thyroid & Metabolic",
+    category: "Diabetes & Metabolic",
     duration: "5m",
     rating: 5,
   },
@@ -565,7 +604,7 @@ export const testimonials = [
     initials: "F",
     location: "Online consultation",
     condition: "PCOS",
-    category: "PCOS & Hormonal",
+    category: "PCOS & PCOD",
     duration: "4m",
     rating: 5,
   },
@@ -576,7 +615,7 @@ export const testimonials = [
     initials: "G",
     location: "Kakinada",
     condition: "Weight",
-    category: "Weight",
+    category: "Weight Loss",
     duration: "3m",
     rating: 5,
   },
@@ -598,7 +637,7 @@ export const testimonials = [
     initials: "I",
     location: "Online consultation",
     condition: "PCOS",
-    category: "PCOS & Hormonal",
+    category: "PCOS & PCOD",
     duration: "4m",
     rating: 5,
   },

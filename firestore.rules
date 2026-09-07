@@ -79,6 +79,30 @@ service cloud.firestore {
       allow read, update, delete: if isAdmin();
     }
 
+    // ── consultation leads ───────────────────────────────────────────────
+    // Written by the public booking form, INCLUDING partial records: the form
+    // saves as soon as it has a name and a usable phone number, so someone
+    // who changes their mind halfway still reaches the practice.
+    //
+    // create and update are open because the visitor has no account and keeps
+    // editing the same client-generated id as they type. Reading is admin-only
+    // — these hold a name, a phone number and a stated health concern, and the
+    // ids are random v4 UUIDs, so a lead cannot be guessed or enumerated.
+    //
+    // Note the deliberate absence of a delete rule for the public: a visitor
+    // must not be able to erase a record the practice is working from.
+    match /leads/{id} {
+      allow create, update: if true;
+      allow read, delete: if isAdmin();
+    }
+
+    // ── saved WhatsApp templates ─────────────────────────────────────────
+    // The practice's own reusable follow-up messages. Never read by the public
+    // site, so there is no reason for anyone but an admin to see them.
+    match /messageTemplates/{id} {
+      allow read, write: if isAdmin();
+    }
+
     // ── published content ────────────────────────────────────────────────
     // The public site reads these, so read is open. Only admins may change them.
     match /treatments/{id} {

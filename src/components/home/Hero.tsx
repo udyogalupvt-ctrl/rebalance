@@ -1,264 +1,220 @@
 import * as React from "react";
-import { useState, useEffect } from "react";
 import { motion, useReducedMotion } from "framer-motion";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, CalendarCheck, MapPin, Microscope } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { CountUp } from "@/components/shared/CountUp";
-
-const SLIDES = [
-  {
-    src: "https://images.unsplash.com/photo-1786640442878-0c216561af21?auto=format&fit=crop&q=80&w=2000",
-    alt: "Hands pressing fresh roti onto a hot tawa in a home kitchen",
-    position: "50% 45%",
-  },
-  {
-    src: "https://images.unsplash.com/photo-1783245255807-cdc7ccb20942?auto=format&fit=crop&q=80&w=2000",
-    alt: "Two women rolling dough and cooking flatbreads together on a griddle",
-    position: "50% 40%",
-  },
-  {
-    src: "https://images.unsplash.com/photo-1767114915936-745dd372f1d8?auto=format&fit=crop&q=80&w=2000",
-    alt: "A home-cooked meal of spinach curry served with warm flatbread",
-    position: "50% 50%",
-  },
-  {
-    src: "https://images.unsplash.com/photo-1550989460-0adf9ea622e2?auto=format&fit=crop&q=80&w=2000",
-    alt: "A market stall stacked with fresh seasonal fruit and vegetables",
-    position: "50% 50%",
-  },
-] as const;
+import { useBooking } from "@/context/BookingContext";
+import { brand } from "@/data/content";
 
 const HEADLINE = "Heal the gut. Rebalance the whole you.";
 
-/** Autoplay dwell per slide. The indicator fill is driven from the same value. */
-const SLIDE_MS = 6000;
+const TRUST = [
+  { icon: MapPin, label: "Online & in-clinic · Kakinada" },
+  { icon: Microscope, label: "Root-cause protocols" },
+  { icon: CalendarCheck, label: "Replies in 24 hours" },
+];
 
-const TRUST = ["Online & In-Clinic · Kakinada", "500+ Lives Rebalanced", "Root-Cause Protocols"];
-
+/**
+ * The opening frame.
+ *
+ * This used to be a four-slide photographic carousel of stock kitchen shots
+ * behind a near-opaque dark scrim. Three things were wrong with it: the
+ * photographs were generic and dim, none of them showed the practice or the
+ * practitioner, and the scrim needed to be so heavy to keep the headline
+ * legible that the imagery was reduced to texture anyway — 2 MB of downloads
+ * to produce a dark rectangle.
+ *
+ * It is now light, and the only photograph is the real one: the practitioner
+ * at her own desk. A person you can see is the single strongest trust signal
+ * a small clinical practice has, and it is the thing no competitor can copy.
+ * The ground is a brand-tinted gradient, which costs nothing to load and
+ * paints on the first frame.
+ */
 export function Hero() {
-  const [current, setCurrent] = useState(0);
   const reduce = useReducedMotion();
-
-  useEffect(() => {
-    if (reduce) return; // no autoplay under reduced motion
-    const timer = setInterval(() => setCurrent((p) => (p + 1) % SLIDES.length), SLIDE_MS);
-    return () => clearInterval(timer);
-  }, [reduce]);
-
+  const { openBooking } = useBooking();
   const words = HEADLINE.split(" ");
 
   return (
     <section
       id="hero"
-      /* Bottom-weighted on phones so the headline sits over the photograph
-         rather than floating in the middle of it; optically centred from lg
-         where there is room for the two-column layout. */
-      className="relative min-h-[100svh] w-full overflow-hidden flex items-end lg:items-center bg-dark-surface"
+      className="relative w-full overflow-hidden bg-bg pt-[calc(var(--header-h)+40px)] pb-16 sm:pb-20 lg:flex lg:min-h-[100svh] lg:items-center lg:pb-24 lg:pt-[calc(var(--header-h)+56px)]"
     >
-      {/* Slideshow */}
-      {SLIDES.map((slide, i) => (
-        <motion.div
-          key={i}
-          aria-hidden={i !== current}
-          initial={{ opacity: i === 0 ? 1 : 0 }}
-          animate={{
-            opacity: i === current ? 1 : 0,
-            scale: reduce ? 1 : i === current ? 1.08 : 1,
-          }}
-          transition={{ duration: reduce ? 0 : 1.6, ease: "easeInOut" }}
-          className="absolute inset-0 z-0"
-        >
-          <img
-            src={slide.src}
-            alt={i === 0 ? slide.alt : ""}
-            width={2000}
-            height={1333}
-            loading={i === 0 ? "eager" : "lazy"}
-            {...(i === 0 ? { fetchPriority: "high" as const } : {})}
-            decoding="async"
-            className="h-full w-full object-cover"
-            style={{ objectPosition: slide.position }}
-          />
-        </motion.div>
-      ))}
+      {/* ---- ground ---------------------------------------------------------
+          A warm blush wash rising from the bottom-right, with the brand's
+          eucalyptus held back to a whisper on the left. Pure gradients: no
+          network request, no decode, nothing to lay out. */}
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_120%_90%_at_78%_18%,rgba(var(--accent-rgb),0.16),transparent_62%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_90%_70%_at_6%_92%,rgba(var(--primary-rgb),0.13),transparent_60%)]" />
+        <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-bg to-transparent" />
+        {/* One quiet ring, echoing the round mark. Sits behind the portrait. */}
+        <div className="absolute -right-[14%] top-[6%] hidden aspect-square w-[52vw] rounded-full border border-[rgba(var(--primary-rgb),0.16)] lg:block" />
+        <div className="absolute -right-[6%] top-[20%] hidden aspect-square w-[34vw] rounded-full border border-[rgba(var(--accent-rgb),0.14)] lg:block" />
+      </div>
 
-      {/* Scrim.
-          Content is left-aligned at every width now, so the phone scrim is
-          weighted to the bottom (where the copy sits) and the desktop one
-          stays directional, leaving the right of the frame open for the
-          photograph and the credential card. */}
-      <div
-        className="absolute inset-0 z-[1] bg-[linear-gradient(to_bottom,rgba(var(--dark-surface-rgb),0.55)_0%,rgba(var(--dark-surface-rgb),0.78)_45%,rgba(var(--dark-surface-rgb),0.94)_100%)] lg:bg-[linear-gradient(100deg,rgba(var(--dark-surface-rgb),0.95)_0%,rgba(var(--dark-surface-rgb),0.84)_46%,rgba(var(--dark-surface-rgb),0.55)_100%)]"
-        aria-hidden="true"
-      />
-      {/* Blend into the section below. Kept shallow: at h-40 this washed the
-          bottom of the frame to near-page-background, and the slide indicators
-          — which now sit in the content flow at the bottom — lost their
-          contrast against it. */}
-      <div
-        className="absolute inset-x-0 bottom-0 z-[1] h-20 bg-gradient-to-t from-bg to-transparent lg:h-32"
-        aria-hidden="true"
-      />
-
-      <div className="container-x relative z-10 w-full pt-32 pb-24 lg:py-28">
-        <div className="grid items-center gap-12 lg:grid-cols-12 lg:gap-8">
-          {/* ---- Copy column ---- */}
-          <div className="flex flex-col items-start text-left lg:col-span-7">
+      <div className="container-x relative z-10 w-full">
+        <div className="grid items-center gap-12 lg:grid-cols-12 lg:gap-10 xl:gap-14">
+          {/* ================= copy ================= */}
+          <div className="flex flex-col items-start text-left lg:col-span-6 xl:col-span-6">
             <motion.div
-              initial={{ opacity: 0, y: 16 }}
+              initial={reduce ? false : { opacity: 0, y: 14 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: reduce ? 0 : 0.5 }}
-              className="mb-6 max-w-full rounded-pill glass-on-dark inline-flex items-center gap-2 px-4 py-2"
+              className="mb-6 inline-flex max-w-full items-center gap-2 rounded-pill border border-[rgba(var(--primary-rgb),0.22)] bg-primary-soft px-4 py-2"
             >
-              <span className="w-2 h-2 rounded-full bg-accent shrink-0" aria-hidden="true" />
-              {/* Kept short deliberately: at 360px a longer eyebrow stretches
-                  the pill from gutter to gutter and stops reading as a pill.
-                  "Nutrition" is already carried by the subhead below. */}
-              <span className="fs-eyebrow text-on-dark text-balance">Gut Health · Kakinada</span>
+              <span className="h-2 w-2 shrink-0 rounded-full bg-accent" aria-hidden="true" />
+              <span className="fs-eyebrow text-balance text-primary-contrast">
+                Gut Health · Kakinada
+              </span>
             </motion.div>
 
-            <h1 className="fs-h1 text-on-dark max-w-[14ch] mb-6">
+            {/*
+              Each word is its own overflow-hidden box so it can rise into
+              place. The literal {" "} between them is not decoration: without
+              it the spans are inline-blocks separated only by a margin, which
+              is invisible to the accessibility tree and to the clipboard — the
+              headline was being announced, and copied, as
+              "Healthegut.Rebalancethewholeyou."
+            */}
+            <h1 className="fs-h1 mb-6 max-w-[13ch] text-text">
               {words.map((word, i) => (
-                <span
-                  key={i}
-                  className="inline-block overflow-hidden align-bottom mr-[0.24em] last:mr-0"
-                >
-                  <motion.span
-                    initial={reduce ? false : { y: "110%" }}
-                    animate={{ y: 0 }}
-                    transition={{ duration: 0.85, delay: i * 0.06, ease: [0.22, 1, 0.36, 1] }}
-                    className={i === words.length - 1 ? "inline-block italic" : "inline-block"}
-                  >
-                    {word}
-                  </motion.span>
-                </span>
+                <React.Fragment key={i}>
+                  <span className="inline-block overflow-hidden align-bottom">
+                    <motion.span
+                      initial={reduce ? false : { y: "110%" }}
+                      animate={{ y: 0 }}
+                      transition={{ duration: 0.85, delay: i * 0.06, ease: [0.22, 1, 0.36, 1] }}
+                      className={
+                        i === words.length - 1
+                          ? "inline-block italic text-accent-contrast"
+                          : "inline-block"
+                      }
+                    >
+                      {word}
+                    </motion.span>
+                  </span>
+                  {i < words.length - 1 ? " " : null}
+                </React.Fragment>
               ))}
             </h1>
 
-            {/* Trimmed from a 45-word paragraph. The symptoms and the
-                practitioner's name are the parts that do real work here; the
-                rest repeated what the sections below already say. */}
-            <p className="fs-sub text-on-dark-muted max-w-[44ch] mb-9">
-              Root-cause nutrition for bloating, acidity, hormones and low energy — by Dt. N. Sai
-              Sowjanya.
-            </p>
+            <motion.p
+              initial={reduce ? false : { opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: reduce ? 0 : 0.6, delay: reduce ? 0 : 0.25 }}
+              className="fs-sub mb-9 max-w-[46ch]"
+            >
+              Root-cause nutrition for bloating, IBS, acidity, PCOS, thyroid and stubborn weight —
+              by {brand.practitioner}.
+            </motion.p>
 
-            <div className="flex w-full flex-col items-stretch gap-3 sm:w-auto sm:flex-row sm:items-center sm:gap-4">
+            <motion.div
+              initial={reduce ? false : { opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: reduce ? 0 : 0.6, delay: reduce ? 0 : 0.34 }}
+              className="flex w-full flex-col items-stretch gap-3 sm:w-auto sm:flex-row sm:items-center sm:gap-3.5"
+            >
               <Link
                 to="/assessment"
-                className="group h-14 px-9 bg-accent-strong text-on-accent rounded-pill font-semibold inline-flex items-center justify-center gap-2 press"
+                className="press group inline-flex h-14 items-center justify-center gap-2 rounded-pill bg-accent-strong px-8 font-semibold text-on-accent shadow-[0_10px_28px_rgba(var(--accent-rgb),0.28)]"
               >
                 Get My Gut Assessment
-                <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
               </Link>
               <button
                 type="button"
-                onClick={() =>
-                  document.getElementById("symptoms")?.scrollIntoView({ behavior: "smooth" })
-                }
-                className="h-14 px-9 glass-on-dark text-on-dark rounded-pill font-semibold inline-flex items-center justify-center transition-colors hover:bg-white/20"
+                onClick={() => openBooking({ source: "hero-booking" })}
+                className="press inline-flex h-14 items-center justify-center gap-2 rounded-pill border border-[rgba(var(--primary-rgb),0.34)] bg-surface px-8 font-semibold text-primary-contrast shadow-[0_2px_10px_rgba(var(--shadow-rgb),0.05)] transition-colors hover:bg-primary-soft"
               >
-                See How It Works
+                <CalendarCheck className="h-[18px] w-[18px]" aria-hidden="true" />
+                Book Consultation
               </button>
-            </div>
+            </motion.div>
 
-            <ul className="mt-11 flex w-full max-w-[620px] list-none flex-wrap gap-x-7 gap-y-2.5 border-t border-on-dark-border p-0 pt-6 text-[13px] text-on-dark-muted sm:text-sm">
-              {TRUST.map((item) => (
-                <li key={item} className="flex items-center gap-2">
-                  <span
-                    className="w-1.5 h-1.5 rounded-full bg-accent shrink-0"
-                    aria-hidden="true"
-                  />
-                  {item}
+            <motion.ul
+              initial={reduce ? false : { opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: reduce ? 0 : 0.6, delay: reduce ? 0 : 0.5 }}
+              /* Sits on one line from lg: three short proofs read as a set,
+                three wrapped onto two lines read as an afterthought. The
+                labels are sized to fit the six-column track at 1280px. */
+              className="mt-10 flex w-full list-none flex-wrap gap-x-5 gap-y-3 border-t border-border p-0 pt-6 text-[13px] text-text-muted sm:text-[13.5px] lg:max-w-none lg:flex-nowrap lg:gap-x-6 lg:whitespace-nowrap xl:gap-x-7"
+            >
+              {TRUST.map(({ icon: Icon, label }) => (
+                <li key={label} className="flex items-center gap-2">
+                  <Icon className="h-[15px] w-[15px] shrink-0 text-primary" aria-hidden="true" />
+                  {label}
                 </li>
               ))}
-            </ul>
-
-            {/* Slide indicators. These sit in the content flow rather than
-                floating over the frame: bottom-anchored copy on phones would
-                otherwise collide with an absolutely positioned control. The
-                active bar fills across the dwell time so the carousel's
-                progress is visible instead of implied. */}
-            <div className="mt-9 flex items-center gap-2">
-              {SLIDES.map((_, i) => (
-                <button
-                  key={i}
-                  type="button"
-                  onClick={() => setCurrent(i)}
-                  aria-label={`Show slide ${i + 1} of ${SLIDES.length}`}
-                  aria-current={i === current}
-                  className="group grid h-11 place-items-center"
-                >
-                  <span
-                    className={
-                      "block h-[3px] overflow-hidden rounded-full transition-all duration-500 " +
-                      (i === current
-                        ? "w-12 bg-on-dark/25"
-                        : "w-5 bg-on-dark/30 group-hover:bg-on-dark/55")
-                    }
-                  >
-                    {i === current && (
-                      <motion.span
-                        key={reduce ? "static" : current}
-                        className="block h-full w-full origin-left rounded-full bg-on-dark"
-                        initial={reduce ? false : { scaleX: 0 }}
-                        animate={{ scaleX: 1 }}
-                        transition={{ duration: reduce ? 0 : SLIDE_MS / 1000, ease: "linear" }}
-                      />
-                    )}
-                  </span>
-                </button>
-              ))}
-            </div>
+            </motion.ul>
           </div>
 
-          {/* ---- Credential card ----
-              The right of the frame was empty at lg+ — the directional scrim
-              clears it deliberately, but nothing occupied it. This anchors that
-              space with the two things a first-time visitor actually weighs:
-              volume of work, and who is doing it. Its own dark fill means it
-              stays legible over whichever photograph is showing. */}
-          <motion.aside
-            initial={{ opacity: 0, y: 24 }}
+          {/* ================= portrait ================= */}
+          <motion.div
+            initial={reduce ? false : { opacity: 0, y: 28 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{
-              duration: reduce ? 0 : 0.7,
-              delay: reduce ? 0 : 0.45,
+              duration: reduce ? 0 : 0.85,
+              delay: reduce ? 0 : 0.2,
               ease: [0.22, 1, 0.36, 1],
             }}
-            className="hidden lg:col-span-4 lg:col-start-9 lg:block"
+            className="relative mx-auto w-full max-w-[420px] lg:col-span-6 lg:col-start-7 lg:mx-0 lg:ml-auto lg:max-w-[460px] xl:max-w-[500px]"
           >
-            <div
-              className="rounded-[26px] border border-on-dark-border p-8 backdrop-blur-xl"
-              style={{ background: "rgba(var(--dark-surface-rgb), 0.78)" }}
+            {/* The arch is the signature: it echoes the round mark, and it is
+                the one silhouette a stock template will not be using. */}
+            <div className="relative overflow-hidden rounded-[200px_200px_28px_28px] border border-[rgba(var(--primary-rgb),0.16)] bg-surface-alt shadow-[0_28px_70px_rgba(var(--shadow-rgb),0.14)]">
+              <img
+                src="/founder.jpg"
+                srcSet="/founder-sm.jpg 640w, /founder.jpg 1086w"
+                sizes="(min-width: 1280px) 500px, (min-width: 1024px) 460px, (min-width: 640px) 420px, 88vw"
+                width={1086}
+                height={1448}
+                alt={`${brand.practitioner}, ${brand.credential}, at her clinic in Kakinada`}
+                fetchPriority="high"
+                decoding="async"
+                className="block aspect-[3/4] w-full object-cover object-[50%_16%]"
+              />
+              {/* A whisper of warmth over the lower third, so the caption
+                  plate below sits on tone rather than on a hard edge. */}
+              <div
+                aria-hidden="true"
+                className="pointer-events-none absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-[rgba(var(--dark-surface-rgb),0.42)] to-transparent"
+              />
+              <div className="absolute inset-x-4 bottom-4 flex items-center gap-3 rounded-[16px] border border-white/14 bg-[rgba(var(--dark-surface-rgb),0.52)] px-4 py-3 backdrop-blur-lg">
+                <span className="h-9 w-[3px] shrink-0 rounded-full bg-accent" aria-hidden="true" />
+                <span className="min-w-0">
+                  <span className="block truncate font-fraunces text-[16.5px] font-medium leading-tight text-on-dark">
+                    {brand.practitioner}
+                  </span>
+                  <span className="mt-0.5 block truncate text-[12px] leading-tight text-on-dark-faint">
+                    Clinical Nutritionist · Kakinada
+                  </span>
+                </span>
+              </div>
+            </div>
+
+            {/* Floating proof. Anchored to the frame's edge so it reads as
+                belonging to the portrait rather than drifting near it. */}
+            <motion.div
+              initial={reduce ? false : { opacity: 0, scale: 0.9, x: 10 }}
+              animate={{ opacity: 1, scale: 1, x: 0 }}
+              transition={{
+                duration: reduce ? 0 : 0.6,
+                delay: reduce ? 0 : 0.7,
+                ease: [0.22, 1, 0.36, 1],
+              }}
+              className="absolute bottom-[26%] left-3 rounded-[18px] border border-border bg-surface px-5 py-3.5 shadow-[0_16px_44px_rgba(var(--shadow-rgb),0.18)] sm:-left-8 lg:-left-10"
             >
-              <p className="fs-display leading-none text-on-dark">
+              <p className="font-fraunces text-[26px] font-medium leading-none text-primary-contrast">
                 <CountUp value={500} suffix="+" />
               </p>
-              <p className="fs-label mt-2 text-on-dark-muted">Lives rebalanced</p>
-
-              <hr className="my-7 border-0 border-t border-on-dark-border" />
-
-              <p className="fs-h4 text-on-dark">Dt. N. Sai Sowjanya</p>
-              <p className="fs-micro mt-1.5 text-on-dark-faint">Clinical Nutritionist · Kakinada</p>
-            </div>
-          </motion.aside>
+              <p className="mt-1.5 text-[12px] font-medium uppercase tracking-[0.1em] text-text-muted">
+                Lives rebalanced
+              </p>
+            </motion.div>
+          </motion.div>
         </div>
-      </div>
-
-      {/* Scroll cue. Desktop only — the phone layout already runs to the
-          bottom edge, so there is no room for one and no doubt that the page
-          continues. */}
-      <div
-        className="pointer-events-none absolute inset-x-0 bottom-7 z-10 hidden justify-center lg:flex"
-        aria-hidden="true"
-      >
-        <motion.span
-          className="block h-10 w-px origin-top bg-gradient-to-b from-on-dark/60 to-transparent"
-          initial={reduce ? false : { scaleY: 0.3, opacity: 0.3 }}
-          animate={reduce ? {} : { scaleY: [0.3, 1, 0.3], opacity: [0.3, 1, 0.3] }}
-          transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut" }}
-        />
       </div>
     </section>
   );

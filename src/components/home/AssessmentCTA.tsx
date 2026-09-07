@@ -1,9 +1,10 @@
 import * as React from "react";
 import { motion, useScroll, useTransform, useReducedMotion } from "framer-motion";
-import { Clock, UserCheck, Lock, ArrowRight, MessageCircle } from "lucide-react";
+import { Link } from "@tanstack/react-router";
+import { Clock, UserCheck, Lock, ArrowRight, CalendarCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Reveal } from "@/components/shared/Reveal";
-import { brand } from "@/data/content";
+import { useBooking } from "@/context/BookingContext";
 
 interface AssessmentCTAProps {
   title?: string;
@@ -11,162 +12,112 @@ interface AssessmentCTAProps {
   className?: string;
 }
 
+const REASSURANCE = [
+  { icon: Clock, label: "Takes about 10 minutes" },
+  { icon: UserCheck, label: "Reviewed personally" },
+  { icon: Lock, label: "100% confidential" },
+];
+
+/**
+ * The closing band.
+ *
+ * Three things were wrong with the previous version and all three were
+ * visible from across the room:
+ *
+ *   - The primary action was a plain `<a href="/assessment">`, which throws
+ *     away the SPA and reloads the entire application — the slowest click on
+ *     the whole site, on the one button that matters most.
+ *   - It carried two competing hover effects (a radial gradient AND a scaling
+ *     dot) plus a one-shot scale pulse, layered over each other with a
+ *     comment quoting the spec that asked for them. That is the texture that
+ *     makes a page read as generated rather than designed.
+ *   - The band met the page on a 1px white border, and the eyebrow's dot
+ *     pinged forever.
+ *
+ * The band now dims into the page at both edges (see the ramps below), the
+ * dot holds still, and there is one hover behaviour: the button lifts.
+ */
 export function AssessmentCTA({ title, subtitle, className }: AssessmentCTAProps) {
-  const containerRef = React.useRef<HTMLDivElement>(null);
-  const shouldReduceMotion = useReducedMotion();
+  const containerRef = React.useRef<HTMLElement>(null);
+  const reduce = useReducedMotion();
+  const { openBooking } = useBooking();
 
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start end", "end start"],
   });
+  const backgroundY = useTransform(scrollYProgress, [0, 1], [-24, 24]);
 
-  const backgroundY = useTransform(scrollYProgress, [0, 1], [-30, 30]);
-
-  const onDarkText = "var(--on-dark)";
-  const onDarkMuted = "var(--on-dark-muted)"; // Increased opacity for better light mode visibility
-  const onDarkBorder = "var(--on-dark-border)"; // Increased opacity for better light mode visibility
-  const onDarkGlass = "var(--on-dark-glass)"; // Increased opacity for better light mode visibility
-
-  // Hand-drawn underline component
-  const HandDrawnUnderline = () => (
-    <svg
-      className="absolute -bottom-2 left-0 w-full h-3 overflow-visible pointer-events-none text-accent/70"
-      viewBox="0 0 200 12"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <motion.path
-        d="M2 10C30 8.5 60 7.5 198 9.5"
-        stroke="currentColor"
-        strokeWidth="3.5"
-        strokeLinecap="round"
-        initial={{ pathLength: 0, opacity: 0 }}
-        whileInView={{ pathLength: 1, opacity: 1 }}
-        viewport={{ once: true }}
-        transition={{
-          duration: 0.7,
-          delay: 0.8,
-          ease: "easeOut",
-        }}
-      />
-    </svg>
-  );
+  /** *word* renders italic, in the on-dark accent, with a drawn underline. */
+  const renderTitle = (text: string) =>
+    text.split(/(\*[^*]+\*)/g).map((part, i) =>
+      part.startsWith("*") && part.endsWith("*") ? (
+        <span key={i} className="relative inline-block italic text-on-dark-accent">
+          {part.slice(1, -1)}
+          <HandDrawnUnderline reduce={!!reduce} />
+        </span>
+      ) : (
+        <React.Fragment key={i}>{part}</React.Fragment>
+      ),
+    );
 
   return (
     <section
       id="assessment-cta"
       ref={containerRef}
       aria-labelledby="assessment-cta-heading"
-      className={cn(
-        "relative w-full overflow-hidden isolate",
-        "bg-[var(--dark-surface)]", // Forced forest green background for all modes
-        "border-y border-white/10",
-        className,
-      )}
-      style={{
-        paddingBlock: "clamp(88px, 11vw, 160px)",
-      }}
+      /* Marks this as one of the permanently-dark bands. The footer reads it
+         to decide whether its curve would land between two dark surfaces —
+         see the note in Footer.tsx. */
+      data-dark-band=""
+      className={cn("relative isolate w-full overflow-hidden bg-[var(--dark-surface)]", className)}
+      style={{ paddingBlock: "clamp(80px, 9.5vw, 132px)" }}
     >
-      {/* Background Stack */}
+      {/* Edge ramps.
+          A full-bleed dark band meeting a porcelain page along a 1px border
+          is a seam. These lift the band's colour towards the page over ~72px
+          at both edges, so the page dims into it instead of stopping at it —
+          the same device the footer curve uses, and the reason the two themes
+          now read alike. */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-x-0 top-0 z-[2] h-[72px] bg-[linear-gradient(to_bottom,rgba(var(--bg-rgb),0.28),transparent)] md:h-[96px]"
+      />
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-x-0 bottom-0 z-[2] h-[72px] bg-[linear-gradient(to_top,rgba(var(--bg-rgb),0.28),transparent)] md:h-[96px]"
+      />
+
+      {/* Atmosphere. Gradients only — the old version stacked two 900px
+          blurred circles, two animated blobs and a live feTurbulence filter,
+          which is a lot of compositing for a band of colour. */}
       <motion.div
         aria-hidden="true"
-        className="absolute inset-0 pointer-events-none"
-        style={{ y: shouldReduceMotion ? 0 : backgroundY }}
+        className="pointer-events-none absolute inset-0"
+        style={{ y: reduce ? 0 : backgroundY }}
       >
-        {/* Layer 1: Radial accent glow */}
-        <div className="absolute top-[20%] left-[25%] -translate-x-1/2 -translate-y-1/2 w-[900px] h-[900px] bg-accent/18 dark:bg-accent/12 rounded-full blur-[160px]" />
-
-        {/* Layer 2: Lighter green glow */}
-        <div className="absolute bottom-0 right-0 w-[700px] h-[700px] bg-[var(--primary)]/12 rounded-full blur-[140px]" />
-
-        {/* Layer 3: Organic blobs */}
-        <motion.div
-          animate={{
-            translateY: [0, -30, 0],
-            translateX: [0, 20, 0],
-          }}
-          transition={{
-            duration: 28,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
-          className="absolute top-[10%] right-[5%] w-[480px] h-[480px] bg-white/4 rounded-[42%_58%_70%_30%_/_45%_45%_55%_55%] blur-[60px]"
-        />
-        <motion.div
-          animate={{
-            translateY: [0, 30, 0],
-            translateX: [0, -20, 0],
-          }}
-          transition={{
-            duration: 34,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
-          className="absolute bottom-[10%] left-[5%] w-[360px] h-[360px] bg-white/4 rounded-[60%_40%_30%_70%_/_60%_30%_70%_40%] blur-[60px]"
-        />
-
-        {/* Layer 4: Grain overlay */}
-        <div className="absolute inset-0 mix-blend-overlay opacity-[0.06]">
-          <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
-            <filter id="noiseFilterCTA">
-              <feTurbulence
-                type="fractalNoise"
-                baseFrequency="0.65"
-                numOctaves="3"
-                stitchTiles="stitch"
-              />
-            </filter>
-            <rect width="100%" height="100%" filter="url(#noiseFilterCTA)" />
-          </svg>
-        </div>
-
-        {/* Layer 5: Vignette */}
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(var(--shadow-rgb), 0.08)_100%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_80%_at_22%_18%,rgba(var(--accent-rgb),0.22),transparent_60%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_70%_at_88%_92%,rgba(var(--primary-rgb),0.20),transparent_62%)]" />
       </motion.div>
 
-      <div className="container-x relative z-10 text-center max-w-[820px] mx-auto">
-        {/* 1. Eyebrow Chip */}
+      <div className="container-x relative z-10 mx-auto max-w-[820px] text-center">
         <Reveal delay={0.05}>
-          <div
-            className="inline-flex items-center gap-2 px-4 py-[7px] rounded-full backdrop-blur-xl mb-6"
-            style={{ backgroundColor: onDarkGlass, border: `1px solid ${onDarkBorder}` }}
-          >
-            <div className="relative w-[6px] h-[6px] bg-accent rounded-full">
-              <div className="absolute inset-0 bg-accent rounded-full animate-[ping_2.4s_infinite] opacity-75" />
-            </div>
-            <span
-              className="text-[12px] font-semibold uppercase tracking-[0.16em]"
-              style={{ color: onDarkText }}
-            >
-              YOUR FIRST STEP
-            </span>
+          <div className="mb-6 inline-flex items-center gap-2 rounded-pill border border-on-dark-border bg-on-dark-glass px-4 py-[7px] backdrop-blur-xl">
+            <span className="h-[6px] w-[6px] rounded-full bg-accent" aria-hidden="true" />
+            <span className="fs-eyebrow text-on-dark">Your first step</span>
           </div>
         </Reveal>
 
-        {/* 2. H2 */}
         <Reveal delay={0.1}>
-          <h2
-            id="assessment-cta-heading"
-            className="fs-h2 mb-6 text-on-dark"
-            style={{ fontSize: "clamp(2.25rem, 5vw, 3.75rem)" }}
-          >
+          <h2 id="assessment-cta-heading" className="fs-h2 mb-6 text-on-dark">
             {title ? (
-              title.split(/(\*.*?\*)/g).map((part, i) =>
-                part.startsWith("*") && part.endsWith("*") ? (
-                  <span key={i} className="relative inline-block italic text-accent">
-                    {part.slice(1, -1)}
-                    <HandDrawnUnderline />
-                  </span>
-                ) : (
-                  part
-                ),
-              )
+              renderTitle(title)
             ) : (
               <>
                 Stop guessing. Start{" "}
-                <span className="relative inline-block italic text-accent">
+                <span className="relative inline-block italic text-on-dark-accent">
                   rebalancing
-                  <HandDrawnUnderline />
+                  <HandDrawnUnderline reduce={!!reduce} />
                 </span>
                 .
               </>
@@ -174,148 +125,72 @@ export function AssessmentCTA({ title, subtitle, className }: AssessmentCTAProps
           </h2>
         </Reveal>
 
-        {/* 3. Sub-line */}
         <Reveal delay={0.15}>
-          <p
-            className="fs-sub max-w-[660px] mx-auto mb-10 text-on-dark-muted"
-            style={{ fontSize: "clamp(1.0625rem, 1.5vw, 1.1875rem)" }}
-          >
+          <p className="fs-sub mx-auto mb-9 max-w-[640px] text-on-dark-muted">
             {subtitle ||
-              "Take the GoRebalance assessment — a guided two-stage form covering your symptoms, medical history, lifestyle and food habits. Dt. Sai Sowjanya reviews every submission personally and responds within 24 hours."}
+              "Take the GoRebalance assessment — a guided form covering your symptoms, medical history, lifestyle and food habits. Dt. Sai Sowjanya reviews every submission personally and responds within 24 hours."}
           </p>
         </Reveal>
 
-        {/* 4. Reassurance Row */}
         <Reveal delay={0.2}>
-          <div className="flex justify-center items-center flex-wrap mb-10">
-            <div className="flex flex-col sm:flex-row items-center sm:gap-0 gap-[14px] sm:items-center">
-              {[
-                { icon: Clock, label: "Takes about 10 minutes" },
-                { icon: UserCheck, label: "Reviewed personally" },
-                { icon: Lock, label: "100% confidential" },
-              ].map((item, i, arr) => (
-                <React.Fragment key={i}>
-                  <div className="inline-flex items-center gap-2">
-                    <item.icon size={16} className="text-accent" />
-                    <span className="text-[14px] font-medium" style={{ color: onDarkMuted }}>
-                      {item.label}
-                    </span>
-                  </div>
-                  {i < arr.length - 1 && (
-                    <div
-                      className="hidden sm:block w-[1px] h-4 mx-6"
-                      style={{ backgroundColor: onDarkBorder }}
-                    />
-                  )}
-                </React.Fragment>
-              ))}
-            </div>
-          </div>
+          <ul className="mb-9 flex list-none flex-wrap items-center justify-center gap-x-7 gap-y-3 p-0">
+            {REASSURANCE.map(({ icon: Icon, label }) => (
+              <li key={label} className="inline-flex items-center gap-2">
+                <Icon size={16} className="text-on-dark-accent" aria-hidden="true" />
+                <span className="text-[14px] font-medium text-on-dark-muted">{label}</span>
+              </li>
+            ))}
+          </ul>
         </Reveal>
 
-        {/* 5. Primary CTA */}
         <Reveal delay={0.25}>
-          <motion.a
-            href="/assessment"
-            className="group relative inline-flex items-center justify-center gap-[10px] h-[56px] sm:h-[60px] px-10 rounded-full font-semibold tracking-[0.01em] transition-all duration-300 overflow-hidden"
-            style={{
-              backgroundColor: "var(--accent-strong)",
-              color: "var(--on-accent)",
-              fontSize: "16.5px",
-              boxShadow: "0 12px 32px rgba(var(--accent-rgb), 0.32)",
-            }}
-            onMouseMove={(e) => {
-              const rect = e.currentTarget.getBoundingClientRect();
-              const x = e.clientX - rect.left;
-              const y = e.clientY - rect.top;
-              e.currentTarget.style.setProperty("--x", `${x}px`);
-              e.currentTarget.style.setProperty("--y", `${y}px`);
-            }}
-            whileHover={{
-              y: -3,
-              boxShadow: "0 18px 44px rgba(var(--accent-rgb), 0.42)",
-            }}
-            whileTap={{ y: -1 }}
-            initial={{ scale: 1 }}
-            animate={(() => {
-              if (typeof window !== "undefined" && !sessionStorage.getItem("cta-pulsed")) {
-                sessionStorage.setItem("cta-pulsed", "true");
-                return { scale: [1, 1.03, 1] };
-              }
-              return { scale: 1 };
-            })()}
-            transition={{
-              scale: { delay: 0.85, duration: 0.6, times: [0, 0.5, 1] },
-            }}
-          >
-            {/* Hover radial fill */}
-            <span
-              className="absolute inset-0 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-full"
-              style={{
-                background: `radial-gradient(circle at var(--x, 50%) var(--y, 50%), rgba(var(--shadow-rgb), 0.15) 0%, transparent 100%)`,
-                transform: "scale(0)",
-              }}
-            />
-            {/* The requirement says: a radial fill in a deeper shade expands from the cursor position (animate from 0 to 250% over 500ms) */}
-            {/* Refined implementation with pseudo-element style expansion */}
-            <span className="absolute inset-0 pointer-events-none z-0">
-              <span
-                className="absolute block w-1 h-1 rounded-full bg-black/10 transition-transform duration-500 ease-out group-hover:scale-[250]"
-                style={{
-                  left: "var(--x, 50%)",
-                  top: "var(--y, 50%)",
-                  transform: "translate(-50%, -50%) scale(0)",
-                }}
-              />
-            </span>
-
-            <span className="relative z-10">Begin My Assessment</span>
-            <ArrowRight
-              size={18}
-              className="relative z-10 transition-transform duration-300 group-hover:translate-x-[5px]"
-            />
-          </motion.a>
-        </Reveal>
-
-        {/* 6. Secondary Link */}
-        <Reveal delay={0.3}>
-          <div className="mt-5 mb-9">
-            <a
-              href={brand.whatsapp}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group inline-flex items-center gap-2 min-h-[44px] text-[15px] font-medium transition-colors duration-300 relative"
-              style={{ color: onDarkMuted }}
+          <div className="flex flex-col items-stretch justify-center gap-3 sm:flex-row sm:items-center sm:gap-3.5">
+            <Link
+              to="/assessment"
+              className="press group inline-flex h-[58px] items-center justify-center gap-2.5 rounded-pill bg-accent-strong px-9 text-[16.5px] font-semibold text-on-accent shadow-[0_12px_32px_rgba(var(--accent-rgb),0.32)]"
             >
-              <MessageCircle size={17} />
-              <span className="group-hover:text-[var(--on-dark)] transition-colors">
-                Or message us on WhatsApp
-              </span>
-              <span
-                className="absolute bottom-0 left-0 w-0 h-[1px] transition-all duration-300 group-hover:w-full"
-                style={{ backgroundColor: onDarkBorder }}
-              />
-            </a>
+              Begin My Assessment
+              <ArrowRight size={18} className="transition-transform group-hover:translate-x-1" />
+            </Link>
+            <button
+              type="button"
+              onClick={() => openBooking({ source: "cta-band" })}
+              className="press inline-flex h-[58px] items-center justify-center gap-2.5 rounded-pill border border-on-dark-border bg-on-dark-glass px-9 text-[16px] font-semibold text-on-dark backdrop-blur-xl transition-colors hover:bg-[rgba(var(--on-dark-rgb),0.2)]"
+            >
+              <CalendarCheck size={18} aria-hidden="true" />
+              Book Consultation
+            </button>
           </div>
         </Reveal>
 
-        {/* 7. Micro Footnote */}
-        <Reveal delay={0.35}>
-          <p
-            className="text-[13px] leading-[1.5] max-w-[500px] mx-auto"
-            style={{ color: "var(--on-dark-faint)" }}
-          >
+        <Reveal delay={0.3}>
+          <p className="mx-auto mt-8 max-w-[520px] text-[13px] leading-[1.5] text-on-dark-faint">
             Consultation fee applies · Secure payment · Clinic in Kakinada · Online across India
           </p>
         </Reveal>
       </div>
-
-      <style>{`
-        @keyframes ping {
-          0% { transform: scale(1); opacity: 0.75; }
-          75%, 100% { transform: scale(2.2); opacity: 0; }
-        }
-      `}</style>
     </section>
+  );
+}
+
+function HandDrawnUnderline({ reduce }: { reduce: boolean }) {
+  return (
+    <svg
+      className="pointer-events-none absolute -bottom-2 left-0 h-3 w-full overflow-visible text-accent/75"
+      viewBox="0 0 200 12"
+      fill="none"
+      aria-hidden="true"
+    >
+      <motion.path
+        d="M2 10C30 8.5 60 7.5 198 9.5"
+        stroke="currentColor"
+        strokeWidth="3.5"
+        strokeLinecap="round"
+        initial={reduce ? false : { pathLength: 0, opacity: 0 }}
+        whileInView={{ pathLength: 1, opacity: 1 }}
+        viewport={{ once: true }}
+        transition={{ duration: reduce ? 0 : 0.7, delay: reduce ? 0 : 0.7, ease: "easeOut" }}
+      />
+    </svg>
   );
 }

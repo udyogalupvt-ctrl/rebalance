@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import GalleryManager from "@/pages/admin/Gallery";
+import { lazyRoute } from "@/components/shared/lazyRoute";
 
 export const Route = createFileRoute("/admin/gallery")({
-  component: GalleryManager,
+  component: lazyRoute(() => import("@/pages/admin/Gallery")),
 });

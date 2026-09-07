@@ -20,22 +20,24 @@ export default function Treatments() {
 
   return (
     <>
-      <Header />
+      <Header overHero={false} />
       <main>
         <PageHero
           variant="image"
           align="left"
           eyebrow="OUR PROGRAMS"
           title="Nutrition built around your *condition*."
-          subtitle="Six focused programs, each addressing a different root cause — but all starting from the same place: your gut, your history and your daily life. Most clients begin with one and find the others resolve alongside it."
+          subtitle="Seven focused programs, each addressing a different root cause — but all starting from the same place: your gut, your history and your daily life. Most clients begin with one and find the others resolve alongside it."
           breadcrumb={breadcrumb}
           image={{
-            src: "https://images.unsplash.com/photo-1767114915989-c6ab3c8fc42e?auto=format&fit=crop&q=80&w=1920",
-            alt: "A professional clinical nutrition consultation setup with fresh ingredients in warm natural light",
+            src: "https://images.unsplash.com/photo-1591586116988-62fe65164f8d?auto=format&fit=crop&q=75&w=1200",
+            alt: "Cauliflower, broccoli, radishes and carrots on a market table",
+            width: 1200,
+            height: 900,
           }}
         >
           <div className="flex flex-wrap gap-3">
-            <MetaChip icon={Layers} label="6 Focused Programs" />
+            <MetaChip icon={Layers} label="7 Focused Programs" />
             <MetaChip icon={UserCheck} label="Personalised, Never Templated" />
             <MetaChip icon={Video} label="In-Clinic & Online" />
           </div>

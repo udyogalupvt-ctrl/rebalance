@@ -43,6 +43,7 @@ export function WhatsIncluded() {
             speed={22}
             gap="14px"
             itemWidth="min(78vw, 320px)"
+            autoScroll={false}
           >
             {programInclusions.map((item, idx) => (
               <React.Fragment key={idx}>

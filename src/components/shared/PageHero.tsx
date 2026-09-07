@@ -1,5 +1,5 @@
 import * as React from "react";
-import { motion, useScroll, useTransform, useReducedMotion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { ChevronRight } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { cn } from "@/lib/utils";
@@ -21,6 +21,8 @@ interface PageHeroProps {
     height?: number;
     /** object-position, e.g. "50% 35%". Defaults to centre. */
     position?: string;
+    /** Frame aspect ratio. Portrait sources need "3/4" or they get beheaded. */
+    ratio?: string;
   };
   align?: "left" | "center";
   variant?: "image" | "plain";
@@ -60,6 +62,22 @@ function useTitleWords(title: string) {
   }, [title]);
 }
 
+/**
+ * The opening band on every page except the home page.
+ *
+ * REBUILT, for the same reason as the home hero. This used to be a full-bleed
+ * photograph under a scrim running from 94% to 58% opacity. At that strength
+ * the photograph contributes nothing you can identify — it is a dark
+ * rectangle with a faint texture — while still costing a full-width image
+ * download and a permanently-running 16-second scale animation on every page
+ * load. The practice's summary of the whole site was that the colours were
+ * too dark, and five of the six pages opened with this.
+ *
+ * It is now light: the same porcelain-and-blush ground as the home hero, with
+ * the photograph moved into a framed panel on the right where it is small
+ * enough to be sharp and large enough to be legible. Copy sits on the page
+ * background, so it is read at 15:1 rather than through a scrim.
+ */
 export function PageHero({
   eyebrow,
   title,
@@ -70,220 +88,166 @@ export function PageHero({
   variant = "image",
   children,
 }: PageHeroProps) {
-  const containerRef = React.useRef<HTMLElement>(null);
   const reduce = useReducedMotion();
 
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start start", "end start"],
-  });
-
-  const imageY = useTransform(scrollYProgress, [0, 1], [0, 60]);
-  const contentY = useTransform(scrollYProgress, [0, 1], [0, -20]);
-  const contentOpacity = useTransform(scrollYProgress, [0, 0.85], [1, 0.45]);
-
-  const isImage = variant === "image" && !!image;
-  const isCenter = align === "center";
+  const hasImage = variant === "image" && !!image;
+  const isCenter = align === "center" || !hasImage;
   const words = useTitleWords(title);
-
-  const fg = isImage ? "var(--on-dark)" : "var(--text)";
-  const fgMuted = isImage ? "var(--on-dark-muted)" : "var(--text-muted)";
-  const fgBorder = isImage ? "var(--on-dark-border)" : "var(--border)";
 
   return (
     <section
-      ref={containerRef}
-      className={cn(
-        "relative w-full overflow-hidden isolate",
-        isImage ? "bg-dark-surface" : "bg-surface-alt",
-      )}
+      className="relative isolate w-full overflow-hidden bg-bg"
       style={{
-        // Clears the fixed header, then adds the hero's own breathing room.
-        paddingTop: "calc(var(--header-h) + clamp(72px, 9vw, 112px))",
-        paddingBottom: "clamp(72px, 9vw, 112px)",
-        minHeight: "clamp(340px, 46vw, 460px)",
+        paddingTop: "calc(var(--header-h) + clamp(56px, 7vw, 88px))",
+        paddingBottom: "clamp(56px, 7vw, 88px)",
       }}
     >
-      {/* Background stack */}
-      {isImage ? (
-        <div className="absolute inset-0 pointer-events-none z-0" aria-hidden="true">
-          <motion.div
-            className="absolute inset-0 motion-parallax"
-            style={{ y: reduce ? 0 : imageY }}
-          >
-            <motion.img
-              src={image!.src}
-              alt=""
-              width={image!.width ?? 1920}
-              height={image!.height ?? 1080}
-              loading="eager"
-              fetchPriority="high"
-              decoding="async"
-              className="w-full h-full object-cover"
-              style={{ objectPosition: image!.position ?? "50% 50%" }}
-              initial={{ scale: 1.06 }}
-              animate={reduce ? { scale: 1.06 } : { scale: [1.06, 1.12] }}
-              transition={
-                reduce
-                  ? { duration: 0 }
-                  : { duration: 16, repeat: Infinity, repeatType: "reverse", ease: "easeInOut" }
-              }
-            />
-          </motion.div>
-
-          {/* Scrim — strong enough that --on-dark text clears 4.5:1 over any
-              part of the photograph, including its lightest areas. */}
-          <div
-            className={cn(
-              "absolute inset-0 z-10",
-              isCenter
-                ? "bg-[linear-gradient(to_bottom,rgba(var(--dark-surface-rgb),0.88)_0%,rgba(var(--dark-surface-rgb),0.72)_50%,rgba(var(--dark-surface-rgb),0.88)_100%)]"
-                : "bg-[linear-gradient(100deg,rgba(var(--dark-surface-rgb),0.94)_0%,rgba(var(--dark-surface-rgb),0.84)_46%,rgba(var(--dark-surface-rgb),0.58)_100%)]",
-            )}
-          />
-          {/* Bottom melt into the page background */}
-          <div className="absolute bottom-0 inset-x-0 h-[140px] z-20 bg-gradient-to-t from-bg to-transparent" />
-          <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[620px] h-[620px] bg-primary/12 rounded-full blur-[150px] z-20" />
-        </div>
-      ) : (
-        <div className="absolute inset-0 pointer-events-none z-0" aria-hidden="true">
-          <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[620px] h-[620px] bg-primary/10 rounded-full blur-[150px]" />
-        </div>
-      )}
-
-      {/* Content */}
-      <div className={cn("container-x relative z-30", isCenter && "text-center")}>
-        <motion.div
-          style={{ y: reduce ? 0 : contentY, opacity: contentOpacity }}
-          className={cn("max-w-[780px]", isCenter && "mx-auto")}
-        >
-          <motion.nav
-            aria-label="Breadcrumb"
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: reduce ? 0 : 0.5 }}
-            className={cn("flex mb-7", isCenter && "justify-center")}
-          >
-            <ol className="flex items-center gap-2.5 list-none p-0 m-0 flex-wrap">
-              {breadcrumb.map((item, index) => {
-                const isLast = index === breadcrumb.length - 1;
-                return (
-                  <React.Fragment key={item.label}>
-                    <li>
-                      {isLast ? (
-                        <span
-                          aria-current="page"
-                          className="text-[13px] font-medium"
-                          style={{ color: fg }}
-                        >
-                          {item.label}
-                        </span>
-                      ) : (
-                        <Link
-                          to={item.href}
-                          className="inline-flex items-center text-[13px] min-h-[44px] transition-colors hover:underline"
-                          style={{ color: fgMuted }}
-                        >
-                          {item.label}
-                        </Link>
-                      )}
-                    </li>
-                    {!isLast && (
-                      <ChevronRight
-                        size={14}
-                        aria-hidden="true"
-                        style={{ color: fgMuted, opacity: 0.6 }}
-                      />
-                    )}
-                  </React.Fragment>
-                );
-              })}
-            </ol>
-          </motion.nav>
-
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: reduce ? 0 : 0.5, delay: reduce ? 0 : 0.08 }}
-            className={cn(
-              "inline-flex items-center gap-2 px-4 py-2 rounded-full mb-6",
-              isImage ? "glass-on-dark" : "bg-surface border border-border",
-            )}
-          >
-            <span className="w-[5px] h-[5px] rounded-full bg-accent shrink-0" aria-hidden="true" />
-            <span className="fs-eyebrow" style={{ color: fg }}>
-              {eyebrow}
-            </span>
-          </motion.div>
-
-          <h1 className="fs-display mb-6" style={{ color: fg }}>
-            {words.map((w, i) => (
-              <span
-                key={i}
-                className="inline-block overflow-hidden align-bottom mr-[0.24em] last:mr-0"
-              >
-                <motion.span
-                  initial={reduce ? false : { y: "110%" }}
-                  animate={{ y: 0 }}
-                  transition={{ duration: 0.8, delay: 0.16 + i * 0.055, ease: [0.22, 1, 0.36, 1] }}
-                  className={cn("inline-block", w.accent && "italic")}
-                  style={{
-                    color: w.accent
-                      ? isImage
-                        ? "var(--on-dark-accent)"
-                        : "var(--accent-contrast)"
-                      : "inherit",
-                  }}
-                >
-                  {w.text}
-                </motion.span>
-              </span>
-            ))}
-          </h1>
-
-          <motion.p
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: reduce ? 0 : 0.5, delay: reduce ? 0 : 0.24 }}
-            className={cn("fs-sub max-w-[620px]", isCenter && "mx-auto")}
-            style={{ color: fgMuted }}
-          >
-            {subtitle}
-          </motion.p>
-
-          {children && (
-            <motion.div
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: reduce ? 0 : 0.5, delay: reduce ? 0 : 0.32 }}
-              className={cn("mt-8 flex flex-wrap gap-3", isCenter && "justify-center")}
-            >
-              {children}
-            </motion.div>
-          )}
-        </motion.div>
+      {/* Ground. Gradients only — nothing to download, nothing to decode. */}
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_110%_90%_at_82%_10%,rgba(var(--accent-rgb),0.14),transparent_60%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_80%_at_2%_88%,rgba(var(--primary-rgb),0.12),transparent_58%)]" />
+        <div className="absolute -right-[16%] -top-[30%] hidden aspect-square w-[46vw] rounded-full border border-[rgba(var(--primary-rgb),0.14)] lg:block" />
       </div>
 
-      {/* Scroll cue. Only shown when there is no meta-chip row to collide with,
-          and only on viewports wide enough for it to sit clear of the content. */}
-      {!reduce && !children && (
-        <div
-          className="hidden xl:block absolute z-30 pointer-events-none left-10"
-          style={{ bottom: "calc(clamp(72px, 9vw, 112px) + 24px)" }}
-          aria-hidden="true"
-        >
-          <div className="w-px h-10 mb-2.5 relative" style={{ backgroundColor: fgBorder }}>
+      <div className="container-x relative z-10">
+        <div className={cn("grid items-center gap-10", hasImage && "lg:grid-cols-12 lg:gap-12")}>
+          <div
+            className={cn(
+              "min-w-0",
+              hasImage ? "lg:col-span-7" : "mx-auto max-w-[780px] text-center",
+            )}
+          >
+            <motion.nav
+              aria-label="Breadcrumb"
+              initial={reduce ? false : { opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: reduce ? 0 : 0.45 }}
+              className={cn("mb-6 flex", isCenter && !hasImage && "justify-center")}
+            >
+              <ol className="m-0 flex list-none flex-wrap items-center gap-2.5 p-0">
+                {breadcrumb.map((item, index) => {
+                  const isLast = index === breadcrumb.length - 1;
+                  return (
+                    <React.Fragment key={item.label}>
+                      <li>
+                        {isLast ? (
+                          <span aria-current="page" className="text-[13px] font-medium text-text">
+                            {item.label}
+                          </span>
+                        ) : (
+                          <Link
+                            to={item.href}
+                            className="inline-flex min-h-[36px] items-center text-[13px] text-text-muted transition-colors hover:text-text hover:underline"
+                          >
+                            {item.label}
+                          </Link>
+                        )}
+                      </li>
+                      {!isLast && (
+                        <ChevronRight
+                          size={14}
+                          aria-hidden="true"
+                          className="text-text-muted opacity-60"
+                        />
+                      )}
+                    </React.Fragment>
+                  );
+                })}
+              </ol>
+            </motion.nav>
+
             <motion.div
-              animate={{ y: [0, 36, 0] }}
-              transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-              className="absolute top-0 -left-[1.5px] w-1 h-1 bg-accent rounded-full"
-            />
+              initial={reduce ? false : { opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: reduce ? 0 : 0.45, delay: reduce ? 0 : 0.06 }}
+              className={cn(
+                "mb-6 inline-flex items-center gap-2 rounded-pill border border-[rgba(var(--primary-rgb),0.22)] bg-primary-soft px-4 py-2",
+              )}
+            >
+              <span
+                className="h-[5px] w-[5px] shrink-0 rounded-full bg-accent"
+                aria-hidden="true"
+              />
+              <span className="fs-eyebrow text-primary-contrast">{eyebrow}</span>
+            </motion.div>
+
+            {/* The literal {" "} carries the word space. A margin between
+                inline-blocks is invisible to screen readers and to the
+                clipboard — see the note in Hero.tsx. */}
+            <h1 className="fs-display mb-5 text-text">
+              {words.map((w, i) => (
+                <React.Fragment key={i}>
+                  <span className="inline-block overflow-hidden align-bottom">
+                    <motion.span
+                      initial={reduce ? false : { y: "110%" }}
+                      animate={{ y: 0 }}
+                      transition={{
+                        duration: 0.8,
+                        delay: 0.12 + i * 0.05,
+                        ease: [0.22, 1, 0.36, 1],
+                      }}
+                      className={cn("inline-block", w.accent && "italic text-accent-contrast")}
+                    >
+                      {w.text}
+                    </motion.span>
+                  </span>
+                  {i < words.length - 1 ? " " : null}
+                </React.Fragment>
+              ))}
+            </h1>
+
+            <motion.p
+              initial={reduce ? false : { opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: reduce ? 0 : 0.5, delay: reduce ? 0 : 0.2 }}
+              className={cn("fs-sub max-w-[620px]", !hasImage && "mx-auto")}
+            >
+              {subtitle}
+            </motion.p>
+
+            {children && (
+              <motion.div
+                initial={reduce ? false : { opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: reduce ? 0 : 0.5, delay: reduce ? 0 : 0.28 }}
+                className={cn("mt-8 flex flex-wrap gap-3", !hasImage && "justify-center")}
+              >
+                {children}
+              </motion.div>
+            )}
           </div>
-          <span className="fs-eyebrow" style={{ color: fgMuted }}>
-            Scroll
-          </span>
+
+          {hasImage && (
+            <motion.div
+              initial={reduce ? false : { opacity: 0, y: 22 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{
+                duration: reduce ? 0 : 0.75,
+                delay: reduce ? 0 : 0.18,
+                ease: [0.22, 1, 0.36, 1],
+              }}
+              className="relative mx-auto hidden w-full max-w-[420px] lg:col-span-5 lg:block lg:max-w-none"
+            >
+              <div className="overflow-hidden rounded-[26px] border border-[rgba(var(--primary-rgb),0.14)] bg-surface-alt shadow-[0_22px_56px_rgba(var(--shadow-rgb),0.12)]">
+                <img
+                  src={image!.src}
+                  alt={image!.alt}
+                  width={image!.width ?? 1200}
+                  height={image!.height ?? 900}
+                  loading="eager"
+                  fetchPriority="high"
+                  decoding="async"
+                  className="block w-full object-cover"
+                  style={{
+                    aspectRatio: image!.ratio ?? "4 / 3",
+                    objectPosition: image!.position ?? "50% 50%",
+                  }}
+                />
+              </div>
+            </motion.div>
+          )}
         </div>
-      )}
+      </div>
     </section>
   );
 }

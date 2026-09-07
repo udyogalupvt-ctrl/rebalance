@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import TreatmentsManager from "@/pages/admin/Treatments";
+import { lazyRoute } from "@/components/shared/lazyRoute";
 
 export const Route = createFileRoute("/admin/treatments")({
-  component: TreatmentsManager,
+  component: lazyRoute(() => import("@/pages/admin/Treatments")),
 });

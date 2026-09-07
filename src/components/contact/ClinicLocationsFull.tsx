@@ -4,6 +4,7 @@ import { Building2, MapPin, Clock, Phone, Navigation, Video, CalendarCheck } fro
 import { SectionWrapper } from "@/components/shared/SectionWrapper";
 import { CurveDivider } from "@/components/shared/CurveDivider";
 import { Reveal } from "@/components/shared/Reveal";
+import { SectionHeading } from "@/components/shared/SectionHeading";
 import { locations, brand } from "@/data/content";
 import { Link } from "@tanstack/react-router";
 import type { Location } from "@/types/content";
@@ -26,20 +27,38 @@ const MapPanel = ({ location, index }: { location: Location; index: number }) =>
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => setIsLoaded(true)}
-            className="group relative w-full h-full cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
+            /* The dark ground lives on the button itself rather than on the
+               decorative layer inside it, so the element that owns the text
+               also owns its background. Anything auditing contrast by walking
+               up the tree — including a browser devtools check — then reads
+               the real backdrop instead of the light card behind. */
+            className="group relative h-full w-full cursor-pointer bg-[var(--dark-surface)] focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
             aria-label={`Load the interactive map for the ${location.city} clinic`}
           >
-            {/* MAP POSTER */}
-            <img
-              src={location.mapPoster}
-              alt={`Map view of ${location.city}`}
-              className="w-full h-full object-fit-cover transition-transform duration-700 group-hover:scale-105"
-            />
-            {/* SCRIM */}
-            <div
-              aria-hidden="true"
-              className="absolute inset-0 bg-[rgba(var(--dark-surface-rgb),0.66)] transition-colors group-hover:bg-[rgba(var(--dark-surface-rgb),0.56)]"
-            />
+            {/*
+              A drawn panel, not a photograph.
+
+              The poster used to be a stock photograph of food carrying
+              alt="Map view of Kakinada" — a description of something that was
+              not in the picture, which is worse than no alt text at all for
+              anyone relying on it. It also cost a full-width image download
+              to sit under a 66% scrim.
+
+              This is the brand's own surface with a faint grid, which reads
+              as "map" without pretending to be one, and paints instantly.
+            */}
+            <div aria-hidden="true" className="absolute inset-0 transition-colors">
+              <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_70%_at_50%_40%,rgba(var(--primary-rgb),0.30),transparent_65%)]" />
+              <div
+                className="absolute inset-0 opacity-[0.14]"
+                style={{
+                  backgroundImage:
+                    "linear-gradient(rgba(var(--on-dark-rgb),0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(var(--on-dark-rgb),0.5) 1px, transparent 1px)",
+                  backgroundSize: "42px 42px",
+                }}
+              />
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_45%,transparent_20%,rgba(var(--dark-surface-rgb),0.75)_75%)] transition-opacity group-hover:opacity-80" />
+            </div>
 
             {/* CONTENT */}
             <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-6">
@@ -86,7 +105,7 @@ const ClinicCard = ({ location, index }: { location: Location; index: number }) 
         <div className="w-[46px] h-[46px] rounded-[13px] bg-primary-soft flex items-center justify-center shrink-0">
           <Building2 className="w-[21px] h-[21px] text-primary" />
         </div>
-        <h3 className="fraunces text-[clamp(1.375rem,2.2vw,1.75rem)] font-medium text-text leading-tight">
+        <h3 className="font-fraunces text-[clamp(1.375rem,2.2vw,1.75rem)] font-medium text-text leading-tight">
           {location.city}
         </h3>
       </div>
@@ -168,27 +187,18 @@ export const ClinicLocationsFull = () => {
           aria-hidden="true"
         />
 
-        <div className="text-center mb-[64px] md:mb-[48px]">
-          <Reveal>
-            <span className="text-[12px] font-semibold uppercase tracking-[0.14em] text-text-muted">
-              VISIT US
-            </span>
-          </Reveal>
-          <Reveal delay={0.1}>
-            <h2
-              id="clinics-heading"
-              className="fraunces text-[clamp(2rem,4.5vw,3.25rem)] font-medium text-text mt-3 mb-4"
-            >
-              One clinic, one *standard of care*.
-            </h2>
-          </Reveal>
-          <Reveal delay={0.2}>
-            <p className="text-[clamp(1rem,1.4vw,1.1875rem)] text-text-muted max-width-[680px] mx-auto leading-relaxed">
-              In-person consultations in Kakinada. Online consultations follow exactly the same
-              protocol, wherever you are in India.
-            </p>
-          </Reveal>
-        </div>
+        {/* Uses the shared heading rather than a hand-rolled one. The local
+            copy printed its own accent markup as literal asterisks — the page
+            read "One clinic, one *standard of care*." — and its type classes
+            did not exist, so it rendered in the body face while every other
+            section heading on the site was in Fraunces. */}
+        <SectionHeading
+          id="clinics-heading"
+          align="center"
+          eyebrow="Visit us"
+          title="One clinic, one *standard of care*."
+          subtitle="In-person consultations in Kakinada. Online consultations follow exactly the same protocol, wherever you are in India."
+        />
 
         <div className="flex flex-col gap-[56px] md:gap-[40px]">
           {locations.map((location, index) => (
@@ -209,7 +219,7 @@ export const ClinicLocationsFull = () => {
                 <Video className="w-[25px] h-[25px] text-primary" />
               </div>
               <div>
-                <h3 className="fraunces text-[clamp(1.125rem,1.8vw,1.375rem)] font-medium text-text">
+                <h3 className="font-fraunces text-[clamp(1.125rem,1.8vw,1.375rem)] font-medium text-text">
                   Not near either clinic?
                 </h3>
                 <p className="mt-2 text-[14.5px] text-text-muted max-w-[56ch]">

@@ -158,7 +158,9 @@ export const EnquiryForm = () => {
                 ].map((step, idx) => (
                   <div key={idx} className="flex gap-3.5">
                     <div className="w-8 h-8 shrink-0 bg-primary-soft rounded-full grid place-items-center">
-                      <span className="fraunces-500 text-[13px] text-primary">{idx + 1}</span>
+                      <span className="font-fraunces font-medium text-[13px] text-primary">
+                        {idx + 1}
+                      </span>
                     </div>
                     <div>
                       <h4 className="text-[14.5px] font-semibold text-foreground">{step.title}</h4>
@@ -497,7 +499,7 @@ export const EnquiryForm = () => {
                   </motion.div>
                 </div>
 
-                <h3 className="fraunces-500 text-[clamp(1.25rem,2vw,1.5rem)] text-foreground mb-3">
+                <h3 className="font-fraunces font-medium text-[clamp(1.25rem,2vw,1.5rem)] text-foreground mb-3">
                   Message received.
                 </h3>
 

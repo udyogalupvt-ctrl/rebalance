@@ -20,18 +20,22 @@ const aboutHeroProps = {
     { label: "Home", href: "/" },
     { label: "About", href: "/about" },
   ],
-  image: {
-    src: "/founder.jpg",
-    alt: "Dt. N. Sai Sowjanya at the GoRebalance clinic in Kakinada",
-    width: 1086,
-    height: 1448,
-  },
+  /*
+   * No hero image, deliberately.
+   *
+   * There is exactly one photograph of the practitioner, and StorySection
+   * opens with it about 200px below the fold. Framing the same picture twice
+   * within one screen made the page read as padded rather than considered.
+   * The hero is a centred statement instead, and her portrait lands once,
+   * where the story that goes with it starts.
+   */
+  variant: "plain" as const,
 };
 
 export default function AboutPage() {
   return (
     <div className="min-h-screen bg-bg">
-      <Header />
+      <Header overHero={false} />
       <main>
         <PageHero {...aboutHeroProps}>
           <MetaChip icon={Award} label="8+ Years of Practice" />

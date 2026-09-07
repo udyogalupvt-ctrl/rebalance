@@ -18,7 +18,7 @@ export default function Gallery() {
 
   return (
     <div className="min-h-screen bg-bg">
-      <Header />
+      <Header overHero={false} />
       <main>
         <PageHero
           variant="image"
@@ -28,8 +28,10 @@ export default function Gallery() {
           subtitle="The clinics, the consultations, the plans and the food that goes into them — at our Kakinada clinic."
           breadcrumb={breadcrumb}
           image={{
-            src: "https://images.unsplash.com/photo-1556912999-8cd7c2582a5e?auto=format&fit=crop&q=80&w=1920",
-            alt: "Warm, natural-light clinic interior consultation space",
+            src: "https://images.unsplash.com/photo-1556912999-8cd7c2582a5e?auto=format&fit=crop&q=75&w=1200",
+            alt: "A woman cooking at the stove in a bright, natural-light kitchen",
+            width: 1200,
+            height: 900,
           }}
         >
           <div className="flex flex-wrap gap-3">

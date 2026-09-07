@@ -41,7 +41,7 @@ function Index() {
   return (
     <>
       <Preloader />
-      <Header />
+      <Header overHero={false} />
       <main>
         <Hero />
         <CredibilityMarquee />

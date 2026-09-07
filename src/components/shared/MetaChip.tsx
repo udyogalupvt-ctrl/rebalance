@@ -5,8 +5,13 @@ interface MetaChipProps {
   icon: React.ElementType;
   label: string;
   /**
-   * "onDark" for chips sitting on an image hero or the dark CTA band,
-   * "default" for chips on a normal page surface.
+   * "onDark" for chips sitting on the dark CTA band, "default" for chips on a
+   * normal page surface.
+   *
+   * The default flipped when the page heroes went light. Every caller relied
+   * on the old default of "onDark", so the chips were rendering --on-dark
+   * text (near-white) on a porcelain background — measured 1.2:1, effectively
+   * invisible. Nobody passes a tone, so the default is the whole contract.
    */
   tone?: "onDark" | "default";
   className?: string;
@@ -17,7 +22,7 @@ interface MetaChipProps {
  * and Testimonials with slightly different colours each time; Contact used a
  * third variant that broke in dark mode.
  */
-export function MetaChip({ icon: Icon, label, tone = "onDark", className }: MetaChipProps) {
+export function MetaChip({ icon: Icon, label, tone = "default", className }: MetaChipProps) {
   return (
     <span
       className={cn(

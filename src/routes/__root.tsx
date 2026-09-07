@@ -10,6 +10,8 @@ import {
 import * as React from "react";
 import { useEffect, type ReactNode } from "react";
 import { WhatsAppButton, BackToTop } from "@/components/shared/FloatingElements";
+import { SmoothScroll } from "@/components/shared/SmoothScroll";
+import { BookingProvider } from "@/context/BookingContext";
 import { Scripts } from "@tanstack/react-router";
 import { motion, useReducedMotion } from "framer-motion";
 import { DUR, EASE_SETTLE } from "@/lib/motion";
@@ -156,15 +158,21 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
-        <PageTransition pathname={pathname}>
-          <Outlet />
-        </PageTransition>
-        {!isAppRoute && (
-          <>
-            <WhatsAppButton />
-            <BackToTop />
-          </>
-        )}
+        {/* Inertial wheel scrolling. Off inside the admin console and the
+            assessment form: both have their own scroll containers and step
+            transitions, where an easing tail reads as lag rather than weight. */}
+        {!isAppRoute && <SmoothScroll key="lenis" />}
+        <BookingProvider>
+          <PageTransition pathname={pathname}>
+            <Outlet />
+          </PageTransition>
+          {!isAppRoute && (
+            <>
+              <WhatsAppButton />
+              <BackToTop />
+            </>
+          )}
+        </BookingProvider>
       </ThemeProvider>
     </QueryClientProvider>
   );

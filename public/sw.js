@@ -13,7 +13,10 @@
  * is only a fallback for when there is no network.
  */
 
-const VERSION = "gorebalance-v1";
+/* Bumped with the code-splitting rework: every asset filename changed, so
+   the old cache holds nothing a returning visitor can still use. Bump this
+   whenever a release invalidates the shell. */
+const VERSION = "gorebalance-v2";
 const SHELL = ["/", "/admin", "/manifest.webmanifest", "/icon-192.png", "/icon-512.png"];
 
 self.addEventListener("install", (event) => {

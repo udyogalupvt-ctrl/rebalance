@@ -1,5 +1,4 @@
 import * as React from "react";
-import * as LucideIcons from "lucide-react";
 import { credibilityItems } from "@/data/content";
 import { Reveal } from "@/components/shared/Reveal";
 import { useReducedMotion } from "framer-motion";

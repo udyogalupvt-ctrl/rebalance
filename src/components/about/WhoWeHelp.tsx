@@ -24,7 +24,16 @@ export function WhoWeHelp() {
       />
 
       <div className="sm:hidden -mx-5 px-5">
-        <AutoScroller label="Who we help" speed={22} gap="14px" itemWidth="min(78vw, 320px)">
+        <AutoScroller
+          label="Who we help"
+          speed={22}
+          gap="14px"
+          itemWidth="min(78vw, 320px)"
+          /* Held still. These cards are information a visitor is trying to
+             read, not a marquee — sliding them out from under a thumb is the
+             thing that makes a site feel like a template. Still swipeable. */
+          autoScroll={false}
+        >
           {whoWeHelp.map((item) => {
             const Icon = resolveIcon(item.icon);
             return (

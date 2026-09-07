@@ -2,7 +2,7 @@ import * as React from "react";
 import { useState, useEffect } from "react";
 import { motion, useScroll, useReducedMotion, AnimatePresence } from "framer-motion";
 import { ArrowUp } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { brand } from "@/data/content";
 
 /**
  * Custom WhatsApp icon SVG to match brand style precisely.
@@ -18,44 +18,68 @@ const WhatsAppIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
+/**
+ * The floating WhatsApp action.
+ *
+ * It used to carry a `repeat: Infinity` halo that scaled and faded every 2.2
+ * seconds, forever. In the corner of the eye that reads as a fault — the
+ * practice described it as "flashing" — and it never stopped, so it kept
+ * pulling attention away from whatever the visitor was actually reading.
+ *
+ * A persistent affordance does not need to shout. It now arrives once, a
+ * moment after the page settles, and then holds completely still. The only
+ * motion left is a response to the pointer: the label unfurls on hover, and
+ * the whole control takes the press.
+ */
 export function WhatsAppButton() {
   const reduce = useReducedMotion();
   const [isExpanded, setIsExpanded] = useState(false);
+  const [hasArrived, setHasArrived] = useState(false);
+
+  useEffect(() => {
+    const t = setTimeout(() => setHasArrived(true), reduce ? 0 : 900);
+    return () => clearTimeout(t);
+  }, [reduce]);
 
   return (
-    <div className="floating-action fixed bottom-6 right-6 z-[60] flex items-center justify-end gap-3 sm:bottom-8 sm:right-8 transition-opacity duration-200">
+    <div className="floating-action fixed bottom-6 right-6 z-[60] flex items-center justify-end gap-3 sm:bottom-8 sm:right-8">
       <motion.a
-        href="https://wa.me/919390414536?text=Hi%20GoRebalance%2C%20I%27d%20like%20to%20know%20more%20about%20your%20gut%20health%20programs."
+        href={brand.whatsapp}
         target="_blank"
         rel="noopener noreferrer"
         onMouseEnter={() => setIsExpanded(true)}
         onMouseLeave={() => setIsExpanded(false)}
-        className="group relative flex items-center rounded-pill bg-[var(--whatsapp)] text-[var(--on-whatsapp)] shadow-[0_8px_24px_rgba(var(--shadow-rgb),0.22)] h-14 sm:h-[58px]"
-        initial={{ width: 56 }}
-        animate={{ width: isExpanded ? "auto" : 56 }}
-        transition={{ type: "spring", stiffness: 320, damping: 30 }}
-        whileHover={{ scale: 1.04 }}
-        whileTap={{ scale: 0.95 }}
+        onFocus={() => setIsExpanded(true)}
+        onBlur={() => setIsExpanded(false)}
+        className="group relative flex h-14 items-center overflow-hidden rounded-pill bg-[var(--whatsapp)] text-[var(--on-whatsapp)] shadow-[0_10px_28px_rgba(var(--whatsapp-rgb),0.32),0_2px_8px_rgba(var(--shadow-rgb),0.18)] sm:h-[58px]"
+        initial={reduce ? false : { opacity: 0, scale: 0.6, y: 12 }}
+        animate={{
+          opacity: hasArrived ? 1 : 0,
+          scale: hasArrived ? 1 : 0.6,
+          y: hasArrived ? 0 : 12,
+          width: isExpanded ? "auto" : 56,
+        }}
+        transition={{
+          opacity: { duration: reduce ? 0 : 0.4, ease: "easeOut" },
+          scale: { type: "spring", stiffness: 380, damping: 24 },
+          y: { type: "spring", stiffness: 380, damping: 24 },
+          width: { type: "spring", stiffness: 320, damping: 32 },
+        }}
+        whileHover={reduce ? {} : { y: -2 }}
+        whileTap={reduce ? {} : { scale: 0.96 }}
         aria-label="Chat with GoRebalance on WhatsApp"
       >
-        <span className="relative grid place-items-center w-14 h-14 sm:w-[58px] sm:h-[58px] flex-shrink-0">
-          {!reduce && (
-            <motion.span
-              aria-hidden="true"
-              className="absolute inset-0 rounded-full bg-[var(--whatsapp)]"
-              animate={{ scale: [1, 1.45], opacity: [0.45, 0] }}
-              transition={{ duration: 2.2, repeat: Infinity, ease: "easeOut" }}
-            />
-          )}
-          <WhatsAppIcon className="relative z-10 w-7 h-7 sm:w-[30px] sm:h-[30px]" />
+        <span className="grid h-14 w-14 flex-shrink-0 place-items-center sm:h-[58px] sm:w-[58px]">
+          <WhatsAppIcon className="h-7 w-7 sm:h-[30px] sm:w-[30px]" />
         </span>
         <AnimatePresence>
           {isExpanded && (
             <motion.span
-              initial={{ opacity: 0, x: -10 }}
+              initial={{ opacity: 0, x: -8 }}
               animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -10 }}
-              className="pr-6 font-semibold whitespace-nowrap text-[15px]"
+              exit={{ opacity: 0, x: -8 }}
+              transition={{ duration: 0.18 }}
+              className="whitespace-nowrap pr-6 text-[15px] font-semibold"
             >
               Chat with us
             </motion.span>
@@ -69,29 +93,32 @@ export function WhatsAppButton() {
 export function BackToTop() {
   const [isVisible, setIsVisible] = useState(false);
   const { scrollYProgress, scrollY } = useScroll();
+  const reduce = useReducedMotion();
 
   useEffect(() => {
+    setIsVisible(scrollY.get() > 400);
     return scrollY.on("change", (latest) => {
       setIsVisible(latest > 400);
     });
   }, [scrollY]);
 
   const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    window.scrollTo({ top: 0, behavior: reduce ? "auto" : "smooth" });
   };
 
   return (
     <AnimatePresence>
       {isVisible && (
         <motion.button
-          initial={{ scale: 0, opacity: 0 }}
+          initial={{ scale: 0.7, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
-          exit={{ scale: 0, opacity: 0 }}
+          exit={{ scale: 0.7, opacity: 0 }}
+          transition={{ type: "spring", stiffness: 420, damping: 30 }}
           onClick={scrollToTop}
-          className="floating-action fixed bottom-[88px] right-6 z-[60] w-12 h-12 sm:bottom-[104px] sm:right-8 sm:w-14 sm:h-14 flex items-center justify-center glass rounded-full shadow-lg text-primary group transition-opacity duration-200"
+          className="floating-action group fixed bottom-[88px] right-6 z-[60] flex h-12 w-12 items-center justify-center rounded-full text-primary shadow-[0_6px_20px_rgba(var(--shadow-rgb),0.14)] glass sm:bottom-[104px] sm:right-8 sm:h-14 sm:w-14"
           aria-label="Back to top"
         >
-          <svg className="absolute inset-0 w-full h-full -rotate-90" viewBox="0 0 100 100">
+          <svg className="absolute inset-0 h-full w-full -rotate-90" viewBox="0 0 100 100">
             <motion.circle
               cx="50"
               cy="50"
@@ -101,10 +128,10 @@ export function BackToTop() {
               strokeWidth="2"
               strokeDasharray="289"
               style={{ pathLength: scrollYProgress }}
-              className="opacity-20"
+              className="opacity-25"
             />
           </svg>
-          <ArrowUp className="w-5 h-5 transition-transform group-hover:-translate-y-1" />
+          <ArrowUp className="h-5 w-5 transition-transform duration-300 group-hover:-translate-y-1" />
         </motion.button>
       )}
     </AnimatePresence>

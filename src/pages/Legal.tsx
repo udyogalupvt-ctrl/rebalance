@@ -1,5 +1,19 @@
 import { brand } from "@/data/content";
 
+/*
+ * The `af-*` styles this page uses live in assessment.css.
+ *
+ * That stylesheet used to be loaded on every page, because it was imported at
+ * the top of a route module and every route module is pulled into the initial
+ * graph. Splitting the assessment into its own chunk moved 2,500 lines of CSS
+ * off the marketing critical path — and took these styles with it, leaving
+ * this page, the tracking page and the whole admin console unstyled.
+ *
+ * Each module that needs it now imports it directly, so it travels with
+ * whichever chunk actually loads first and never with the home page.
+ */
+import "@/styles/assessment.css";
+
 export type LegalSection = { heading: string; body: string[] };
 
 /**
