@@ -7,19 +7,15 @@ interface LogoProps {
   /** Render the mark only, without the wordmark. */
   hideText?: boolean;
   /**
-   * Scale the whole lockup down on the narrowest phones.
+   * Drop the wordmark on the narrowest phones.
    *
    * At 320px the header pill has to hold the mark, the wordmark, the theme
-   * toggle and the menu button, and at full size the menu button was pushed
-   * hard against the screen edge.
-   *
-   * The first attempt hid the wordmark below 400px. That was wrong: without
-   * it there is nothing on screen that says what the practice is CALLED, and
-   * a mark alone only works for a brand people already recognise. So the
-   * lockup shrinks instead — mark and wordmark together, in proportion — and
-   * the name is readable at every width.
+   * toggle and the menu button. The wordmark is the only one of those that is
+   * not a control, and it is the one that pushed the menu button hard against
+   * the screen edge. Below 400px the mark carries the brand on its own — it
+   * is distinctive enough to, which is the point of having a mark.
    */
-  shrinkOnNarrow?: boolean;
+  collapseTextOnNarrow?: boolean;
   /**
    * Which artwork to use.
    *
@@ -77,12 +73,10 @@ export function Logo({
   className,
   style,
   hideText,
-  shrinkOnNarrow,
+  collapseTextOnNarrow,
   tone = "dark",
   size = 44,
 }: LogoProps) {
-  // Intrinsic size for the <img>, so the browser can reserve the box before
-  // the file arrives. The RENDERED size comes from --logo-h below.
   const dimensions = { width: size, height: size };
 
   /*
@@ -98,21 +92,10 @@ export function Logo({
    * markup and CSS picks one — which also means the correct mark is painted
    * on the very first frame, before any theme hook has run.
    */
-  const markClass = "logo-lockup__mark block shrink-0 object-contain";
+  const markClass = "block shrink-0 object-contain";
 
   return (
-    <span
-      className={cn("logo-lockup inline-flex items-center", shrinkOnNarrow && "logo-lockup--responsive", className)}
-      style={
-        {
-          "--logo-h": `${size}px`,
-          // ~82% of full size. Enough to clear the controls at 320px while
-          // keeping the wordmark comfortably legible.
-          "--logo-h-narrow": `${Math.round(size * 0.82)}px`,
-          ...style,
-        } as React.CSSProperties
-      }
-    >
+    <span className={cn("inline-flex items-center", className)} style={style}>
       {tone === "light" ? (
         <img
           src="/brand-mark-light.png"
@@ -121,6 +104,7 @@ export function Logo({
           decoding="async"
           fetchPriority="high"
           className={markClass}
+          style={dimensions}
           aria-hidden="true"
         />
       ) : (
@@ -132,6 +116,7 @@ export function Logo({
             decoding="async"
             fetchPriority="high"
             className={cn(markClass, "dark:hidden")}
+            style={dimensions}
             aria-hidden="true"
           />
           <img
@@ -140,6 +125,7 @@ export function Logo({
             {...dimensions}
             decoding="async"
             className={cn(markClass, "hidden dark:block")}
+            style={dimensions}
             aria-hidden="true"
           />
         </>
@@ -147,11 +133,17 @@ export function Logo({
       {!hideText && (
         <span
           className={cn(
-            "logo-lockup__word font-fraunces font-semibold leading-none tracking-[-0.015em]",
+            "font-fraunces font-semibold leading-none tracking-[-0.015em]",
             tone === "light" ? "text-on-dark" : "text-text",
+            collapseTextOnNarrow && "hidden min-[400px]:inline-block",
           )}
           style={{
+            fontSize: Math.round(size * WORDMARK_RATIO),
             transform: `translateY(${WORDMARK_NUDGE})`,
+            /* The mark's own ink centroid sits 6.6/320 to the RIGHT of its box
+               centre, so a symmetric gap looks tight on this side. Measured in
+               the same units as the nudge so it scales with the lockup. */
+            marginLeft: Math.round(size * 0.13),
           }}
         >
           GoRebalance
