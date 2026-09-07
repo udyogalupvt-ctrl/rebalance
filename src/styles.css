@@ -545,6 +545,134 @@
     }
   }
 
+  /* ========================================================================
+     THE BRAND LOCKUP
+
+     The rendered size comes from a CSS variable rather than from JavaScript,
+     because the header pill has to hold the mark, the wordmark, the theme
+     toggle and the menu button inside 320px. Driving one variable scales the
+     mark and the wordmark together, in proportion, so the name stays readable
+     at every width instead of being dropped on small screens.
+     ==================================================================== */
+  .logo-lockup {
+    --logo-render-h: var(--logo-h, 44px);
+  }
+
+  .logo-lockup__mark {
+    width: var(--logo-render-h);
+    height: var(--logo-render-h);
+  }
+
+  .logo-lockup__word {
+    /*
+     * 0.52 of the mark's height.
+     *
+     * Was 0.56, which measured too heavy against the mark on a phone: at 44px
+     * the word alone ran ~180px and dominated the header row. 0.52 keeps the
+     * mark leading the lockup, which is the right hierarchy for a symbol this
+     * distinctive. The optical nudge in Logo.tsx is derived from this number,
+     * so change both together.
+     */
+    font-size: calc(var(--logo-render-h) * 0.52);
+    /* The mark's ink centroid sits right of its box centre, so a symmetric
+       gap looks tight on this side. Scales with the lockup. */
+    margin-left: calc(var(--logo-render-h) * 0.13);
+  }
+
+  @media (max-width: 400px) {
+    .logo-lockup--responsive {
+      --logo-render-h: var(--logo-h-narrow, 31px);
+    }
+  }
+
+  /* ========================================================================
+     THE HERO BACKDROP
+
+     The photograph behind the hero is ground, not a picture, and how much of
+     it should show depends entirely on the layout:
+
+       PHONES  the portrait is stacked below the copy, so most of the frame is
+               empty and the image can be genuinely present. It was reported as
+               "very hard to see" at the desktop's strength, because the
+               desktop mask hides everything left of 40% — which on a phone is
+               the whole column.
+       DESKTOP the portrait and the copy fill the frame, so the image only
+               shows around them and has to stay well back.
+
+     Both masks keep the top clear so the nav never sits on texture.
+     ==================================================================== */
+  .hero-backdrop {
+    opacity: 0.42;
+    -webkit-mask-image: linear-gradient(
+      to bottom,
+      transparent 64px,
+      black 220px,
+      black 76%,
+      transparent 99%
+    );
+    mask-image: linear-gradient(
+      to bottom,
+      transparent 64px,
+      black 220px,
+      black 76%,
+      transparent 99%
+    );
+  }
+
+  @media (min-width: 1024px) {
+    .hero-backdrop {
+      opacity: 0.26;
+      -webkit-mask-image:
+        linear-gradient(to right, transparent 40%, black 76%),
+        linear-gradient(to bottom, transparent 150px, black 300px, black 72%, transparent 97%);
+      mask-image:
+        linear-gradient(to right, transparent 40%, black 76%),
+        linear-gradient(to bottom, transparent 150px, black 300px, black 72%, transparent 97%);
+      -webkit-mask-composite: source-in;
+      mask-composite: intersect;
+    }
+  }
+
+  .dark .hero-backdrop {
+    opacity: 0.24;
+  }
+
+  @media (min-width: 1024px) {
+    .dark .hero-backdrop {
+      opacity: 0.16;
+    }
+  }
+
+  /*
+   * The veil that keeps the hero copy readable over the backdrop.
+   *
+   * On a phone the copy runs the full width, so a veil confined to the left
+   * 62% (which is what desktop needs) left the subhead sitting directly on
+   * vegetables. Here it is a vertical wash instead: strong behind the
+   * headline and subhead, clearing as it descends towards the portrait, where
+   * there is no text to protect.
+   */
+  .hero-veil {
+    background: linear-gradient(
+      to bottom,
+      rgba(var(--bg-rgb), 0.93) 0%,
+      rgba(var(--bg-rgb), 0.88) 42%,
+      rgba(var(--bg-rgb), 0.55) 68%,
+      rgba(var(--bg-rgb), 0) 100%
+    );
+  }
+
+  @media (min-width: 1024px) {
+    .hero-veil {
+      background: linear-gradient(
+        to right,
+        rgba(var(--bg-rgb), 0.99) 0%,
+        rgba(var(--bg-rgb), 0.95) 62%,
+        rgba(var(--bg-rgb), 0) 100%
+      );
+    }
+  }
+
   /* ---- surfaces ---- */
   .glass {
     background-color: rgba(var(--surface-rgb), 0.72);

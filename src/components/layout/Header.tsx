@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils";
 import { Link, useRouterState } from "@tanstack/react-router";
 import { DUR, EASE_SETTLE } from "@/lib/motion";
 import { setScrollLocked } from "@/components/shared/SmoothScroll";
+import { useMediaQuery } from "@/hooks/use-media-query";
 
 const navLinks = [
   { name: "Home", href: "/" },
@@ -37,6 +38,15 @@ export function Header({ overHero = true }: HeaderProps = {}) {
   const { scrollY } = useScroll();
   const reduce = useReducedMotion();
   const pathname = useRouterState({ select: (state) => state.location.pathname });
+
+  /*
+   * The bar's padding has to come from JS, not from a Tailwind class.
+   *
+   * framer-motion writes the animated padding straight onto the style
+   * attribute, so `sm:px-…` can never win against it. At 360px the old 40px
+   * gutters left only 280px for a lockup and two 44px controls.
+   */
+  const narrow = useMediaQuery("(max-width: 400px)");
 
   useEffect(() => {
     const unsub = scrollY.on("change", (latest) => setIsScrolled(latest > 60));
@@ -100,8 +110,8 @@ export function Header({ overHero = true }: HeaderProps = {}) {
             width: isScrolled ? "min(1180px, calc(100% - 32px))" : "100%",
             paddingTop: isScrolled ? 12 : 26,
             paddingBottom: isScrolled ? 12 : 26,
-            paddingLeft: isScrolled ? 22 : 40,
-            paddingRight: isScrolled ? 22 : 40,
+            paddingLeft: isScrolled ? (narrow ? 14 : 22) : narrow ? 18 : 40,
+            paddingRight: isScrolled ? (narrow ? 14 : 22) : narrow ? 18 : 40,
             marginTop: isScrolled ? 16 : 0,
             borderRadius: isScrolled ? 999 : 0,
           }}

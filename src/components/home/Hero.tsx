@@ -5,7 +5,7 @@ import { Link } from "@tanstack/react-router";
 import { CountUp } from "@/components/shared/CountUp";
 import { useBooking } from "@/context/BookingContext";
 import { brand } from "@/data/content";
-import { HERO_BACKDROP, HERO_CHIPS } from "@/data/images";
+import { HERO_SLIDES, HERO_CHIPS } from "@/data/images";
 
 const HEADLINE = "Heal the gut. Rebalance the whole you.";
 
@@ -31,10 +31,21 @@ const TRUST = [
  * The ground is a brand-tinted gradient, which costs nothing to load and
  * paints on the first frame.
  */
+/** Dwell per backdrop frame. Long: this is atmosphere, not a carousel. */
+const SLIDE_MS = 6500;
+
 export function Hero() {
   const reduce = useReducedMotion();
   const { openBooking } = useBooking();
   const words = HEADLINE.split(" ");
+
+  const [slideIndex, setSlideIndex] = React.useState(0);
+  React.useEffect(() => {
+    // No autoplay under reduced motion — the first frame simply stays.
+    if (reduce) return;
+    const timer = setInterval(() => setSlideIndex((i) => (i + 1) % HERO_SLIDES.length), SLIDE_MS);
+    return () => clearInterval(timer);
+  }, [reduce]);
 
   return (
     <section
@@ -64,35 +75,40 @@ export function Hero() {
       */}
       <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-0">
         {/*
-          Two masks, intersected.
+          A slow crossfading slideshow, not a single frame.
 
-          A single radial mask put the visible core of the photograph at 76%
-          across and 45% down — which is precisely where the portrait card
-          sits, so the image was fully hidden behind it and the hero looked
-          exactly as it had before. The horizontal mask reveals the right of
-          the frame; the vertical one keeps the top clear so the nav never
-          sits on texture, and fades the foot into the page.
+          Handled as ground: the masks and opacity live in .hero-backdrop in
+          styles.css, because how much of the photograph should show depends
+          on the breakpoint — on a phone the portrait sits below the copy and
+          most of the frame is empty, so the image can be genuinely present;
+          on desktop it only shows around the portrait and has to stay back.
+
+          Every frame is in the DOM and cross-fades by opacity, so there is no
+          layout work per transition and nothing to decode mid-animation.
         */}
-        <img
-          src={HERO_BACKDROP.src}
-          alt=""
-          decoding="async"
-          fetchPriority="low"
-          className="absolute inset-0 h-full w-full object-cover opacity-[0.26] dark:opacity-[0.16]"
-          style={{
-            maskImage:
-              "linear-gradient(to right, transparent 40%, black 76%), linear-gradient(to bottom, transparent 150px, black 300px, black 72%, transparent 97%)",
-            WebkitMaskImage:
-              "linear-gradient(to right, transparent 40%, black 76%), linear-gradient(to bottom, transparent 150px, black 300px, black 72%, transparent 97%)",
-            maskComposite: "intersect",
-            WebkitMaskComposite: "source-in",
-          }}
-        />
+        <div className="hero-backdrop absolute inset-0">
+          {HERO_SLIDES.map((slide, i) => (
+            <motion.img
+              key={slide.src}
+              src={slide.src}
+              alt=""
+              decoding="async"
+              {...(i === 0 ? {} : { loading: "lazy" as const })}
+              className="absolute inset-0 h-full w-full object-cover"
+              initial={false}
+              animate={{ opacity: i === slideIndex ? 1 : 0 }}
+              transition={{ duration: reduce ? 0 : 1.4, ease: "easeInOut" }}
+            />
+          ))}
+        </div>
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_120%_90%_at_78%_18%,rgba(var(--accent-rgb),0.16),transparent_62%)]" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_90%_70%_at_6%_92%,rgba(var(--primary-rgb),0.13),transparent_60%)]" />
         {/* Keeps the copy column on flat page colour whatever the photograph
             is doing behind it. */}
-        <div className="absolute inset-y-0 left-0 w-[62%] bg-[linear-gradient(to_right,rgba(var(--bg-rgb),0.99)_0%,rgba(var(--bg-rgb),0.95)_62%,transparent_100%)]" />
+        {/* Keeps the copy on flat page colour whatever the backdrop is doing
+            behind it. Full width on phones, left-hand only from lg — see
+            .hero-veil in styles.css. */}
+        <div className="hero-veil absolute inset-0 lg:inset-y-0 lg:left-0 lg:right-auto lg:w-[62%]" />
         <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-bg to-transparent" />
         {/* Two quiet rings, echoing the round mark. Behind the portrait. */}
         <div className="absolute -right-[14%] top-[6%] hidden aspect-square w-[52vw] rounded-full border border-[rgba(var(--primary-rgb),0.16)] lg:block" />

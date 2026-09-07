@@ -68,10 +68,36 @@ export const SUPPORTING = {
  * everything else in this file: so the whole set of photographs the site uses
  * can be reviewed in one place and swapped for the practice's own.
  */
-export const HERO_BACKDROP = {
-  src: unsplash("photo-1591586116988-62fe65164f8d", 1400),
-  alt: "Fresh vegetables on a market table",
-};
+/**
+ * The hero's background slideshow.
+ *
+ * Four frames, cycled slowly behind the copy. They are all fresh produce and
+ * home cooking shot in daylight — the subject the practice actually works in
+ * — and they are handled as GROUND rather than as pictures: masked at every
+ * edge and held at low opacity over the brand wash, so the headline never
+ * sits on photographic detail.
+ *
+ * The set is deliberately small. A longer loop means more to download for
+ * something a visitor is not meant to look at directly.
+ */
+export const HERO_SLIDES = [
+  {
+    src: unsplash("photo-1591586116988-62fe65164f8d", 1400),
+    alt: "Fresh vegetables on a market table",
+  },
+  {
+    src: unsplash("photo-1490645935967-10de6ba17061", 1400),
+    alt: "A balanced bowl of vegetables, egg and avocado",
+  },
+  {
+    src: unsplash("photo-1543362906-acfc16c67564", 1400),
+    alt: "Green vegetables arranged on a pale ground",
+  },
+  {
+    src: unsplash("photo-1610348725531-843dff563e2c", 1400),
+    alt: "A wooden board surrounded by colourful raw vegetables and fruit",
+  },
+] as const;
 
 export const HERO_CHIPS = [
   {

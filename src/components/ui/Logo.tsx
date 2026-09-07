@@ -7,15 +7,20 @@ interface LogoProps {
   /** Render the mark only, without the wordmark. */
   hideText?: boolean;
   /**
-   * Drop the wordmark on the narrowest phones.
+   * Scale the whole lockup down on the narrowest phones.
    *
-   * At 320px the header pill has to hold the mark, the wordmark, the theme
-   * toggle and the menu button. The wordmark is the only one of those that is
-   * not a control, and it is the one that pushed the menu button hard against
-   * the screen edge. Below 400px the mark carries the brand on its own — it
-   * is distinctive enough to, which is the point of having a mark.
+   * At 360px the header pill has to hold the mark, the wordmark, the theme
+   * toggle and the menu button. At full size the wordmark alone is about
+   * 180px wide, which leaves the two 44px controls fighting for what is left
+   * and pushes the menu button against the screen edge.
+   *
+   * The first attempt hid the wordmark below 400px. That was wrong: without
+   * it nothing on screen says what the practice is CALLED, and a mark alone
+   * only works for a brand people already recognise. So the lockup shrinks
+   * instead — mark and wordmark together, in proportion — and the name stays
+   * readable at every width. See .logo-lockup in styles.css.
    */
-  collapseTextOnNarrow?: boolean;
+  shrinkOnNarrow?: boolean;
   /**
    * Which artwork to use.
    *
@@ -26,14 +31,14 @@ interface LogoProps {
    * white silhouette.
    */
   tone?: "dark" | "light";
-  /** Height of the mark in pixels. */
+  /** Height of the mark in pixels, at full size. */
   size?: number;
 }
 
 /**
  * Optical centring nudge for the wordmark, expressed in em of the wordmark.
  *
- * Measured, not guessed, and re-measured after the wordmark was enlarged.
+ * Measured, not guessed.
  *
  * The artwork is 320x320 with the ink occupying y 22..296. Aligning the two
  * BOUNDING BOXES centres the wordmark against y=159 — which looks wrong,
@@ -44,21 +49,21 @@ interface LogoProps {
  * geometric centre. That is why the wordmark read as sitting too high.
  *
  *   nudge_px = 0.0491 * markSize
- *   nudge_em = nudge_px / (WORDMARK_RATIO * markSize) = 0.0491 / 0.56 = 0.088
+ *   nudge_em = nudge_px / (0.52 * markSize) = 0.094
  *
- * The size cancels out, so one em value holds at every size the logo is used
- * at. Re-measure the centroid if the artwork is ever redrawn.
+ * The mark size cancels out, so one em value holds at every size the logo is
+ * used at. Re-measure the centroid if the artwork is ever redrawn.
  */
-const WORDMARK_NUDGE = "0.088em";
+const WORDMARK_NUDGE = "0.094em";
 
 /**
- * Wordmark size as a fraction of the mark's height.
+ * How far the lockup shrinks below 400px, as a fraction of its full size.
  *
- * Raised from 0.5. At half the mark height the word was optically subordinate
- * to a mark whose ink only fills two thirds of its own box, so the lockup read
- * as a large symbol with a caption rather than as one unit.
+ * 0.70 rather than something gentler because the constraint is real: at 360px
+ * the row has ~324px of usable width, the two controls take 96px of it, and
+ * the lockup has to fit in what remains with air to spare.
  */
-const WORDMARK_RATIO = 0.56;
+const NARROW_SCALE = 0.7;
 
 /**
  * The GoRebalance brand lockup: the mark, with the wordmark set as live text.
@@ -68,43 +73,59 @@ const WORDMARK_RATIO = 0.56;
  * shrinks the wordmark to a few illegible pixels. So the mark is used as an
  * image and the wordmark is typeset beside it in Fraunces, which also lets it
  * take the surrounding colour and stay crisp at any size.
+ *
+ * The RENDERED size comes from the --logo-h custom property, not from
+ * JavaScript, so a media query can scale the mark and the wordmark together.
  */
 export function Logo({
   className,
   style,
   hideText,
-  collapseTextOnNarrow,
+  shrinkOnNarrow,
   tone = "dark",
   size = 44,
 }: LogoProps) {
-  const dimensions = { width: size, height: size };
-
-  /*
-   * Which artwork, and why there are two <img> tags.
-   *
-   * `tone="light"` means "I am on one of the permanently-dark bands" — the
-   * footer, the CTA — and always takes the light mark.
-   *
-   * `tone="dark"` means "I am on the page surface", and that surface flips
-   * with the theme. The dark-green mark on the dark theme's plum surface
-   * measured barely 2:1, so it has to flip too. That cannot be decided in JS
-   * without the component subscribing to the theme, so both files are in the
-   * markup and CSS picks one — which also means the correct mark is painted
-   * on the very first frame, before any theme hook has run.
-   */
-  const markClass = "block shrink-0 object-contain";
+  // Intrinsic size for the <img>, so the browser reserves the right box before
+  // the file arrives. The painted size comes from --logo-h.
+  const intrinsic = { width: size, height: size };
+  const markClass = "logo-lockup__mark block shrink-0 object-contain";
 
   return (
-    <span className={cn("inline-flex items-center", className)} style={style}>
+    <span
+      className={cn(
+        "logo-lockup inline-flex items-center",
+        shrinkOnNarrow && "logo-lockup--responsive",
+        className,
+      )}
+      style={
+        {
+          "--logo-h": `${size}px`,
+          "--logo-h-narrow": `${Math.round(size * NARROW_SCALE)}px`,
+          ...style,
+        } as React.CSSProperties
+      }
+    >
+      {/*
+       * Which artwork, and why there are two <img> tags.
+       *
+       * `tone="light"` means "I am on one of the permanently-dark bands" — the
+       * footer, the CTA — and always takes the light mark.
+       *
+       * `tone="dark"` means "I am on the page surface", and that surface flips
+       * with the theme. The dark-green mark on the dark theme's plum surface
+       * measured barely 2:1, so it has to flip too. That cannot be decided in
+       * JS without the component subscribing to the theme, so both files are
+       * in the markup and CSS picks one — which also means the correct mark is
+       * painted on the very first frame, before any theme hook has run.
+       */}
       {tone === "light" ? (
         <img
           src="/brand-mark-light.png"
           alt=""
-          {...dimensions}
+          {...intrinsic}
           decoding="async"
           fetchPriority="high"
           className={markClass}
-          style={dimensions}
           aria-hidden="true"
         />
       ) : (
@@ -112,39 +133,30 @@ export function Logo({
           <img
             src="/brand-mark.png"
             alt=""
-            {...dimensions}
+            {...intrinsic}
             decoding="async"
             fetchPriority="high"
             className={cn(markClass, "dark:hidden")}
-            style={dimensions}
             aria-hidden="true"
           />
           <img
             src="/brand-mark-light.png"
             alt=""
-            {...dimensions}
+            {...intrinsic}
             decoding="async"
             className={cn(markClass, "hidden dark:block")}
-            style={dimensions}
             aria-hidden="true"
           />
         </>
       )}
+
       {!hideText && (
         <span
           className={cn(
-            "font-fraunces font-semibold leading-none tracking-[-0.015em]",
+            "logo-lockup__word font-fraunces font-semibold leading-none tracking-[-0.015em]",
             tone === "light" ? "text-on-dark" : "text-text",
-            collapseTextOnNarrow && "hidden min-[400px]:inline-block",
           )}
-          style={{
-            fontSize: Math.round(size * WORDMARK_RATIO),
-            transform: `translateY(${WORDMARK_NUDGE})`,
-            /* The mark's own ink centroid sits 6.6/320 to the RIGHT of its box
-               centre, so a symmetric gap looks tight on this side. Measured in
-               the same units as the nudge so it scales with the lockup. */
-            marginLeft: Math.round(size * 0.13),
-          }}
+          style={{ transform: `translateY(${WORDMARK_NUDGE})` }}
         >
           GoRebalance
         </span>

@@ -220,7 +220,7 @@ export function BookingDialog({
                     className="flex min-h-0 flex-1 flex-col overflow-y-auto overscroll-contain px-6 py-6 sm:px-8"
                     data-lenis-prevent
                   >
-                    <div className="flex flex-col gap-[18px]">
+                    <div className="flex shrink-0 flex-col gap-[18px]">
                       <Field
                         id="booking-name"
                         label="Name"
@@ -339,10 +339,21 @@ export function BookingDialog({
                       </p>
                     )}
 
+                    {/*
+                      `shrink-0` is load-bearing.
+
+                      The form is a flex COLUMN that scrolls, and a flex item
+                      defaults to `flex-shrink: 1`. Once the fields overflowed
+                      the panel the browser reclaimed the space from the only
+                      item with a fixed height — this button — squashing the
+                      site's primary conversion action from 54px to 27px, a
+                      squashed pill with the label jammed against its edges.
+                      The same applies to the two notes below it.
+                    */}
                     <button
                       type="submit"
                       disabled={phase === "saving"}
-                      className="press mt-6 inline-flex h-[54px] w-full items-center justify-center gap-2 rounded-pill bg-accent-strong font-jakarta text-[16px] font-semibold text-on-accent shadow-[0_10px_28px_rgba(var(--accent-rgb),0.28)] disabled:cursor-progress disabled:opacity-80"
+                      className="press mt-6 inline-flex h-[54px] w-full shrink-0 items-center justify-center gap-2 rounded-pill bg-accent-strong font-jakarta text-[16px] font-semibold text-on-accent shadow-[0_10px_28px_rgba(var(--accent-rgb),0.28)] transition-shadow hover:shadow-[0_14px_36px_rgba(var(--accent-rgb),0.38)] disabled:cursor-progress disabled:opacity-80"
                     >
                       {phase === "saving" ? (
                         <>
@@ -357,11 +368,11 @@ export function BookingDialog({
                       )}
                     </button>
 
-                    <p className="fs-micro mt-3.5 text-center">
+                    <p className="fs-micro mt-3.5 shrink-0 text-center">
                       We'll save your request and open WhatsApp so our team can reply faster.
                     </p>
 
-                    <ul className="mt-5 flex list-none flex-wrap justify-center gap-x-5 gap-y-2 border-t border-border p-0 pt-5 text-[12.5px] text-text-muted">
+                    <ul className="mt-5 flex shrink-0 list-none flex-wrap justify-center gap-x-5 gap-y-2 border-t border-border p-0 pt-5 text-[12.5px] text-text-muted">
                       {[
                         { icon: ShieldCheck, label: "100% confidential" },
                         { icon: Clock, label: "Reply within 24 hours" },
