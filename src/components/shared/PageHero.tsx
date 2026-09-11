@@ -3,6 +3,12 @@ import { motion, useReducedMotion } from "framer-motion";
 import { ChevronRight } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { cn } from "@/lib/utils";
+import {
+  HeroBackdrop,
+  HeroBackdropDots,
+  type BackdropSlide,
+} from "@/components/shared/HeroBackdrop";
+import { useBackdropCarousel } from "@/hooks/use-backdrop-carousel";
 
 interface BreadcrumbItem {
   label: string;
@@ -26,6 +32,14 @@ interface PageHeroProps {
   };
   align?: "left" | "center";
   variant?: "image" | "plain";
+  /**
+   * The photographs behind the band.
+   *
+   * Every marketing page passes a set related to what it is about. Without
+   * one the hero falls back to gradients, which is what all of them used to
+   * be — and why five of the six pages opened on flat colour.
+   */
+  backdrop?: readonly BackdropSlide[];
   children?: React.ReactNode;
 }
 
@@ -86,6 +100,7 @@ export function PageHero({
   image,
   align = "left",
   variant = "image",
+  backdrop,
   children,
 }: PageHeroProps) {
   const reduce = useReducedMotion();
@@ -93,6 +108,8 @@ export function PageHero({
   const hasImage = variant === "image" && !!image;
   const isCenter = align === "center" || !hasImage;
   const words = useTitleWords(title);
+  const slides = backdrop ?? [];
+  const carousel = useBackdropCarousel(slides.length, 7000);
 
   return (
     <section
@@ -102,8 +119,28 @@ export function PageHero({
         paddingBottom: "clamp(56px, 7vw, 88px)",
       }}
     >
-      {/* Ground. Gradients only — nothing to download, nothing to decode. */}
-      <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10">
+      {/*
+        Ground: a photographic carousel under the brand wash.
+
+        z-0 rather than -z-10. A negatively-stacked child only paints in front
+        of its parent's own background when the parent establishes a stacking
+        context, and the route transition wrapper above this one does — which
+        is the bug that hid the home hero's photographs for so long. `isolate`
+        on the section settles it either way, and z-0 leaves nothing to
+        depend on.
+      */}
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-0">
+        {slides.length > 0 && (
+          <>
+            <HeroBackdrop slides={slides} index={carousel.index} className="hero-backdrop--page" />
+            <div
+              className={cn(
+                "hero-veil hero-veil--page absolute inset-0",
+                isCenter && "hero-veil--centred",
+              )}
+            />
+          </>
+        )}
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_110%_90%_at_82%_10%,rgba(var(--accent-rgb),0.14),transparent_60%)]" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_80%_at_2%_88%,rgba(var(--primary-rgb),0.12),transparent_58%)]" />
         <div className="absolute -right-[16%] -top-[30%] hidden aspect-square w-[46vw] rounded-full border border-[rgba(var(--primary-rgb),0.14)] lg:block" />
@@ -215,6 +252,23 @@ export function PageHero({
                 {children}
               </motion.div>
             )}
+
+            {/* The carousel's controls, in the copy column with everything
+                else rather than floated over the photograph. */}
+            {slides.length > 1 && (
+              <motion.div
+                initial={reduce ? false : { opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: reduce ? 0 : 0.5, delay: reduce ? 0 : 0.4 }}
+                className={cn("mt-7 -ml-2", isCenter && "flex justify-center")}
+              >
+                <HeroBackdropDots
+                  slides={slides}
+                  index={carousel.index}
+                  onSelect={carousel.select}
+                />
+              </motion.div>
+            )}
           </div>
 
           {hasImage && (
@@ -228,7 +282,7 @@ export function PageHero({
               }}
               className="relative mx-auto hidden w-full max-w-[420px] lg:col-span-5 lg:block lg:max-w-none"
             >
-              <div className="overflow-hidden rounded-[26px] border border-[rgba(var(--primary-rgb),0.14)] bg-surface-alt shadow-[0_22px_56px_rgba(var(--shadow-rgb),0.12)]">
+              <div className="overflow-hidden rounded-[26px] border border-[rgba(var(--primary-rgb),0.14)] bg-surface-alt shadow-[0_30px_70px_rgba(var(--shadow-rgb),0.2),0_6px_18px_rgba(var(--shadow-rgb),0.1)]">
                 <img
                   src={image!.src}
                   alt={image!.alt}

@@ -17,6 +17,7 @@ import { Route as ContactRouteImport } from './routes/contact'
 import { Route as DisclaimerRouteImport } from './routes/disclaimer'
 import { Route as GalleryRouteImport } from './routes/gallery'
 import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as ProgramsRouteImport } from './routes/programs'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as TestimonialsRouteImport } from './routes/testimonials'
 import { Route as TrackRouteImport } from './routes/track'
@@ -70,6 +71,11 @@ const GalleryRoute = GalleryRouteImport.update({
 const PrivacyRoute = PrivacyRouteImport.update({
   id: '/privacy',
   path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProgramsRoute = ProgramsRouteImport.update({
+  id: '/programs',
+  path: '/programs',
   getParentRoute: () => rootRouteImport,
 } as any)
 const TermsRoute = TermsRouteImport.update({
@@ -152,6 +158,7 @@ export interface FileRoutesByFullPath {
   '/disclaimer': typeof DisclaimerRoute
   '/gallery': typeof GalleryRoute
   '/privacy': typeof PrivacyRoute
+  '/programs': typeof ProgramsRoute
   '/terms': typeof TermsRoute
   '/testimonials': typeof TestimonialsRoute
   '/track': typeof TrackRoute
@@ -175,6 +182,7 @@ export interface FileRoutesByTo {
   '/disclaimer': typeof DisclaimerRoute
   '/gallery': typeof GalleryRoute
   '/privacy': typeof PrivacyRoute
+  '/programs': typeof ProgramsRoute
   '/terms': typeof TermsRoute
   '/testimonials': typeof TestimonialsRoute
   '/track': typeof TrackRoute
@@ -200,6 +208,7 @@ export interface FileRoutesById {
   '/disclaimer': typeof DisclaimerRoute
   '/gallery': typeof GalleryRoute
   '/privacy': typeof PrivacyRoute
+  '/programs': typeof ProgramsRoute
   '/terms': typeof TermsRoute
   '/testimonials': typeof TestimonialsRoute
   '/track': typeof TrackRoute
@@ -226,6 +235,7 @@ export interface FileRouteTypes {
     | '/disclaimer'
     | '/gallery'
     | '/privacy'
+    | '/programs'
     | '/terms'
     | '/testimonials'
     | '/track'
@@ -249,6 +259,7 @@ export interface FileRouteTypes {
     | '/disclaimer'
     | '/gallery'
     | '/privacy'
+    | '/programs'
     | '/terms'
     | '/testimonials'
     | '/track'
@@ -273,6 +284,7 @@ export interface FileRouteTypes {
     | '/disclaimer'
     | '/gallery'
     | '/privacy'
+    | '/programs'
     | '/terms'
     | '/testimonials'
     | '/track'
@@ -298,6 +310,7 @@ export interface RootRouteChildren {
   DisclaimerRoute: typeof DisclaimerRoute
   GalleryRoute: typeof GalleryRoute
   PrivacyRoute: typeof PrivacyRoute
+  ProgramsRoute: typeof ProgramsRoute
   TermsRoute: typeof TermsRoute
   TestimonialsRoute: typeof TestimonialsRoute
   TrackRoute: typeof TrackRoute
@@ -360,6 +373,13 @@ declare module '@tanstack/react-router' {
       path: '/privacy'
       fullPath: '/privacy'
       preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/programs': {
+      id: '/programs'
+      path: '/programs'
+      fullPath: '/programs'
+      preLoaderRoute: typeof ProgramsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/terms': {
@@ -500,6 +520,7 @@ const rootRouteChildren: RootRouteChildren = {
   DisclaimerRoute: DisclaimerRoute,
   GalleryRoute: GalleryRoute,
   PrivacyRoute: PrivacyRoute,
+  ProgramsRoute: ProgramsRoute,
   TermsRoute: TermsRoute,
   TestimonialsRoute: TestimonialsRoute,
   TrackRoute: TrackRoute,

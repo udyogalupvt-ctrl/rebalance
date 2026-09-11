@@ -23,6 +23,15 @@ export function FeaturedStories() {
     return data.filter((t) => t.featured).slice(0, 3);
   }, [data]);
 
+  /*
+   * Nothing to feature means no section at all.
+   *
+   * The grid above already explains that there are no published stories yet.
+   * A second empty band saying the same thing under a heading about featured
+   * ones would read as a broken page rather than an honest one.
+   */
+  if (featured.length === 0) return null;
+
   return (
     <>
       <CurveDivider fill="base" flip />
@@ -160,7 +169,9 @@ function SpotlightBlock({ item, index }: { item: Testimonial; index: number }) {
                   {item.after?.length ? item.after.join(" · ") : item.condition}
                 </p>
                 <p className="text-[12.5px] text-text-muted mt-0.5">
-                  {item.duration} program · {item.location.split(",")[0]}
+                  {[item.duration && `${item.duration} program`, item.location?.split(",")[0]]
+                    .filter(Boolean)
+                    .join(" · ")}
                 </p>
               </div>
             </motion.div>
@@ -233,7 +244,7 @@ function SpotlightBlock({ item, index }: { item: Testimonial; index: number }) {
                   aria-hidden="true"
                   className={cn(
                     "w-[15px] h-[15px]",
-                    i < item.rating ? "fill-accent text-accent" : "text-border",
+                    i < (item.rating ?? 0) ? "fill-accent text-accent" : "text-border",
                   )}
                 />
               ))}

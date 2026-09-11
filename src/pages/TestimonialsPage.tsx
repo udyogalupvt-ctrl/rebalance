@@ -34,9 +34,9 @@ export default function TestimonialsPage() {
             height: 900,
           }}
         >
-          <MetaChip icon={Users} label="500+ Clients" />
-          <MetaChip icon={Star} label="4.9 Average Rating" />
-          <MetaChip icon={Repeat} label="Most Refer Someone" />
+          <MetaChip icon={Users} label="Ages 15–50" />
+          <MetaChip icon={Star} label="Published With Consent" />
+          <MetaChip icon={Repeat} label="Individual Results Vary" />
         </PageHero>
 
         <ResultsStats />
@@ -45,7 +45,7 @@ export default function TestimonialsPage() {
         <ConsentNote />
         <AssessmentCTA
           title="Their story started with one *form*."
-          subtitle="Ten minutes covering your symptoms, history, lifestyle and food habits — reviewed personally by Dt. Sai Sowjanya, with a response within 24 hours."
+          subtitle="Ten minutes covering your symptoms, history, lifestyle and food habits, reviewed personally before you are contacted."
         />
       </main>
       <Footer />

@@ -11,7 +11,7 @@ export default function Privacy() {
           eyebrow="Privacy"
           title="What we collect, and why."
           intro="This describes exactly what this website stores about you, where it goes, and how to have it removed."
-          updated="6 September 2026"
+          updated="11 September 2026"
           sections={[
             {
               heading: "What the assessment collects",

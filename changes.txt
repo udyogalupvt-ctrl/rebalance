@@ -1,0 +1,402 @@
+GO REBALANCE
+Complete Website Content & Developer Brief
+Personalised nutrition. Gut health at the core.
+Founder: Sai Sowjanya Nallimpalli
+Dietitian | Gut Health Specialist
+Updated content brief for website design, development and launch preparation
+Brand tagline is currently under review and should not be treated as final
+
+
+Document Map
+This document is the current master content brief for the Go Rebalance website. It includes the original website
+content plus the latest updates on audience age, gut-health positioning, realistic expectations, scope boundaries and
+trust-building sections.
+01 Brand & Website Direction
+02 Recommended Homepage Order
+03 Homepage Content
+04 Initial Assessment Form
+05 Client Journey & Service Flow
+06 About Page
+07 Program Detail Content
+08 Footer & Disclaimer
+09 Medical & Copy Boundaries
+10 Developer Notes & Launch Priorities
+1. Brand & Website Direction
+Brand: Go Rebalance
+Primary positioning: Personalised nutrition. Gut health at the core.
+Founder: Sai Sowjanya Nallimpalli - Dietitian | Gut Health Specialist
+Tagline: Under review. Do not lock the design around a final tagline yet.
+Go Rebalance is a personalised nutrition practice. Gut health is a core lens of the approach, but the service is not
+limited only to gut concerns. The website should communicate thoughtful, individualised nutrition guidance without
+making cure, diagnosis or guaranteed-outcome claims.
+Desired Brand Feel
+• Professional, warm, approachable and trustworthy.
+• Calm and premium without feeling flashy, luxurious or aggressively commercial.
+• Modern, simple and easy to understand.
+• Personal and founder-led rather than corporate.
+• Mobile-first, clean layout with generous white space.
+• Natural palette: warm off-white/cream, muted greens, earthy neutrals and deep green/charcoal text.
+• Avoid a hospital, gym, supplement-store, generic diet-plan or spa/wellness-template appearance.
+• Avoid cliché imagery such as measuring tapes, weighing scales, extreme fitness models and generic salad bowls.
+Primary website CTA: Start Your Assessment
+Important: Do not display program pricing publicly. Do not use Buy Now as the primary action.
+2. Recommended Homepage Order
+
+
+
+The updated homepage should follow this sequence:
+Hero → Areas of Focus → Who We Work With (15-50) → Why Gut Health Is at the Core → Approach
+→ Programs → Why Go Rebalance → What You Can Expect / No False Promises → Meet Sai →
+Credentials → FAQs → Final Assessment CTA → Footer
+This order gives the visitor a clear journey: understand what Go Rebalance is, recognise whether the service is
+relevant to them, understand the philosophy and process, explore support options, build trust and then take action.
+3. Homepage Content
+Section 1 - Hero
+Headline: Go Rebalance
+Positioning line: Personalised nutrition. Gut health at the core.
+Nutrition guidance designed around your body, your lifestyle and your needs.
+Primary CTA: Start Your Assessment
+Secondary CTA: Explore Programs
+Design note: Keep the hero clean and confident. The final tagline will be inserted later once approved.
+Section 2 - Areas of Focus
+Heading: How Can We Support You?
+Gut Health
+IBS • IBD • SIBO • Gut Dysbiosis
+Weight & Metabolic Health
+Weight • Diabetes • Insulin Resistance
+Hormonal & Thyroid Health
+PCOS • PMS • Thyroid • Hashimoto's
+Autoimmune Nutrition
+Nutrition support alongside your medical care.
+Women's Health
+Preconception • Pregnancy • Women's Nutrition
+Different bodies. Different needs. Personalised nutrition.
+Section 3 - Who We Work With
+Heading: Personalised Nutrition Support for Ages 15-50
+Go Rebalance currently works with clients aged 15 to 50. Support may include teenage nutrition, digestive concerns,
+hormonal and thyroid health, metabolic health, women's nutrition and individual nutrition goals.
+Recommendations are adapted to the person's stage of life, health needs, food habits, lifestyle and goals.
+For clients under 18: A parent or legal guardian should be involved in the consultation and consent
+process.
+Developer note: Repeat the age eligibility discreetly on the assessment page and in the FAQs. Do not repeat it
+excessively across the website.
+Section 4 - Why Gut Health Is at the Core
+Heading: Why Gut Health Is at the Core
+
+
+Digestive health is closely connected with food tolerance, nutrient absorption and day-to-day wellbeing. That is why
+Go Rebalance considers gut health as part of the wider nutritional picture rather than looking at it in isolation.
+We don't look at the gut alone. We look at the person as a whole.
+Copy note: Keep this section short. It should explain the philosophy without implying that every health condition is
+caused by the gut.
+Section 5 - The Go Rebalance Approach
+Heading: Not Just a Diet Plan. A Plan Built Around You.
+01 - Understand
+We begin with your health history, symptoms, lifestyle, food habits and goals.
+02 - Assess
+We review relevant health reports and blood work to better understand your nutritional needs.
+03 - Personalise
+Your nutrition strategy is designed around you - with supplement guidance where appropriate.
+04 - Support & Rebalance
+Through regular follow-ups, we track progress, make adjustments and support you throughout your journey.
+Because personalised nutrition isn't just about creating a plan. It's about supporting you
+throughout the process.
+Section 6 - Programs
+Heading: Find the Right Support for You
+From a focused consultation to longer-term personalised nutrition support, choose the level of guidance that fits your
+needs.
+Nutrition Clarity Consultation
+One focused consultation to understand where you are, what your nutrition needs and what your next steps could
+look like.
+• Personalised nutrition assessment
+• Review of relevant health reports
+• Clear, practical next steps
+Button: Explore Consultation
+21-Day Gut Reset
+A guided 21-day experience to understand your gut, simplify your nutrition and begin building better digestive habits.
+• Gut-focused nutrition guidance
+• Personalised food & lifestyle strategies
+• Guided support for 21 days
+Button: Explore Gut Reset
+3-Month Rebalance Program - SIGNATURE PROGRAM
+A 12-week personalised nutrition journey where we assess, plan, follow up and adapt your strategy as you progress.
+• In-depth personalised assessment
+• 12 weekly consultations
+
+
+• Ongoing nutrition & WhatsApp support
+Your plan. Your progress. Your support.
+Button: Explore Rebalance
+6-Month Rebalance Program
+Longer-term personalised nutrition support for those who need more time, deeper guidance and continuity of care.
+• Long-term personalised strategy
+• Regular progress reviews & adjustments
+• Consistent professional support
+Button: Explore 6-Month Rebalance
+Program display rule: Do not show prices. Homepage cards should stay concise; detailed
+inclusions belong on program detail pages or expandable sections.
+Section 7 - Why Go Rebalance?
+Personalised, Not Prescribed
+Your plan starts with understanding you - your symptoms, health history, lifestyle, food habits and goals.
+Always Asking "Why?"
+When something isn't progressing as expected, we reassess, ask why and adjust the approach instead of simply
+repeating the same plan.
+Consistency Over Perfection
+Knowing what to do is only the beginning. We help you work through challenges and turn recommendations into
+habits you can realistically follow.
+Support That Evolves With You
+Your needs may change throughout the journey. Regular follow-ups help us understand your progress and adapt
+your nutrition strategy along the way.
+Founder-Led Guidance
+Go Rebalance is a personal practice. Clients receive guidance directly from Sai rather than being passed through a
+large coaching team.
+I can guide you, educate you and support you - but the real change happens when you put it into
+practice. My role is to help you keep moving forward.
+Section 8 - What You Can Expect From Go Rebalance
+Suggested section headline: No Quick Fixes. No False Promises.
+No One-Size-Fits-All Plans
+Your nutrition strategy is built around your individual needs rather than a standard diet chart.
+No Guaranteed Outcomes
+Every body and every health journey responds differently. Individual results can vary.
+No Unnecessary Supplements
+Supplement guidance is considered only where appropriate for the individual.
+No Replacing Medical Care
+Nutrition support is not a substitute for medical diagnosis or treatment and should work alongside appropriate
+healthcare when needed
+
+
+What we do promise is thoughtful assessment, personalised guidance, honest communication,
+regular reassessment and support throughout your journey.
+Section 9 - When Nutrition Isn't Enough
+Suggested heading: Knowing When to Look Beyond Nutrition
+If a concern requires medical investigation or falls outside the scope of nutrition care, Go Rebalance may recommend
+that the client consult the appropriate healthcare professional.
+This section should be small but visible. It reinforces professional boundaries and trust.
+Section 10 - Meet Sai
+Sai Sowjanya Nallimpalli
+Dietitian | Gut Health Specialist
+With a background in Biotechnology, advanced education in Nutrition & Dietetics, clinical training across
+multispecialty hospitals, and specialised education in gut health, my approach goes beyond standard diet charts.
+I created Go Rebalance to offer personalised nutrition guidance that helps you understand your body, support your
+gut and work towards better balance - one realistic step at a time.
+Button: Read My Story
+Developer note: Leave a clear place for a professional portrait of Sai.
+Section 11 - Education & Credentials
+Bachelor's in Biotechnology
+GITAM University, Visakhapatnam
+Certification in Food & Nutrition
+Bridge Course
+Master's in Dietetics & Food Service Management
+Clinical Nutrition Internship & Training
+Clinical learning and exposure across multiple multispecialty hospitals.
+Certificate of Advanced Education in Gut Health
+Institute for Integrative Nutrition (IIN)
+Section 12 - Frequently Asked Questions
+Who can join Go Rebalance?
+Go Rebalance currently provides personalised nutrition support for clients aged 15-50. For clients under 18, a parent
+or legal guardian should be involved in the consultation and consent process.
+Is Go Rebalance only for gut problems?
+No. Gut health is an important part of our approach, but Go Rebalance also provides personalised nutrition support
+for weight, metabolic health, hormonal and thyroid concerns, autoimmune health and women's nutrition.
+Which program is right for me?
+You don't have to decide on your own. We consider your goals, symptoms, health concerns and initial assessment to
+help determine the level of support that may suit you best.
+Do I need blood tests before starting?
+Relevant recent blood work can help us better understand your nutritional needs. If appropriate reports aren't
+available, additional tests may be suggested based on your health history and symptoms.
+
+
+Will my nutrition plan be personalised?
+Yes. Your nutrition strategy is created around your health needs, symptoms, food habits, lifestyle and goals - not a
+standard diet chart.
+Do you recommend supplements?
+When appropriate. Supplements may be recommended based on individual nutritional needs, relevant reports and
+identified deficiencies. They are not automatically included for everyone.
+How do online consultations work?
+Consultations are conducted one-to-one online through Google Meet at a pre-scheduled time. Ongoing program
+support and follow-ups are provided through scheduled consultations and WhatsApp, depending on your program.
+What happens after I submit the initial assessment?
+We review the information you've shared and schedule a discovery call. During the call, we'll understand your
+concerns and goals more clearly and discuss which Go Rebalance program may be appropriate for you. Once you
+choose to enrol, the detailed assessment process begins.
+Is WhatsApp support available?
+Yes. WhatsApp support is included in selected ongoing programs during designated working hours.
+What if my concern needs medical attention?
+If your concern requires medical investigation or falls outside the scope of nutrition care, you may be advised to
+consult the appropriate healthcare professional. Go Rebalance does not replace medical diagnosis or treatment.
+Section 13 - Final CTA
+Heading: Ready to Start Your Rebalance Journey?
+You don't need to know which program is right for you.
+Tell us a little about your health concerns and goals. We'll start by understanding where you are and guide you
+towards the next step.
+Button: Start Your Assessment
+Initial Assessment → Discovery Call → Personalised Program Recommendation
+4. Initial Assessment Form
+Purpose: This is a short pre-enrolment form. It is not the full clinical/medical intake form and should not request
+detailed blood reports or extensive medical records.
+Suggested fields:
+• Full Name
+• Age
+• If under 18: Parent / Guardian Name
+• Email
+• Phone / WhatsApp Number
+• Primary health concern
+• Main symptoms / concerns
+• Main health or nutrition goal
+• How long have you been experiencing these concerns?
+
+
+• Program interest: Not sure / Nutrition Clarity Consultation / 21-Day Gut Reset / 3-Month Rebalance / 6-Month
+Rebalance
+• Preferred way to contact
+• Consent checkbox
+• If under 18: Parent / Guardian consent acknowledgement
+Submit button: Submit Assessment
+Submission Message
+Thank You - We've Received Your Assessment.
+We'll review the information you've shared and get in touch to schedule your discovery call.
+This is where we'll understand your concerns and goals better and discuss the next step in your Go Rebalance
+journey.
+5. Client Journey & Service Flow
+Website visitor journey:
+Explore Go Rebalance → Complete Initial Assessment → Discovery Call → Recommend
+Appropriate Program → Discuss Program & Pricing Privately → Client Decides → Enrolment /
+Payment → Detailed Health Assessment & Relevant Reports → Nutrition Review → Personalised
+Nutrition Strategy → Program Begins → Follow-ups & Adjustments
+After enrolment/payment, the detailed assessment begins. Relevant health history, symptoms, food/lifestyle
+information and available blood reports are collected. If suitable recent reports are not available, relevant tests may
+be suggested where appropriate.
+The detailed review and personalised plan may take approximately 4-5 working days after all required assessment
+information and relevant reports have been received.
+Important: Do not imply that detailed blood-work analysis or a personalised plan is completed before the client
+enrols.
+6. About Page - My Story
+I didn't always know I would become a dietitian. Growing up, I dreamed of becoming a doctor, but life took me in a
+different direction - first into Biotechnology and eventually into the world of nutrition.
+Along the way, my own experiences with health changed the way I looked at food and wellbeing. They taught me
+something textbooks alone cannot: what it feels like to be on the other side - to want answers, to want to feel
+better, and to want someone who truly listens.
+That curiosity led me to pursue advanced studies in Food & Nutrition and Dietetics. My journey then moved beyond
+the classroom into clinical training, where I gained hands-on exposure across multispecialty hospitals and learned
+about supporting different nutritional needs, including recovery and post-surgical nutrition.
+The more I worked with people, the clearer one thing became: I didn't want nutrition care to be just another
+standard diet chart.
+I wanted to understand the person behind it - their body, symptoms, food habits, lifestyle and individual needs.
+My further education in gut health strengthened that belief. I learned how important balance within the gut can be and
+how personalised nutrition and appropriate guidance can support overall wellbeing.
+That idea became the heart of Go Rebalance.
+For me, Go Rebalance is more than a name. It is an invitation to understand your body, support your gut and take
+meaningful steps towards finding your balance again.
+
+
+Because your nutrition should be as individual as you are.
+7. Program Detail Content
+Nutrition Clarity Consultation
+Designed for someone who wants professional guidance on a specific nutrition concern without committing to a
+longer program.
+Includes:
+• Health, nutrition & lifestyle assessment
+• Review of relevant reports, where appropriate
+• One-to-one nutrition consultation
+• Personalised nutrition recommendations
+• Guidance on practical next steps
+• Supplement guidance, where appropriate
+Best suited for: Someone looking for professional nutrition guidance, a second look at their current approach, or
+clarity about their next steps.
+21-Day Gut Reset
+A focused starting point for people who want to better understand their digestive health and build supportive food and
+lifestyle habits.
+Includes:
+• Gut health & symptom assessment
+• Review of food and lifestyle patterns
+• Personalised gut-supportive nutrition guidance
+• Meal and food guidance
+• Lifestyle recommendations
+• Supplement guidance where appropriate
+• Progress review during the program
+• Support throughout the 21-day journey
+Copy note: Do not call this a detox or cleanse. Do not promise to heal or fully rebalance the gut in 21 days.
+3-Month Rebalance Program - Signature Program
+This is the heart of Go Rebalance. A structured 12-week personalised nutrition journey designed for people who need
+more than a one-time plan.
+Includes:
+• Comprehensive health & symptom assessment
+• Review of relevant blood work and health reports
+• Personalised nutrition strategy
+• Individualised meal guidance
+• Supplement guidance where appropriate
+• 12 weekly one-to-one consultations
+
+
+• Regular progress reviews
+• Nutrition plan adjustments as needed
+• WhatsApp support during working hours, Monday-Saturday
+Best suited for: People looking for structured ongoing support for gut health, weight/metabolic health, hormonal
+health or other nutrition-related goals.
+Your plan. Your progress. Your support.
+Because personalised nutrition isn't just about creating a plan. It's about supporting you throughout the process.
+6-Month Rebalance Program
+Longer-term personalised nutrition support for people who may benefit from more time, continuity and gradual
+adjustment.
+Includes:
+• Comprehensive health & symptom assessment
+• Review of relevant blood work and health reports
+• Personalised nutrition strategy
+• Individualised meal guidance
+• Supplement guidance where appropriate
+• Scheduled one-to-one follow-ups
+• Ongoing progress and symptom reviews
+• Nutrition plan adjustments
+• WhatsApp support during working hours, Monday-Saturday
+Important: Consultation frequency for this program has not yet been finalised. Do not invent a number of
+consultations.
+A longer journey, with support that evolves with you.
+8. Footer & Disclaimer
+Go Rebalance
+Personalised nutrition. Gut health at the core.
+Footer links: About | Programs | FAQs | Start Your Assessment | Contact | Privacy Policy | Terms & Conditions
+Contact placeholders: WhatsApp | Email | Instagram
+Professional Disclaimer:
+Go Rebalance provides nutrition and lifestyle guidance for educational and wellness purposes. Services are not a
+substitute for medical diagnosis, treatment or care from a qualified healthcare professional. Nutrition and supplement
+recommendations are personalised where appropriate, and individual results may vary. Clients with medical
+conditions should continue to work with their treating healthcare professionals.
+9. Important Medical & Copy Boundaries
+The website should not:
+• Claim to diagnose disease.
+• Claim to treat or cure medical conditions.
+• Guarantee symptom improvement or weight loss
+
+
+• Use "heal your gut" as a medical promise.
+• Claim to identify the "root cause" of disease.
+• Claim that all health problems are caused by the gut.
+• Describe food as a replacement for medical treatment.
+• Imply supplements are necessary for everyone.
+• Imply Go Rebalance replaces a doctor.
+• Invent credentials, awards, testimonials or client results.
+Preferred language: nutrition support; personalised nutrition; support digestive wellbeing; nutritional needs;
+alongside medical care; where appropriate; individual results may vary.
+Testimonials: There are currently no client results/testimonials to publish. Omit this section rather than creating
+placeholder or fabricated testimonials.
+10. Developer Notes & Launch Priorities
+• Build mobile-first and fully responsive.
+• Use clear semantic heading hierarchy and accessible form labels.
+• Use a sticky, simple navigation with Start Your Assessment as the primary CTA.
+• Use an FAQ accordion to reduce page length.
+• Make the 3-Month Rebalance Program visually identifiable as the Signature Program.
+• Program cards on the homepage should stay concise; detailed inclusions belong on program detail pages or
+expandable sections.
+• Do not show pricing anywhere at this stage.
+• Do not invent contact details. Use placeholders until final WhatsApp, email and Instagram details are supplied.
+• Do not add fake testimonials.
+• Keep the age range (15-50) visible but not repetitive.
+• For users under 18, include parent/guardian involvement and consent in the assessment flow.
+• Do not create a full Lab Work page yet unless testing becomes a defined service. For now, explain report review
+and blood work through the approach/program/FAQ content.
+• A Resources/Blog section can be added later as Phase 2 once regular educational content is available.
+• Create Privacy Policy, Terms & Conditions and a detailed Health Disclaimer before final launch.
+• The website should feel like a credible founder-led personalised nutrition practice, not an AI-generated template or
+aggressive sales funnel.
+• Prioritise clarity and trust over adding many sections simply to make the website look large
+

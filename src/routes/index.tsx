@@ -2,33 +2,50 @@ import * as React from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
-import { Hero } from "@/components/home/Hero";
-import { CredibilityMarquee } from "@/components/home/CredibilityMarquee";
-import { AssessmentCTA } from "@/components/home/AssessmentCTA";
-import { SymptomChecker } from "@/components/home/SymptomChecker";
-import { AboutPreview } from "@/components/home/AboutPreview";
-import { ProcessSteps } from "@/components/home/ProcessSteps";
-import { TreatmentsPreview } from "@/components/home/TreatmentsPreview";
-import { Testimonials } from "@/components/home/Testimonials";
-import { GalleryStrip } from "@/components/home/GalleryStrip";
-import { FaqSection } from "@/components/home/FaqSection";
-import { CurveDivider } from "@/components/shared/CurveDivider";
 import { Preloader } from "@/components/layout/Preloader";
+import { CurveDivider } from "@/components/shared/CurveDivider";
 
+import { BriefHero } from "@/components/home/BriefHero";
+import { AreasOfFocus } from "@/components/home/AreasOfFocus";
+import { WhoWeWorkWith } from "@/components/home/WhoWeWorkWith";
+import { GutHealthCore } from "@/components/home/GutHealthCore";
+import { ApproachSteps } from "@/components/home/ApproachSteps";
+import { ProgramsSection } from "@/components/home/ProgramsSection";
+import { WhyGoRebalance } from "@/components/home/WhyGoRebalance";
+import { WhatToExpect } from "@/components/home/WhatToExpect";
+import { MeetSai } from "@/components/home/MeetSai";
+import { BriefFaq } from "@/components/home/BriefFaq";
+import { FinalCta } from "@/components/home/FinalCta";
+
+/**
+ * The homepage, rebuilt to the practice's content brief.
+ *
+ * The order below is the brief's, not an arrangement of convenience, and the
+ * sequence is an argument: say what this is, let the reader find themselves in
+ * it, explain the thinking, show the process, show the options, say why this
+ * practice, then say plainly what it will NOT do — and only then introduce
+ * the person and ask for the form. Trust is built before anything is asked
+ * for.
+ *
+ * Four things that used to be on this page are deliberately gone, because the
+ * brief forbids every one of them: client testimonials, headline statistics
+ * ("500+ clients", "8+ years", "4.9 rating"), any claim about healing or root
+ * causes, and prices. None of them came from the practice.
+ */
 export const Route = createFileRoute("/")({
   head: () => ({
-    title: "GoRebalance | Clinical Nutrition & Gut Health Specialist",
+    title: "Go Rebalance | Personalised Nutrition. Gut Health at the Core.",
     meta: [
       {
         name: "description",
         content:
-          "Heal the gut. Rebalance the whole you. Personalised root-cause nutrition programs by Dt. N. Sai Sowjanya in Kakinada.",
+          "Personalised nutrition guidance designed around your body, your lifestyle and your needs, from dietitian Sai Sowjanya Nallimpalli.",
       },
-      { property: "og:title", content: "GoRebalance | Gut Health Specialist" },
+      { property: "og:title", content: "Go Rebalance | Personalised Nutrition" },
       {
         property: "og:description",
         content:
-          "Evidence-based clinical nutrition and gut health programs by Dt. N. Sai Sowjanya.",
+          "Personalised nutrition guidance designed around your body, your lifestyle and your needs.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -43,20 +60,20 @@ function Index() {
       <Preloader />
       <Header overHero={false} />
       <main>
-        <Hero />
-        <CredibilityMarquee />
-        <SymptomChecker />
-        <AboutPreview />
-        <CurveDivider fill="base" flip />
-        <ProcessSteps />
+        {/* 01 */} <BriefHero />
+        {/* 02 */} <AreasOfFocus />
+        {/* 03 */} <WhoWeWorkWith />
+        {/* 04 */} <GutHealthCore />
+        {/* 05 */} <ApproachSteps />
         <CurveDivider fill="alt" />
-        <TreatmentsPreview />
+        {/* 06 */} <ProgramsSection />
         <CurveDivider fill="base" flip />
-        <Testimonials />
-        <CurveDivider fill="alt" />
-        <GalleryStrip />
-        <AssessmentCTA />
-        <FaqSection />
+        {/* 07 */} <WhyGoRebalance />
+        {/* 08 + 09 */} <WhatToExpect />
+        <CurveDivider fill="base" flip />
+        {/* 10 + 11 */} <MeetSai />
+        {/* 12 */} <BriefFaq />
+        {/* 13 */} <FinalCta />
       </main>
       <Footer />
     </>

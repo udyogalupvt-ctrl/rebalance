@@ -14,12 +14,6 @@ import {
 } from "firebase/firestore";
 import { db } from "./firebase";
 import { iconNameOf } from "./icons";
-import {
-  treatments as staticTreatments,
-  testimonialsFull as staticTestimonials,
-  galleryFull as staticGallery,
-} from "../data/content";
-
 /**
  * A document as stored in a CMS collection. The index signature is `unknown`
  * rather than `any` so callers must narrow before use; the known fields stay
@@ -202,9 +196,16 @@ export function subscribeToCMS(
   onError: (err: FirestoreError) => void,
 ) {
   // Fire and forget seeding
-  if (collectionName === "treatments") ensureSeeded("treatments", staticTreatments);
-  if (collectionName === "testimonials") ensureSeeded("testimonials", staticTestimonials);
-  if (collectionName === "galleryItems") ensureSeeded("galleryItems", staticGallery);
+  /*
+   * No seeding any more.
+   *
+   * The three collections this seeded — treatments, testimonials and gallery
+   * items — no longer have managers or public pages. Testimonials in
+   * particular must not be seeded: the static array it used to copy into
+   * Firestore was fifteen invented client stories, and seeding them would put
+   * them back in the database the moment an admin page touched the
+   * collection.
+   */
 
   const q = query(collection(db, collectionName), orderBy("order", "asc"));
   return onSnapshot(

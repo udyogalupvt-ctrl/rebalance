@@ -2,10 +2,26 @@ import * as React from "react";
 import { Maximize2, X, ChevronLeft, ChevronRight } from "lucide-react";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { cn } from "@/lib/utils";
-import { type GalleryItem } from "@/data/content";
+
+/**
+ * What the lightbox needs to show one image.
+ *
+ * Declared here rather than imported from the gallery data. The public gallery
+ * is gone, but the admin console still opens this to inspect a payment
+ * screenshot, and that has nothing to do with a gallery item's category or
+ * orientation. Owning the minimum shape means the component no longer depends
+ * on content it does not use.
+ */
+export interface LightboxItem {
+  id: string;
+  src: string;
+  alt: string;
+  caption?: string;
+  category?: string;
+}
 
 interface LightboxProps {
-  items: GalleryItem[];
+  items: LightboxItem[];
   selectedIndex: number;
   isOpen: boolean;
   onClose: () => void;

@@ -2,7 +2,7 @@ import * as React from "react";
 
 import { useState, useMemo, useEffect } from "react";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
-import { Maximize2, Plus } from "lucide-react";
+import { Maximize2, Plus, Camera } from "lucide-react";
 import { fetchPublished } from "@/lib/cms-public";
 import { galleryFull as fallbackGallery } from "@/data/content";
 import { SectionWrapper } from "@/components/shared/SectionWrapper";
@@ -10,6 +10,7 @@ import { SectionHeading } from "@/components/shared/SectionHeading";
 import { Reveal } from "@/components/shared/Reveal";
 import { FilterBar } from "@/components/shared/FilterBar";
 import { Lightbox } from "@/components/shared/Lightbox";
+import { EmptyState } from "@/components/shared/EmptyState";
 import { cn } from "@/lib/utils";
 import type { GalleryItem } from "@/data/gallery";
 
@@ -103,25 +104,35 @@ export function MasonryGallery() {
           </motion.ul>
         </AnimatePresence>
 
-        <div className="mt-12 md:mt-10 flex flex-col items-center gap-3">
-          {itemsToShow < filteredItems.length ? (
-            <button
-              onClick={handleLoadMore}
-              className="h-[52px] px-8 rounded-full border-[1.5px] border-primary text-primary font-semibold text-[15px] inline-flex items-center gap-2 transition-all hover:bg-primary-soft hover:-translate-y-0.5"
-              aria-label="Load more images"
-            >
-              Load More
-              <Plus className="w-[17px] h-[17px]" />
-            </button>
-          ) : (
-            <p className="text-sm text-text-muted font-medium">
-              That's everything — {filteredItems.length} images.
+        {filteredItems.length === 0 ? (
+          <EmptyState
+            icon={Camera}
+            title="No photographs published yet."
+            body="The clinic's own photography is being gathered. Rather than fill this page with stock pictures captioned as though they were taken here, it stays empty until there is something real to show."
+            action={{ label: "Start your assessment", to: "/assessment" }}
+            className="mt-4"
+          />
+        ) : (
+          <div className="mt-12 md:mt-10 flex flex-col items-center gap-3">
+            {itemsToShow < filteredItems.length ? (
+              <button
+                onClick={handleLoadMore}
+                className="h-[52px] px-8 rounded-full border-[1.5px] border-primary text-primary font-semibold text-[15px] inline-flex items-center gap-2 transition-all hover:bg-primary-soft hover:-translate-y-0.5"
+                aria-label="Load more images"
+              >
+                Load More
+                <Plus className="w-[17px] h-[17px]" />
+              </button>
+            ) : (
+              <p className="text-sm text-text-muted font-medium">
+                That's everything — {filteredItems.length} images.
+              </p>
+            )}
+            <p className="text-[13px] text-text-muted">
+              Showing {Math.min(itemsToShow, filteredItems.length)} of {filteredItems.length}
             </p>
-          )}
-          <p className="text-[13px] text-text-muted">
-            Showing {Math.min(itemsToShow, filteredItems.length)} of {filteredItems.length}
-          </p>
-        </div>
+          </div>
+        )}
       </div>
 
       <Lightbox

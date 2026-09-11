@@ -169,6 +169,56 @@
   z-index: 0;
 }
 
+/* ==========================================================================
+   .orb -- the soft wash of brand light behind a section.
+
+   Every section had one of these, written as a solid circle with a huge
+   Gaussian blur: `bg-primary/4 rounded-full blur-[150px]` on a 620px box.
+   That looks right and costs a great deal. A 150px blur radius makes the
+   browser process an area far larger than the element on every paint, and a
+   scroll repaints it constantly -- eighteen of them were live across the site,
+   twenty-two filter layers on the home page alone, measured in the browser.
+
+   A radial-gradient produces the same wash with no filter pass at all: it is
+   painted straight into the layer like any other background. The stops below
+   were fitted to a Gaussian falloff, so the replacement is visually the same
+   glow, not an approximation that reads as a hard-edged disc.
+
+   Size and position stay in the markup, where they belong; intensity comes
+   from --orb-a, and the colour from the modifier.
+   ========================================================================== */
+.orb {
+  --orb-rgb: var(--primary-rgb);
+  --orb-a: 0.07;
+
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  background: radial-gradient(
+    circle at center,
+    rgba(var(--orb-rgb), var(--orb-a)) 0%,
+    rgba(var(--orb-rgb), calc(var(--orb-a) * 0.62)) 38%,
+    rgba(var(--orb-rgb), calc(var(--orb-a) * 0.22)) 62%,
+    transparent 80%
+  );
+}
+
+.orb--accent {
+  --orb-rgb: var(--accent-rgb);
+}
+
+/* Intensity ladder. The default suits a section wash; --faint is for the
+   large decorative orbs that only need to lift a flat fill, and --strong is
+   for the permanently dark bands (the footer, the open mobile menu) where the
+   ground is dark enough to swallow anything subtler. */
+.orb--faint {
+  --orb-a: 0.05;
+}
+
+.orb--strong {
+  --orb-a: 0.2;
+}
+
 .arc-glow {
   position: absolute;
   border-radius: 50%;

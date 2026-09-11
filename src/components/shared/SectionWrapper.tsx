@@ -53,6 +53,9 @@ export function SectionWrapper({
       className={cn(
         size === "sm" ? "section-y-sm" : "section-y",
         "relative overflow-hidden",
+        // Skips layout and paint entirely while the section is off screen.
+        // See .render-on-approach in styles.css.
+        "render-on-approach",
         bgClass,
         className,
       )}

@@ -48,8 +48,8 @@ export default function StepComplete() {
 
       <h1 className="af-complete-title">That's everything, {firstName}.</h1>
       <p className="af-complete-body">
-        Your assessment has been sent to Dt. Sai Sowjanya. She reviews every submission personally —
-        you'll hear back within 24 hours on working days to schedule your consultation.
+        Your assessment has been sent to Sai Sowjanya Nallimpalli. She reviews every submission
+        personally — you'll hear back within 24 hours on working days to schedule your consultation.
       </p>
 
       <div className="af-reference-panel">

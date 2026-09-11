@@ -23,14 +23,14 @@ export default function Terms() {
             {
               heading: "Accurate information",
               body: [
-                "The plan you receive is built from what you tell us. Please give accurate information about your medical history, medications and symptoms — an incomplete history can make a nutrition plan unsuitable for you.",
+                "The guidance you receive is built from what you tell us. Please give accurate information about your medical history, medications and symptoms — an incomplete history can make nutrition guidance unsuitable for you.",
                 "Tell the practice promptly if your medication or diagnosis changes during a program.",
               ],
             },
             {
               heading: "Payments",
               body: [
-                "The consultation fee is payable in advance and is confirmed by uploading a payment screenshot with your assessment.",
+                "The consultation fee is payable in advance and is confirmed by uploading a payment screenshot with your assessment. Program pricing beyond that is discussed with you privately.",
                 "If a payment cannot be matched to a record, the practice will contact you. Your assessment is not lost while that is resolved.",
               ],
             },

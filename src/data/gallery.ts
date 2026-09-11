@@ -233,7 +233,7 @@ export const galleryFull: GalleryItem[] = [
   // --- Community ------------------------------------------------------------
   {
     id: "comm-1",
-    src: U("photo-1783245255807-cdc7ccb20942"),
+    src: U("photo-1591586116988-62fe65164f8d"),
     alt: "Two women rolling dough and cooking flatbreads together on a griddle",
     caption: "Cooking together, learning together",
     category: "Community",

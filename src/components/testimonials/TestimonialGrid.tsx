@@ -3,6 +3,7 @@ import { useState, useMemo, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { fetchPublished } from "@/lib/cms-public";
 import { testimonialsFull as fallbackTestimonials } from "@/data/content";
+import type { Testimonial } from "@/types/content";
 import { Star, BadgeCheck, MapPin, ChevronDown, Quote } from "lucide-react";
 import { StoryMedia, hasStoryMedia } from "@/components/shared/StoryMedia";
 import * as Collapsible from "@radix-ui/react-collapsible";
@@ -10,6 +11,7 @@ import { SectionWrapper } from "@/components/shared/SectionWrapper";
 import { SectionHeading } from "@/components/shared/SectionHeading";
 import { FilterBar } from "@/components/shared/FilterBar";
 import { CurveDivider } from "@/components/shared/CurveDivider";
+import { EmptyState } from "@/components/shared/EmptyState";
 import { Reveal } from "@/components/shared/Reveal";
 import { cn } from "@/lib/utils";
 
@@ -30,24 +32,15 @@ const CATEGORIES = [
   "Weight Loss",
 ];
 
-interface Testimonial {
-  id: string;
-  name: string;
-  initials: string;
-  location: string;
-  condition: string;
-  category: string;
-  duration: string;
-  rating: number;
-  quote: string;
-  fullStory?: string;
-  before?: string[];
-  after?: string[];
-  featured?: boolean;
-  /** Attached in the admin panel — see StoryMedia. */
-  photoUrl?: string;
-  videoUrl?: string;
-}
+/*
+ * The shape comes from the shared type, not from a second copy here.
+ *
+ * This file declared its own Testimonial with every field required, which was
+ * true only while the data was a hand-written array. Stories now arrive from
+ * Firestore, where an admin may well save one with no location, no duration
+ * and no rating, so the shared type marks those optional and this file follows
+ * it rather than contradicting it.
+ */
 
 export function TestimonialGrid() {
   const [activeCategory, setActiveCategory] = useState("All");
@@ -103,34 +96,47 @@ export function TestimonialGrid() {
           counts={counts}
         />
 
-        <div
-          className="columns-1 sm:columns-2 lg:columns-3 gap-5 lg:gap-6 max-w-[560px] sm:max-w-none mx-auto"
-          aria-live="polite"
-        >
-          {shownItems.map((testimonial, index) => (
-            <div key={testimonial.id} className="break-inside-avoid mb-5 lg:mb-6">
-              <Reveal delay={(index % 3) * 0.1}>
-                <TestimonialCard testimonial={testimonial} />
-              </Reveal>
-            </div>
-          ))}
-        </div>
-
-        <div className="mt-12 flex flex-col items-center gap-4">
-          {visibleCount < filtered.length ? (
-            <button
-              onClick={handleLoadMore}
-              className="h-[52px] px-8 rounded-full border-[1.5px] border-primary text-primary font-semibold transition-all hover:bg-primary-strong hover:text-on-primary"
+        {filtered.length === 0 ? (
+          <EmptyState
+            icon={Quote}
+            title="No client stories published yet."
+            body="The practice is collecting consented stories from clients who have finished a program. Rather than fill this page with invented ones, we would rather leave it honest until there is something real to show."
+            action={{ label: "Start your assessment", to: "/assessment" }}
+          />
+        ) : (
+          <>
+            <div
+              className="columns-1 sm:columns-2 lg:columns-3 gap-5 lg:gap-6 max-w-[560px] sm:max-w-none mx-auto"
+              aria-live="polite"
             >
-              Load More Stories
-            </button>
-          ) : (
-            <p className="text-[14px] text-text-muted">That's all {filtered.length} stories.</p>
-          )}
-          <p className="text-[13px] text-text-muted">
-            Showing {shownItems.length} of {filtered.length}
-          </p>
-        </div>
+              {shownItems.map((testimonial, index) => (
+                <div key={testimonial.id} className="break-inside-avoid mb-5 lg:mb-6">
+                  <Reveal delay={(index % 3) * 0.1}>
+                    <TestimonialCard testimonial={testimonial} />
+                  </Reveal>
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-12 flex flex-col items-center gap-4">
+              {visibleCount < filtered.length ? (
+                <button
+                  onClick={handleLoadMore}
+                  className="h-[52px] px-8 rounded-full border-[1.5px] border-primary text-primary font-semibold transition-all hover:bg-primary-strong hover:text-on-primary"
+                >
+                  Load More Stories
+                </button>
+              ) : (
+                <p className="text-[14px] text-text-muted">
+                  That&apos;s all {filtered.length} stories.
+                </p>
+              )}
+              <p className="text-[13px] text-text-muted">
+                Showing {shownItems.length} of {filtered.length}
+              </p>
+            </div>
+          </>
+        )}
       </SectionWrapper>
     </>
   );
@@ -180,7 +186,7 @@ function TestimonialCard({ testimonial }: { testimonial: Testimonial }) {
               aria-hidden="true"
               className={cn(
                 "w-[15px] h-[15px]",
-                i < testimonial.rating ? "fill-accent text-accent" : "text-border",
+                i < (testimonial.rating ?? 0) ? "fill-accent text-accent" : "text-border",
               )}
             />
           ))}
@@ -250,7 +256,7 @@ function TestimonialCard({ testimonial }: { testimonial: Testimonial }) {
           <Collapsible.Trigger
             onClick={handleToggle}
             aria-label={`Read ${testimonial.name}'s full story`}
-            className="group/btn inline-flex items-center gap-[7px] text-[14px] font-semibold text-primary"
+            className="group/btn inline-flex min-h-[40px] items-center gap-[7px] py-1 text-[14px] font-semibold text-primary"
           >
             <span>{isOpen ? "Show less" : "Read the full story"}</span>
             <ChevronDown

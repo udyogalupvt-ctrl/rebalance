@@ -1,7 +1,15 @@
 import { Link } from "@tanstack/react-router";
 import React from "react";
 import { MessageCircle, Phone, Mail, MapPin, Globe, ArrowRight, Info } from "lucide-react";
-import { brand, locations, navLinks, treatments, socials, legalLinks } from "@/data/content";
+import {
+  brand,
+  locations,
+  navLinks,
+  programs,
+  socials,
+  legalLinks,
+  professionalDisclaimer,
+} from "@/data/content";
 import { Logo } from "@/components/ui/Logo";
 import { Reveal } from "@/components/shared/Reveal";
 import { CurveDivider } from "@/components/shared/CurveDivider";
@@ -77,7 +85,12 @@ export function Footer() {
   }, []);
 
   return (
-    <footer ref={ref} role="contentinfo" className="relative overflow-hidden isolate" id="contact">
+    <footer
+      ref={ref}
+      role="contentinfo"
+      className="render-on-approach relative overflow-hidden isolate"
+      id="contact"
+    >
       {!afterDarkBand && (
         <CurveDivider fill="custom" toDark className="text-[var(--dark-surface)]" />
       )}
@@ -86,9 +99,9 @@ export function Footer() {
         {/* Decorative Layers */}
         <div className="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
           {/* Primary Glow */}
-          <div className="absolute -bottom-1/4 -left-1/4 w-[700px] h-[700px] rounded-full bg-primary/14 dark:bg-primary/10 blur-[160px]" />
+          <div className="orb orb--strong absolute -bottom-1/4 -left-1/4 w-[700px] h-[700px]" />
           {/* Accent Glow */}
-          <div className="absolute -top-1/4 -right-1/4 w-[460px] h-[460px] rounded-full bg-accent/7 blur-[140px]" />
+          <div className="orb orb--accent absolute -top-1/4 -right-1/4 w-[460px] h-[460px]" />
           {/* Grain */}
           {/* Dot Grid */}
           <div className="absolute top-0 inset-x-0 h-[30%] opacity-3 [mask-image:linear-gradient(to_bottom,black,transparent)]">
@@ -125,12 +138,11 @@ export function Footer() {
                   <Logo tone="light" size={40} />
                 </Link>
                 <p className="mt-2.5 text-[12.5px] font-semibold uppercase tracking-[0.14em] text-on-dark-accent">
-                  Gut Health · Nutrition · Balance
+                  {brand.tagline}
                 </p>
                 <p className="mt-5 hidden max-w-[42ch] text-[14.5px] leading-[1.7] text-on-dark-muted sm:block">
-                  Root-cause nutrition and gut health care by Dt. N. Sai Sowjanya. We treat
-                  bloating, acidity, hormonal imbalance and low energy where they actually begin —
-                  so the results hold without the plan.
+                  Personalised nutrition guidance designed around your body, your lifestyle and your
+                  needs, from {brand.practitioner}, {brand.credential}.
                 </p>
 
                 {/* Only the accounts the practice has actually given us. */}
@@ -200,15 +212,18 @@ export function Footer() {
                 </h3>
                 <div className="w-6 h-0.5 bg-accent mb-3" />
                 <ul className="list-none p-0 m-0">
-                  {treatments.map((t) => (
-                    <li key={t.id}>
+                  {/* The four levels of support, not seven conditions. The
+                      old column deep-linked into a treatments page that no
+                      longer exists, and named conditions as things treated. */}
+                  {programs.map((program) => (
+                    <li key={program.id}>
                       <Link
-                        to="/treatments"
-                        search={{ program: t.slug }}
+                        to="/programs"
+                        hash={program.id}
                         className="group relative flex items-center min-h-[44px] w-fit py-0 text-[14px] sm:text-[14.5px] leading-[1.5] text-on-dark-muted transition-all duration-250 hover:text-accent-contrast hover:translate-x-1.25 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-[3px]"
                       >
                         <span className="absolute left-[-14px] top-1/2 -translate-y-1/2 w-2 h-[1.5px] bg-accent origin-left scale-x-0 transition-transform duration-250 group-hover:scale-x-100" />
-                        {t.shortTitle || t.title}
+                        {program.title}
                       </Link>
                     </li>
                   ))}
@@ -269,10 +284,41 @@ export function Footer() {
                           {loc.label}
                         </span>
                         <span className="text-[12.5px] text-on-dark-faint">{loc.note}</span>
+                        <a
+                          href={loc.mapDirectionsUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="mt-1 inline-flex min-h-[36px] items-center gap-1.5 text-[13px] font-semibold text-on-dark-accent transition-colors hover:text-on-dark"
+                        >
+                          Get directions
+                          <ArrowRight className="h-[13px] w-[13px]" aria-hidden="true" />
+                        </a>
                       </div>
                     ))}
                   </div>
                 </div>
+
+                {/*
+                  The map, on every page rather than only on Contact.
+                  
+                  A clinic that takes in-person consultations is judged partly
+                  on whether a visitor can tell it is a real place in a real
+                  town. The footer is on every page, so this is where it does
+                  the most work. `loading="lazy"` keeps the Google embed off
+                  the critical path — it is at the foot of the document and
+                  nobody is waiting for it.
+                */}
+                {locations[0] && (
+                  <figure className="m-0 mt-1 overflow-hidden rounded-[18px] border border-on-dark-border">
+                    <iframe
+                      src={locations[0].mapEmbedUrl}
+                      title={`Map of ${locations[0].label}`}
+                      loading="lazy"
+                      referrerPolicy="no-referrer-when-downgrade"
+                      className="block h-[160px] w-full max-w-[300px] border-0 grayscale-[0.25]"
+                    />
+                  </figure>
+                )}
 
                 {/* Online */}
                 <div className="flex gap-3 items-start">
@@ -309,11 +355,11 @@ export function Footer() {
                   className="w-4 h-4 text-on-dark-faint mt-0.5 flex-shrink-0"
                   aria-hidden="true"
                 />
+                {/* The brief's professional disclaimer, word for word. It is
+                    the practice's own wording and has been reviewed as such;
+                    paraphrasing it would put words in their mouth. */}
                 <p className="text-[12.5px] leading-[1.6] text-on-dark-faint max-w-[92ch]">
-                  Nutrition and lifestyle guidance provided by GoRebalance is intended to support,
-                  not replace, medical care. It is not a diagnosis or a prescription. Always consult
-                  your physician regarding medical conditions, medications and before making changes
-                  to prescribed treatment.
+                  {professionalDisclaimer}
                 </p>
               </div>
             </div>
@@ -329,7 +375,7 @@ export function Footer() {
               <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-5">
                 {/* Copyright (Bottom on mobile) */}
                 <div className="order-2 md:order-1 flex flex-col items-center md:items-start gap-1.5 text-[13px] text-on-dark-faint">
-                  <span>© {currentYear} GoRebalance. All rights reserved.</span>
+                  <span>© {currentYear} Go Rebalance. All rights reserved.</span>
                   <span>
                     Designed and developed by{" "}
                     <a

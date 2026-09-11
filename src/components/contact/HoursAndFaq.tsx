@@ -67,7 +67,7 @@ const HoursCard = () => {
   return (
     <div className="relative overflow-hidden bg-surface border border-border rounded-[24px] p-[26px_22px] md:p-[32px_30px]">
       <div
-        className="absolute top-0 right-0 w-[320px] h-[320px] bg-primary/6 blur-[100px] rounded-full translate-x-1/2 -translate-y-1/2 pointer-events-none"
+        className="orb absolute top-0 right-0 w-[320px] h-[320px] translate-x-1/2 -translate-y-1/2"
         aria-hidden="true"
       />
 

@@ -77,7 +77,7 @@ const STEPS = [
   {
     key: "review",
     title: "Under review",
-    body: "Dt. Sai Sowjanya reads your history and nutrition log in full.",
+    body: "Your assessment is read in full before anyone gets in touch.",
   },
   {
     key: "done",
@@ -202,7 +202,7 @@ export default function TrackPage({ initialRef = "" }: { initialRef?: string }) 
             body:
               next.status === "completed"
                 ? "The clinic has been in touch to book your consultation."
-                : "Dt. Sai Sowjanya is reviewing your assessment.",
+                : "Your assessment is being reviewed.",
             url: `/track?ref=${watching}`,
             tag: `status-${watching}`,
           });

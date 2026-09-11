@@ -7,18 +7,13 @@ interface LogoProps {
   /** Render the mark only, without the wordmark. */
   hideText?: boolean;
   /**
-   * Scale the whole lockup down on the narrowest phones.
+   * Let the lockup follow the per-device size ladder.
    *
-   * At 360px the header pill has to hold the mark, the wordmark, the theme
-   * toggle and the menu button. At full size the wordmark alone is about
-   * 180px wide, which leaves the two 44px controls fighting for what is left
-   * and pushes the menu button against the screen edge.
-   *
-   * The first attempt hid the wordmark below 400px. That was wrong: without
-   * it nothing on screen says what the practice is CALLED, and a mark alone
-   * only works for a brand people already recognise. So the lockup shrinks
-   * instead — mark and wordmark together, in proportion — and the name stays
-   * readable at every width. See .logo-lockup in styles.css.
+   * The header is the only place this is wanted: its row has to hold the
+   * mark, the wordmark, the theme toggle and the menu button. The ladder
+   * itself lives in .logo-lockup--responsive in styles.css, because the
+   * wordmark has to disappear below 360px and a media query is the only
+   * thing that can decide that on the very first painted frame.
    */
   shrinkOnNarrow?: boolean;
   /**
@@ -57,15 +52,6 @@ interface LogoProps {
 const WORDMARK_NUDGE = "0.094em";
 
 /**
- * How far the lockup shrinks below 400px, as a fraction of its full size.
- *
- * 0.70 rather than something gentler because the constraint is real: at 360px
- * the row has ~324px of usable width, the two controls take 96px of it, and
- * the lockup has to fit in what remains with air to spare.
- */
-const NARROW_SCALE = 0.7;
-
-/**
  * The GoRebalance brand lockup: the mark, with the wordmark set as live text.
  *
  * The supplied artwork is a *vertical* lockup — mark stacked above the
@@ -100,7 +86,6 @@ export function Logo({
       style={
         {
           "--logo-h": `${size}px`,
-          "--logo-h-narrow": `${Math.round(size * NARROW_SCALE)}px`,
           ...style,
         } as React.CSSProperties
       }

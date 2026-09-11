@@ -25,9 +25,6 @@ const BASE_ROUTES = [
   { path: "/admin/leads", name: "Leads", icon: UserPlus, badgeKey: "leads" },
   { path: "/admin/assessments", name: "Assessments", icon: ClipboardList, badgeKey: "assessments" },
   { path: "/admin/payments", name: "Payments", icon: Receipt },
-  { path: "/admin/treatments", name: "Treatments", icon: Stethoscope },
-  { path: "/admin/testimonials", name: "Testimonials", icon: Quote },
-  { path: "/admin/gallery", name: "Gallery", icon: Images },
   { path: "/admin/enquiries", name: "Enquiries", icon: Mail, badgeKey: "enquiries" },
 ];
 

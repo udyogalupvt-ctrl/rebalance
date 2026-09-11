@@ -27,7 +27,7 @@ export default function Treatments() {
           align="left"
           eyebrow="OUR PROGRAMS"
           title="Nutrition built around your *condition*."
-          subtitle="Seven focused programs, each addressing a different root cause — but all starting from the same place: your gut, your history and your daily life. Most clients begin with one and find the others resolve alongside it."
+          subtitle="Seven focused areas of nutrition support, all starting from the same place: your gut, your history and your daily life. Many people begin with one and find the others ease alongside it."
           breadcrumb={breadcrumb}
           image={{
             src: "https://images.unsplash.com/photo-1591586116988-62fe65164f8d?auto=format&fit=crop&q=75&w=1200",

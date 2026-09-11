@@ -55,8 +55,31 @@ export function AutoScroller({
   // sub-pixel per-frame delta is discarded and the rail never moves.
   const posRef = React.useRef(0);
 
+  /*
+   * Whether the rail is actually on screen.
+   *
+   * The animation loop used to run from mount until unmount, on every rail on
+   * the page, whether or not any of them were in view — and every frame it
+   * wrote scrollLeft, which is a layout write. On a page with three rails
+   * that is three forced layouts per frame being spent on content nobody can
+   * see. An observer costs nothing while the rail is away.
+   */
+  const [onScreen, setOnScreen] = React.useState(false);
   React.useEffect(() => {
-    if (reduce || paused || !autoScroll) return;
+    const el = scrollerRef.current;
+    if (!el || typeof IntersectionObserver === "undefined") {
+      setOnScreen(true);
+      return;
+    }
+    const io = new IntersectionObserver(([entry]) => setOnScreen(!!entry?.isIntersecting), {
+      rootMargin: "120px",
+    });
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
+  React.useEffect(() => {
+    if (reduce || paused || !autoScroll || !onScreen) return;
     const el = scrollerRef.current;
     if (!el) return;
 
@@ -80,8 +103,24 @@ export function AutoScroller({
     };
 
     raf = requestAnimationFrame(step);
-    return () => cancelAnimationFrame(raf);
-  }, [reduce, paused, speed, autoScroll]);
+
+    // A background tab still fires rAF in some browsers, and always resumes
+    // with a long first delta. Dropping the loop while hidden avoids both.
+    const onVisibility = () => {
+      if (document.hidden) {
+        cancelAnimationFrame(raf);
+      } else {
+        last = performance.now();
+        raf = requestAnimationFrame(step);
+      }
+    };
+    document.addEventListener("visibilitychange", onVisibility);
+
+    return () => {
+      cancelAnimationFrame(raf);
+      document.removeEventListener("visibilitychange", onVisibility);
+    };
+  }, [reduce, paused, speed, autoScroll, onScreen]);
 
   // Resume shortly after the user stops interacting, so a swipe doesn't
   // immediately fight the animation.

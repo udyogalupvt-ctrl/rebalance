@@ -11,7 +11,7 @@ export const ContactMethods = () => {
   return (
     <SectionWrapper id="contact-methods" bg="base" className="pb-contact relative overflow-hidden">
       <div
-        className="absolute top-0 right-0 w-[560px] h-[560px] bg-primary/4 blur-[150px] -z-10 pointer-events-none"
+        className="orb orb--faint absolute top-0 right-0 -z-10 w-[560px] h-[560px]"
         aria-hidden="true"
       />
 

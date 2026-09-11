@@ -10,6 +10,7 @@ import {
 import * as React from "react";
 import { useEffect, type ReactNode } from "react";
 import { WhatsAppButton, BackToTop } from "@/components/shared/FloatingElements";
+import { MobileAssessmentBar } from "@/components/shared/MobileAssessmentBar";
 import { SmoothScroll } from "@/components/shared/SmoothScroll";
 import { BookingProvider } from "@/context/BookingContext";
 import { Scripts } from "@tanstack/react-router";
@@ -78,14 +79,14 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "GoRebalance" },
-      { name: "description", content: "Clinical Nutrition & Gut Health Specialist" },
-      { name: "author", content: "GoRebalance" },
-      { property: "og:title", content: "GoRebalance | Clinical Nutrition & Gut Health" },
+      { title: "Go Rebalance" },
+      { name: "description", content: "Personalised nutrition. Gut health at the core." },
+      { name: "author", content: "Go Rebalance" },
+      { property: "og:title", content: "Go Rebalance | Personalised Nutrition" },
       {
         property: "og:description",
         content:
-          "Root-cause nutrition and gut health care by Dt. N. Sai Sowjanya. Kakinada, Andhra Pradesh.",
+          "Personalised nutrition guidance designed around your body, your lifestyle and your needs.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -170,6 +171,11 @@ function RootComponent() {
             <>
               <WhatsAppButton />
               <BackToTop />
+              {/* The site's primary action, kept reachable on a phone. The
+                  header's button is hidden below 640px, which left the most
+                  important thing on the site absent from the chrome on the
+                  devices most people use. */}
+              <MobileAssessmentBar />
             </>
           )}
         </BookingProvider>

@@ -183,7 +183,7 @@ export const ClinicLocationsFull = () => {
       <CurveDivider fill="base" flip />
       <SectionWrapper id="clinics" bg="base" labelledBy="clinics-heading">
         <div
-          className="absolute bottom-0 left-0 w-[580px] h-[580px] bg-primary/4 blur-[150px] rounded-full -translate-x-1/2 translate-y-1/2 pointer-events-none"
+          className="orb orb--faint absolute bottom-0 left-0 w-[580px] h-[580px] -translate-x-1/2 translate-y-1/2"
           aria-hidden="true"
         />
 

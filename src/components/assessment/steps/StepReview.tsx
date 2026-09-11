@@ -508,8 +508,8 @@ export default function StepReview() {
             style={{ width: 16, height: 16, color: "var(--primary)", marginTop: 2, flexShrink: 0 }}
           />
           <div style={{ fontSize: "13px", lineHeight: 1.6, color: "var(--text-muted)" }}>
-            Your assessment is confidential. It's read only by Dt. Sai Sowjanya's practice and used
-            solely to build your plan.
+            Your assessment is confidential. It's read only by the practice and used solely to build
+            your plan.
           </div>
         </div>
       </div>

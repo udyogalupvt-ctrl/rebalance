@@ -1,6 +1,6 @@
 import * as React from "react";
 import { useState, useEffect } from "react";
-import { motion, AnimatePresence, useScroll, useReducedMotion } from "framer-motion";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { Menu, X, Sun, Moon, ArrowRight } from "lucide-react";
 import { Logo } from "@/components/ui/Logo";
 import { useTheme } from "@/components/shared/ThemeProvider";
@@ -8,16 +8,27 @@ import { cn } from "@/lib/utils";
 import { Link, useRouterState } from "@tanstack/react-router";
 import { DUR, EASE_SETTLE } from "@/lib/motion";
 import { setScrollLocked } from "@/components/shared/SmoothScroll";
-import { useMediaQuery } from "@/hooks/use-media-query";
+import { useScrolledPast } from "@/hooks/use-scrolled-past";
 
+/**
+ * The header's own copy of the navigation.
+ *
+ * Seven entries is too many for the bar at every width, so the desktop row
+ * carries the five a visitor decides with and the rest live in the mobile
+ * panel and the footer, which is where a longer list belongs.
+ */
 const navLinks = [
   { name: "Home", href: "/" },
   { name: "About", href: "/about" },
+  { name: "Programs", href: "/programs" },
   { name: "Treatments", href: "/treatments" },
   { name: "Gallery", href: "/gallery" },
   { name: "Testimonials", href: "/testimonials" },
   { name: "Contact", href: "/contact" },
 ];
+
+/** The five the desktop bar shows. The mobile panel shows all of them. */
+const DESKTOP_NAV = new Set(["Home", "About", "Programs", "Treatments", "Contact"]);
 
 interface HeaderProps {
   /**
@@ -32,27 +43,18 @@ interface HeaderProps {
 }
 
 export function Header({ overHero = true }: HeaderProps = {}) {
-  const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { theme, setTheme } = useTheme();
-  const { scrollY } = useScroll();
   const reduce = useReducedMotion();
   const pathname = useRouterState({ select: (state) => state.location.pathname });
 
   /*
-   * The bar's padding has to come from JS, not from a Tailwind class.
-   *
-   * framer-motion writes the animated padding straight onto the style
-   * attribute, so `sm:px-…` can never win against it. At 360px the old 40px
-   * gutters left only 280px for a lockup and two 44px controls.
+   * Nothing runs on scroll here. See use-scrolled-past: a sentinel parked 60px
+   * down the document tells an IntersectionObserver when the bar should
+   * collapse into its pill, so crossing that line costs two callbacks for the
+   * whole visit rather than a layout read on every scrolled frame.
    */
-  const narrow = useMediaQuery("(max-width: 400px)");
-
-  useEffect(() => {
-    const unsub = scrollY.on("change", (latest) => setIsScrolled(latest > 60));
-    setIsScrolled(scrollY.get() > 60);
-    return unsub;
-  }, [scrollY]);
+  const isScrolled = useScrolledPast(60);
 
   // Lock the page behind the mobile menu.
   useEffect(() => {
@@ -89,90 +91,72 @@ export function Header({ overHero = true }: HeaderProps = {}) {
   // close button disappear into it.
   const onDark = isMenuOpen || (overHero && !isScrolled);
 
-  const spring = reduce
-    ? { duration: 0 }
-    : ({ type: "spring", stiffness: 260, damping: 30, mass: 0.9 } as const);
-
   return (
     <header className="fixed top-0 left-0 z-50 w-full pointer-events-none">
       {/* Scrim: keeps the nav legible over light hero imagery. Fades out once
           the pill has its own background. */}
-      <motion.div
+      <div
         aria-hidden="true"
+        data-visible={onDark ? "true" : "false"}
         className="header-scrim absolute inset-x-0 top-0 h-[168px] pointer-events-none"
-        animate={{ opacity: onDark ? 1 : 0 }}
-        transition={{ duration: reduce ? 0 : 0.35, ease: "easeOut" }}
       />
 
       <div className="relative flex justify-center">
-        <motion.div
-          animate={{
-            width: isScrolled ? "min(1180px, calc(100% - 32px))" : "100%",
-            paddingTop: isScrolled ? 12 : 26,
-            paddingBottom: isScrolled ? 12 : 26,
-            paddingLeft: isScrolled ? (narrow ? 14 : 22) : narrow ? 18 : 40,
-            paddingRight: isScrolled ? (narrow ? 14 : 22) : narrow ? 18 : 40,
-            marginTop: isScrolled ? 16 : 0,
-            borderRadius: isScrolled ? 999 : 0,
-          }}
-          transition={spring}
-          style={{ borderWidth: 1, borderStyle: "solid", maxWidth: "100%" }}
-          /*
-           * Geometry is animated by the spring above; COLOUR is animated by
-           * CSS below.
-           *
-           * They used to share the spring, with values like
-           * `rgba(var(--surface-rgb), 0)`. Motion cannot interpolate a colour
-           * expressed through a CSS variable — it logged
-           * "is not an animatable color" on every page load and simply
-           * snapped between the two states, so the bar's fill appeared
-           * instantly while its shape was still easing. A plain CSS
-           * transition handles var() fine, and runs off the main thread.
-           */
-          className={cn(
-            "pointer-events-auto flex items-center justify-between",
-            "[transition:background-color_var(--dur-3)_var(--ease-glide),border-color_var(--dur-3)_var(--ease-glide),box-shadow_var(--dur-3)_var(--ease-glide)]",
-            isScrolled && !isMenuOpen
-              ? "border-[var(--border)] bg-[rgba(var(--surface-rgb),0.72)] shadow-[0_8px_32px_rgba(var(--text-rgb),0.10),0_2px_8px_rgba(var(--text-rgb),0.05)] backdrop-blur-[20px]"
-              : "border-transparent bg-transparent shadow-none",
-          )}
+        {/*
+         * The pill's whole geometry lives in .header-bar in styles.css.
+         *
+         * It was a framer-motion spring over width, padding, margin and
+         * border-radius. Every one of those is a layout property, so each
+         * frame of the spring forced a re-layout on the main thread — and it
+         * was driven by React state that changes during a scroll, which is
+         * precisely when there is no budget for it. The same movement as a
+         * CSS transition costs no JavaScript at all, and the gutters can then
+         * track .container-x through media queries so the lockup lines up
+         * with the content below it.
+         */}
+        <div
+          data-scrolled={isScrolled ? "true" : "false"}
+          data-menu-open={isMenuOpen ? "true" : "false"}
+          className="header-bar pointer-events-auto flex items-center justify-between"
         >
           <Link to="/" aria-label="GoRebalance — home" className="shrink-0">
             <Logo tone={onDark ? "light" : "dark"} size={44} shrinkOnNarrow />
           </Link>
 
           {/* Desktop nav */}
-          <nav className="hidden lg:flex items-center gap-8">
-            {navLinks.map((link) => {
-              const active = isActive(link.href);
-              return (
-                <Link
-                  key={link.name}
-                  to={link.href}
-                  aria-current={active ? "page" : undefined}
-                  className={cn(
-                    "relative group font-jakarta text-[15px] transition-colors py-2",
-                    active ? "font-semibold" : "font-medium",
-                    onDark
-                      ? active
-                        ? "text-on-dark"
-                        : "text-on-dark-muted hover:text-on-dark"
-                      : active
-                        ? "text-primary-contrast"
-                        : "text-text-muted hover:text-text",
-                  )}
-                >
-                  {link.name}
-                  <span
+          <nav className="hidden lg:flex items-center gap-5 xl:gap-8">
+            {navLinks
+              .filter((link) => DESKTOP_NAV.has(link.name))
+              .map((link) => {
+                const active = isActive(link.href);
+                return (
+                  <Link
+                    key={link.name}
+                    to={link.href}
+                    aria-current={active ? "page" : undefined}
                     className={cn(
-                      "absolute -bottom-0.5 left-0 h-[2px] rounded-full transition-all duration-300",
-                      active ? "w-full" : "w-0 group-hover:w-full",
-                      onDark ? "bg-on-dark-accent" : "bg-accent",
+                      "relative group whitespace-nowrap font-jakarta text-[14.5px] transition-colors py-2 xl:text-[15px]",
+                      active ? "font-semibold" : "font-medium",
+                      onDark
+                        ? active
+                          ? "text-on-dark"
+                          : "text-on-dark-muted hover:text-on-dark"
+                        : active
+                          ? "text-primary-contrast"
+                          : "text-text-muted hover:text-text",
                     )}
-                  />
-                </Link>
-              );
-            })}
+                  >
+                    {link.name}
+                    <span
+                      className={cn(
+                        "absolute -bottom-0.5 left-0 h-[2px] rounded-full transition-all duration-300",
+                        active ? "w-full" : "w-0 group-hover:w-full",
+                        onDark ? "bg-on-dark-accent" : "bg-accent",
+                      )}
+                    />
+                  </Link>
+                );
+              })}
           </nav>
 
           <div className="flex items-center gap-2 sm:gap-3">
@@ -212,9 +196,9 @@ export function Header({ overHero = true }: HeaderProps = {}) {
 
             <Link
               to="/assessment"
-              className="hidden sm:inline-flex items-center gap-2 h-11 px-6 bg-accent-strong text-on-accent rounded-pill font-jakarta text-[14px] font-semibold press group"
+              className="hidden sm:inline-flex shrink-0 items-center gap-2 h-11 whitespace-nowrap rounded-pill bg-accent-strong px-5 font-jakarta text-[14px] font-semibold text-on-accent press group xl:px-6"
             >
-              Start My Assessment
+              Start Your Assessment
               <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
             </Link>
 
@@ -234,7 +218,7 @@ export function Header({ overHero = true }: HeaderProps = {}) {
               )}
             </button>
           </div>
-        </motion.div>
+        </div>
       </div>
 
       {/* Mobile menu.
@@ -257,8 +241,8 @@ export function Header({ overHero = true }: HeaderProps = {}) {
               className="pointer-events-none absolute inset-0 overflow-hidden"
               aria-hidden="true"
             >
-              <div className="absolute -left-1/3 -top-1/4 h-[560px] w-[560px] rounded-full bg-primary/20 blur-[120px]" />
-              <div className="absolute -right-1/4 top-1/3 h-[420px] w-[420px] rounded-full bg-accent/12 blur-[110px]" />
+              <div className="orb orb--strong absolute -left-1/3 -top-1/4 h-[560px] w-[560px]" />
+              <div className="orb orb--accent absolute -right-1/4 top-1/3 h-[420px] w-[420px]" />
               {/* The mark itself, held large and faint at the foot of the
                   panel. It is the brand, so it earns the space. */}
               <img
@@ -337,7 +321,7 @@ export function Header({ overHero = true }: HeaderProps = {}) {
                 onClick={() => setIsMenuOpen(false)}
                 className="press flex h-14 w-full items-center justify-center gap-2 rounded-pill bg-accent-strong font-jakarta text-[16px] font-semibold text-on-accent"
               >
-                Start My Assessment
+                Start Your Assessment
                 <ArrowRight className="h-4 w-4" />
               </Link>
 

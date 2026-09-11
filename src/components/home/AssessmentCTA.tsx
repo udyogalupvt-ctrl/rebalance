@@ -128,7 +128,7 @@ export function AssessmentCTA({ title, subtitle, className }: AssessmentCTAProps
         <Reveal delay={0.15}>
           <p className="fs-sub mx-auto mb-9 max-w-[640px] text-on-dark-muted">
             {subtitle ||
-              "Take the GoRebalance assessment — a guided form covering your symptoms, medical history, lifestyle and food habits. Dt. Sai Sowjanya reviews every submission personally and responds within 24 hours."}
+              "Take the Go Rebalance assessment — a guided form covering your symptoms, history, lifestyle and food habits. Every submission is reviewed personally before you are contacted."}
           </p>
         </Reveal>
 

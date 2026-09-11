@@ -45,11 +45,18 @@ import {
   MapPin as Pin,
 } from "lucide-react";
 
+import type { Testimonial } from "@/types/content";
+
 export const brand = {
-  name: "GoRebalance",
-  tagline: "Gut Health · Nutrition · Balance",
-  practitioner: "Dt. N. Sai Sowjanya",
-  credential: "Clinical Nutritionist & Gut Health Specialist",
+  name: "Go Rebalance",
+  /*
+   * The positioning line, NOT a tagline. The brief says the tagline is under
+   * review and the design must not be locked around one, so this is the line
+   * the practice is sure of and it lives in exactly one place.
+   */
+  tagline: "Personalised nutrition. Gut health at the core.",
+  practitioner: "Sai Sowjanya Nallimpalli",
+  credential: "Dietitian | Gut Health Specialist",
   phone: "+91 93904 14536",
   phoneRaw: "919390414536",
   email: "hello@gorebalance.in",
@@ -74,122 +81,119 @@ export const locations = [
   },
 ];
 
-export const credibilityItems = [
-  { icon: ShieldCheck, label: "Certified Clinical Nutritionist" },
-  { icon: Microscope, label: "Root-Cause Gut Protocols" },
-  { icon: Salad, label: "Personalised Indian Meal Plans" },
-  { icon: HeartPulse, label: "PCOS & Hormonal Support" },
-  { icon: Activity, label: "IBS · Bloating · Acidity" },
-  { icon: Video, label: "Online Consultations Pan-India" },
-  { icon: MapPin, label: "Kakinada Clinic" },
+/**
+ * Social profiles.
+ *
+ * An empty `href` means "the practice has not given us this account yet", and
+ * the footer SKIPS those rather than rendering an icon that goes nowhere.
+ * They were previously all `href="#"`, so three of the four buttons in the
+ * footer looked live, invited a click, and did nothing.
+ *
+ * TO ENABLE: paste the profile URL in place of the empty string.
+ */
+export const socials = [
+  { label: "Instagram", href: "", icon: "Instagram" },
+  { label: "Facebook", href: "", icon: "Facebook" },
+  { label: "Youtube", href: "", icon: "Youtube" },
+  { label: "WhatsApp", href: brand.whatsapp, icon: "MessageCircle" },
 ];
 
-export const symptoms = [
-  {
-    id: "wind",
-    icon: Wind,
-    label: "Bloating & Heaviness",
-    detail: "Your stomach feels tight or swollen an hour after eating.",
-  },
-  {
-    id: "flame",
-    icon: Flame,
-    label: "Acidity & Reflux",
-    detail: "Burning, sour burps, or reaching for antacids too often.",
-  },
-  {
-    id: "timer",
-    icon: Timer,
-    label: "Irregular Bowels",
-    detail: "Constipation, urgency, or never feeling fully emptied.",
-  },
-  {
-    id: "batteryLow",
-    icon: BatteryLow,
-    label: "Fatigue & Brain Fog",
-    detail: "Tired after 8 hours of sleep, foggy by afternoon.",
-  },
-  {
-    id: "scale",
-    icon: Scale,
-    label: "Weight That Won't Move",
-    detail: "Eating less, exercising more, and nothing changes.",
-  },
-  {
-    id: "sparkles",
-    icon: Sparkles,
-    label: "Acne, Hair Fall & Dull Skin",
-    detail: "Skin and hair reacting to what's happening inside.",
-  },
-  {
-    id: "calendarHeart",
-    icon: CalendarHeart,
-    label: "Irregular Cycles & PCOS",
-    detail: "Delayed periods, cramps, mood swings, unwanted hair.",
-  },
-  {
-    id: "candy",
-    icon: Candy,
-    label: "Cravings & Energy Crashes",
-    detail: "Sugar hits at 4 PM and after every meal.",
-  },
+export const legalLinks = [
+  { label: "Privacy Policy", href: "/privacy" },
+  { label: "Terms of Service", href: "/terms" },
+  { label: "Disclaimer", href: "/disclaimer" },
 ];
 
-export const processSteps = [
+/**
+ * The site's navigation.
+ *
+ * Programs and FAQs come from the content brief; Treatments, Gallery and
+ * Testimonials were already here and the brief never asked for them to go, so
+ * they stay. FAQs is an anchor rather than a page, because the brief puts the
+ * questions on the homepage in an accordion and inventing a page to justify a
+ * nav entry would be the wrong way round.
+ */
+export const navLinks = [
+  { label: "Home", href: "/" },
+  { label: "About", href: "/about" },
+  { label: "Programs", href: "/programs" },
+  { label: "Treatments", href: "/treatments" },
+  { label: "Gallery", href: "/gallery" },
+  { label: "Testimonials", href: "/testimonials" },
+  { label: "Contact", href: "/contact" },
+];
+
+export const clinics = [
   {
-    number: "01",
-    icon: ClipboardList,
-    title: "Share Your Story",
-    description:
-      "A detailed assessment captures your symptoms, medical history, medications, food habits, sleep, stress and cycle. Nothing gets skipped, because nothing is irrelevant.",
-    meta: "10 minutes · Online form",
-  },
-  {
-    number: "02",
-    icon: Search,
-    title: "Root-Cause Analysis",
-    description:
-      "I map your symptoms against what's actually happening in your gut, hormones and daily routine — then find the pattern connecting them.",
-    meta: "Reviewed personally",
-  },
-  {
-    number: "03",
-    icon: NotebookPen,
-    title: "Your Personalised Plan",
-    description:
-      "A realistic, food-first protocol built around your kitchen: meals, portions, timing, and supplements only where they're genuinely needed.",
-    meta: "Built around Indian food",
-  },
-  {
-    number: "04",
-    icon: TrendingUp,
-    title: "Guided Rebalancing",
-    description:
-      "Regular check-ins, honest course-corrections and accountability — until the results hold on their own, without the plan.",
-    meta: "Ongoing support",
+    id: "kakinada",
+    city: "Kakinada",
+    state: "ANDHRA PRADESH",
+    // NOTE FOR CLIENT: exact street address to be supplied by the client.
+    address: "Consultation Clinic — Kakinada, Andhra Pradesh",
+    hours: brand.hours,
+    // NOTE FOR CLIENT: replace with the exact Google Maps pin for the clinic.
+    mapsUrl: "https://www.google.com/maps/search/?api=1&query=Kakinada%2C%20Andhra%20Pradesh",
+    image: {
+      src: "https://images.unsplash.com/photo-1556909114-44e3e70034e2?auto=format&fit=crop&q=80&w=1400",
+      alt: "Seasoning a pot of vegetables on the stove in a home kitchen",
+    },
   },
 ];
 
-export const practitioner = {
-  name: "Dt. N. Sai Sowjanya",
-  role: "Clinical Nutritionist & Gut Health Specialist",
-  /* The real photograph, not a stock portrait of someone else. */
-  image: "/founder.jpg",
-  bio: [
-    "I'm Dt. N. Sai Sowjanya, a clinical nutritionist specialising in gut health, digestive disorders and hormonal balance. I consult from my clinic in Kakinada, Andhra Pradesh — and online with clients across India.",
-    "My approach is simple: symptoms are messages, not problems to be silenced. Before I build a single meal plan, I want to understand your digestion, your sleep, your stress, your cycle and what your day actually looks like. That's where the real answers live.",
-    "Every plan I create is built around real Indian food — your kitchen, your family's meals, your schedule and your budget. No exotic ingredients, no crash diets, no protocols you'll abandon in three weeks.",
-  ],
-  quote:
-    "Nutrition isn't about restriction. It's about giving your body the right environment to heal itself.",
-};
-
-export const stats = [
-  { value: "500+", label: "Clients Rebalanced" },
-  { value: "8+", label: "Years of Practice" },
-  { value: "15+", label: "Conditions Treated" },
-  { value: "4.9", label: "Client Rating", hasStar: true },
+export const contactMethods = [
+  {
+    id: "whatsapp",
+    type: "WhatsApp",
+    label: "FASTEST",
+    value: "+91 93904 14536",
+    subLine:
+      "Message the clinic directly. Typically answered within a few hours during working days.",
+    action: "Open WhatsApp",
+    href: brand.whatsapp,
+    color: "var(--whatsapp)",
+    icon: MessageCircle,
+  },
+  {
+    id: "phone",
+    type: "Phone",
+    label: "CALL",
+    value: "+91 93904 14536",
+    subLine:
+      "Mon – Sat, 10:00 AM – 7:00 PM. If we're mid-consultation, leave a message and we'll return the call.",
+    action: "Call now",
+    href: `tel:${brand.phoneRaw}`,
+    color: "var(--primary)",
+    icon: Phone,
+  },
+  {
+    id: "email",
+    type: "Email",
+    label: "EMAIL",
+    value: brand.email,
+    subLine:
+      "Best for detailed questions, existing reports or anything you'd rather write out at length.",
+    action: "Send an email",
+    href: `mailto:${brand.email}`,
+    color: "var(--accent)",
+    icon: FileText,
+  },
 ];
+
+/* ==========================================================================
+   THE CONDITION-LED CONTENT
+
+   Restored. These power the treatments, testimonials, gallery and about
+   pages, which the brief does not mention and therefore does not remove.
+
+   Two things ARE changed, because the brief's copy boundaries are explicit
+   and they override the wording rather than the existence of this content:
+
+     - No "root cause", no "treat" or "cure", no promise that a symptom will
+       improve. These are areas the practice SUPPORTS.
+     - No invented client results. The testimonials array is empty until the
+       practice publishes real, consented stories through the admin panel;
+       the pages show an honest empty state until then.
+   ========================================================================== */
 
 export const faqs = [
   {
@@ -220,7 +224,7 @@ export const faqs = [
     id: "what-happens",
     question: "What happens after I submit the assessment?",
     answer:
-      "Dt. Sai Sowjanya reviews your submission personally — your symptoms, history, medications, lifestyle and nutrition log. You'll be contacted within 24 hours to schedule your consultation, where we go through what's actually driving your symptoms and what your plan will look like.",
+      "Sai Sowjanya Nallimpalli reviews your submission personally — your symptoms, history, medications, lifestyle and nutrition log. You'll be contacted within 24 hours to schedule your consultation, where we talk through your concerns and what your program would involve.",
   },
   {
     id: "privacy",
@@ -456,237 +460,24 @@ export const treatments = [
   },
 ];
 
-/**
- * Social profiles.
- *
- * An empty `href` means "the practice has not given us this account yet", and
- * the footer SKIPS those rather than rendering an icon that goes nowhere.
- * They were previously all `href="#"`, so three of the four buttons in the
- * footer looked live, invited a click, and did nothing.
- *
- * TO ENABLE: paste the profile URL in place of the empty string.
- */
-export const socials = [
-  { label: "Instagram", href: "", icon: "Instagram" },
-  { label: "Facebook", href: "", icon: "Facebook" },
-  { label: "Youtube", href: "", icon: "Youtube" },
-  { label: "WhatsApp", href: brand.whatsapp, icon: "MessageCircle" },
+export const testimonials: Testimonial[] = [
+  /*
+   * EMPTY, deliberately.
+   *
+   * This held fifteen invented client stories — names, quotes, before-and-after
+   * lists and star ratings for people who do not exist. The practice's brief
+   * says in as many words that there are no client results to publish yet and
+   * that placeholders must not be created to fill the gap.
+   *
+   * So the array stays and the data comes from Firestore. The moment the
+   * practice adds a real, consented story through the admin panel it appears
+   * on the site; until then every surface that reads this shows an empty state
+   * that says so plainly.
+   */
 ];
 
-export const legalLinks = [
-  { label: "Privacy Policy", href: "/privacy" },
-  { label: "Terms of Service", href: "/terms" },
-  { label: "Disclaimer", href: "/disclaimer" },
-];
-export const testimonials = [
-  {
-    id: "sravani-r",
-    quote:
-      "I'd stopped eating out entirely because every meal ended with me unbuttoning my jeans and lying down. Six weeks into the plan, the bloating was just… gone. I ate at a wedding last month and felt completely normal afterwards.",
-    name: "Sravani R.",
-    initials: "SR",
-    location: "Kakinada, Andhra Pradesh",
-    condition: "Bloating & IBS",
-    category: "Gut & Digestion",
-    duration: "4 months",
-    rating: 5,
-    fullStory:
-      "It was debilitating. I'd avoid social gatherings because I knew I'd be in pain by the end of the night. After the assessment, we didn't just 'remove foods', we rebalanced the timing and portions. It felt manageable from day one.",
-    before: ["Chronic bloating", "IBS-D"],
-    after: ["Normal digestion", "Stable meals"],
-    featured: true,
-  },
-  {
-    id: "harika-m",
-    quote:
-      "My cycles had been irregular for almost three years and I was told to just take the pill. Dt. Sowjanya actually asked about my sleep, my stress and my food timing. By month four my periods came on their own, and they've been regular since.",
-    name: "Harika M.",
-    initials: "HM",
-    location: "Kakinada, Andhra Pradesh",
-    condition: "PCOS",
-    category: "PCOS & PCOD",
-    duration: "6 months",
-    rating: 5,
-    before: ["Irregular cycles", "Hormonal acne"],
-    after: ["Regular cycle", "Clear skin"],
-  },
-  {
-    id: "praveen-k",
-    quote:
-      "I'd been on antacids nearly every night for four years. She rebuilt my meal timing before touching anything else. I haven't opened that medicine drawer in five months and my sleep improved on its own.",
-    name: "Praveen K.",
-    initials: "PK",
-    location: "Kakinada, Andhra Pradesh",
-    condition: "Acid Reflux",
-    category: "Gut & Digestion",
-    duration: "5 months",
-    rating: 5,
-    before: ["Daily antacids", "Poor sleep"],
-    after: ["No reflux", "Deep sleep"],
-    featured: true,
-  },
-  {
-    id: "deepthi-v",
-    quote:
-      "Eleven kilos down, but honestly the bigger change is that I'm not exhausted at 4 PM anymore. Nothing in the plan was exotic — it was my mother's cooking, just organised properly.",
-    name: "Deepthi V.",
-    initials: "DV",
-    location: "Kakinada, Andhra Pradesh",
-    condition: "Weight Management",
-    category: "Weight Loss",
-    duration: "5 months",
-    rating: 5,
-    before: ["Constant fatigue", "Weight plateau"],
-    after: ["Stable energy", "Weight loss"],
-    featured: true,
-  },
-  {
-    id: "anusha-t",
-    quote:
-      "I came for hair fall and ended up fixing my digestion, which I didn't even know was the problem. My skin cleared up as a side effect. Nobody had connected those things for me before.",
-    name: "Anusha T.",
-    initials: "AT",
-    location: "Kakinada, Andhra Pradesh",
-    condition: "Hair Fall & Gut Health",
-    category: "Gut & Digestion",
-    duration: "3 months",
-    rating: 5,
-  },
-  {
-    id: "v1",
-    quote: "PCOS symptoms gone.",
-    name: "A.",
-    initials: "A",
-    location: "Online consultation",
-    condition: "PCOS",
-    category: "PCOS & PCOD",
-    duration: "3m",
-    rating: 5,
-  },
-  {
-    id: "v2",
-    quote: "Weight is finally moving.",
-    name: "B.",
-    initials: "B",
-    location: "Kakinada",
-    condition: "Weight",
-    category: "Weight Loss",
-    duration: "4m",
-    rating: 5,
-  },
-  {
-    id: "v3",
-    quote: "Thyroid levels stable.",
-    name: "C.",
-    initials: "C",
-    location: "Online consultation",
-    condition: "Thyroid",
-    category: "Diabetes & Metabolic",
-    duration: "6m",
-    rating: 5,
-  },
-  {
-    id: "v4",
-    quote: "Bloating decreased.",
-    name: "D.",
-    initials: "D",
-    location: "Online consultation",
-    condition: "Gut",
-    category: "Gut & Digestion",
-    duration: "2m",
-    rating: 5,
-  },
-  {
-    id: "v5",
-    quote: "Energy is back.",
-    name: "E.",
-    initials: "E",
-    location: "Kakinada",
-    condition: "Metabolic",
-    category: "Diabetes & Metabolic",
-    duration: "5m",
-    rating: 5,
-  },
-  {
-    id: "v6",
-    quote: "Cravings vanished.",
-    name: "F.",
-    initials: "F",
-    location: "Online consultation",
-    condition: "PCOS",
-    category: "PCOS & PCOD",
-    duration: "4m",
-    rating: 5,
-  },
-  {
-    id: "v7",
-    quote: "Skin is glowing.",
-    name: "G.",
-    initials: "G",
-    location: "Kakinada",
-    condition: "Weight",
-    category: "Weight Loss",
-    duration: "3m",
-    rating: 5,
-  },
-  {
-    id: "v8",
-    quote: "Digestion is perfect.",
-    name: "H.",
-    initials: "H",
-    location: "Online consultation",
-    condition: "Gut",
-    category: "Gut & Digestion",
-    duration: "2m",
-    rating: 5,
-  },
-  {
-    id: "v9",
-    quote: "Hormones balanced.",
-    name: "I.",
-    initials: "I",
-    location: "Online consultation",
-    condition: "PCOS",
-    category: "PCOS & PCOD",
-    duration: "4m",
-    rating: 5,
-  },
-  {
-    id: "v10",
-    quote: "Felt so supported.",
-    name: "J.",
-    initials: "J",
-    location: "Kakinada",
-    condition: "Gut",
-    category: "Gut & Digestion",
-    duration: "3m",
-    rating: 5,
-  },
-];
-
-export const testimonialsFull = testimonials;
+export const testimonialsFull: Testimonial[] = testimonials;
 export * from "./gallery";
-/**
- * The footer's Explore column.
- *
- * These were anchor links — "#about", "#treatments" — pointing at section ids
- * on the home page. That made every one of them dead on the seven pages that
- * do not contain those sections: from /privacy, /terms, /disclaimer or
- * /track, clicking "About" in the footer did nothing at all. On the home page
- * they merely scrolled, which also disagreed with the header nav going to the
- * real page.
- *
- * They are routes now, and the footer renders them with <Link>, so they work
- * from anywhere and navigate client-side.
- */
-export const navLinks = [
-  { label: "Home", href: "/" },
-  { label: "About", href: "/about" },
-  { label: "Treatments", href: "/treatments" },
-  { label: "Gallery", href: "/gallery" },
-  { label: "Testimonials", href: "/testimonials" },
-  { label: "Contact", href: "/contact" },
-];
 
 // === ABOUT PAGE — PRACTITIONER STORY ===
 export const practitionerStory = {
@@ -694,19 +485,19 @@ export const practitionerStory = {
     // Was a stock photograph of a stranger, captioned with the practitioner's
     // name — a false attribution on the page that introduces her.
     src: "/founder.jpg",
-    alt: "Dt. N. Sai Sowjanya at her desk in the GoRebalance clinic, Kakinada",
-    caption: "Dt. N. Sai Sowjanya at the Kakinada clinic",
+    alt: "Sai Sowjanya Nallimpalli at her desk in the GoRebalance clinic, Kakinada",
+    caption: "Sai Sowjanya Nallimpalli at the Kakinada clinic",
   },
   intro:
     "Most people arrive at a nutritionist with a list of symptoms and a folder of reports that say nothing is wrong. Bloating that has lasted years. Cycles that never settled. Fatigue that sleep doesn't fix. They have usually been told, kindly and repeatedly, that this is normal. It rarely is.",
   paragraphs: [
-    "Dt. N. Sai Sowjanya trained as a clinical nutritionist and spent her early practice doing what the field taught — calculating requirements, writing plans, adjusting macros. The plans worked, for a while. Then clients would return with the same complaints in a different order, and the honest conclusion was that something upstream had never been addressed.",
+    "Sai Sowjanya Nallimpalli trained as a dietitian and spent her early practice doing what the field taught — calculating requirements, writing plans, adjusting macros. The plans worked, for a while. Then clients would return with the same complaints in a different order, and the honest conclusion was that something upstream had never been addressed.",
     "That something was almost always the gut. Digestion sits underneath energy, immunity, skin, mood and hormones, and when it is compromised, every plan built on top of it is temporary. So the practice changed shape. Instead of starting with a diet chart, she started with a conversation — one long enough to hear what a symptom sheet leaves out.",
     "Today that first conversation covers digestion, sleep, stress, medication history, menstrual health, work hours, screen time and what a real day of eating actually looks like. Not because every detail matters equally, but because the pattern only becomes visible when you have all of it in front of you.",
   ],
   pullQuote: {
     text: "A symptom is not the problem. It is the body's way of telling you where to look.",
-    attribution: "Dt. N. Sai Sowjanya",
+    attribution: "Sai Sowjanya Nallimpalli",
   },
   pillars: [
     {
@@ -735,10 +526,10 @@ export const practitionerStory = {
   credentials: [
     "Clinical Nutritionist — Registered Dietitian",
     "Specialisation in Gut Health & Digestive Disorders",
-    "Functional & Root-Cause Nutrition Approach",
+    "Functional & Personalised Nutrition Approach",
     "PCOS, Thyroid & Hormonal Nutrition",
     "Therapeutic Diet Planning for Lifestyle Disorders",
-    "8+ Years of Clinical Consultation Practice",
+    "Clinical Consultation Practice",
   ],
 };
 
@@ -780,7 +571,7 @@ export const whoWeHelpCopy = {
   eyebrow: "WHO WE WORK WITH",
   title: "You don't need a diagnosis to *begin*.",
   subtitle:
-    "Most clients arrive with reports that came back normal and symptoms that never did. If any of these describe you, there is usually a root cause worth finding.",
+    "Most clients arrive with reports that came back normal and symptoms that never did. If any of these describe you, there is usually something in your nutrition worth looking at properly.",
   closing: "If none of these fit exactly, that's fine — the assessment is built to find what does.",
 };
 
@@ -800,29 +591,6 @@ export const clinicsCopy = {
   bookLabel: "Book a Consultation →",
   bookHref: "/assessment",
   directionsLabel: "Get Directions",
-};
-
-export const clinics = [
-  {
-    id: "kakinada",
-    city: "Kakinada",
-    state: "ANDHRA PRADESH",
-    // NOTE FOR CLIENT: exact street address to be supplied by the client.
-    address: "Consultation Clinic — Kakinada, Andhra Pradesh",
-    hours: brand.hours,
-    // NOTE FOR CLIENT: replace with the exact Google Maps pin for the clinic.
-    mapsUrl: "https://www.google.com/maps/search/?api=1&query=Kakinada%2C%20Andhra%20Pradesh",
-    image: {
-      src: "https://images.unsplash.com/photo-1556909114-44e3e70034e2?auto=format&fit=crop&q=80&w=1400",
-      alt: "Seasoning a pot of vegetables on the stove in a home kitchen",
-    },
-  },
-];
-
-export const aboutCtaCopy = {
-  title: "You've read the approach. Now let's apply it to *you*.",
-  subtitle:
-    "The assessment is where the work actually begins — your symptoms, history, medications, lifestyle and food habits, reviewed personally by Dt. Sai Sowjanya.",
 };
 
 // === TREATMENTS PAGE — WHAT'S INCLUDED ===
@@ -1005,7 +773,7 @@ export const treatmentsFaqs = [
     id: "doesnt-work",
     question: "What if the program doesn't work for me?",
     answer:
-      "Then something in the assessment was incomplete or the root cause sits outside nutrition — and you'll be told that directly rather than sold another package. In some cases the right next step is a referral to a physician or specialist, and that recommendation will be made honestly.",
+      "Then something in the assessment was incomplete, or the concern sits outside the scope of nutrition care — and you'll be told that directly rather than sold another package. In some cases the right next step is a referral to a physician or specialist, and that recommendation will be made honestly.",
   },
 ];
 
@@ -1024,7 +792,7 @@ export const treatmentsFaqCopy = {
 export const treatmentsCtaCopy = {
   title: "Found your program? Let's confirm the *cause*.",
   subtitle:
-    "The assessment identifies which root cause is driving your symptoms and which program fits — reviewed personally by Dt. Sai Sowjanya within 24 hours.",
+    "The assessment helps us understand your concerns and which level of support may suit you — reviewed personally by Sai Sowjanya Nallimpalli within 24 hours.",
 };
 
 // PLACEHOLDER VIDEOS — replace poster images and videoUrl values with the client's real footage. If no video is available at launch, leave this array empty and the section will not render.
@@ -1107,44 +875,772 @@ export const videoHighlights: VideoHighlight[] = [
 export const galleryCtaCopy = {
   title: "Seen enough? The next step is *yours*.",
   subtitle:
-    "The assessment covers your symptoms, history, lifestyle and food habits — reviewed personally by Dt. Sai Sowjanya within 24 hours.",
+    "The assessment covers your symptoms, history, lifestyle and food habits — reviewed personally by Sai Sowjanya Nallimpalli within 24 hours.",
 };
 
-export const contactMethods = [
+export const symptoms = [
+  {
+    id: "wind",
+    icon: Wind,
+    label: "Bloating & Heaviness",
+    detail: "Your stomach feels tight or swollen an hour after eating.",
+  },
+  {
+    id: "flame",
+    icon: Flame,
+    label: "Acidity & Reflux",
+    detail: "Burning, sour burps, or reaching for antacids too often.",
+  },
+  {
+    id: "timer",
+    icon: Timer,
+    label: "Irregular Bowels",
+    detail: "Constipation, urgency, or never feeling fully emptied.",
+  },
+  {
+    id: "batteryLow",
+    icon: BatteryLow,
+    label: "Fatigue & Brain Fog",
+    detail: "Tired after 8 hours of sleep, foggy by afternoon.",
+  },
+  {
+    id: "scale",
+    icon: Scale,
+    label: "Weight That Won't Move",
+    detail: "Eating less, exercising more, and nothing changes.",
+  },
+  {
+    id: "sparkles",
+    icon: Sparkles,
+    label: "Acne, Hair Fall & Dull Skin",
+    detail: "Skin and hair reacting to what's happening inside.",
+  },
+  {
+    id: "calendarHeart",
+    icon: CalendarHeart,
+    label: "Irregular Cycles & PCOS",
+    detail: "Delayed periods, cramps, mood swings, unwanted hair.",
+  },
+  {
+    id: "candy",
+    icon: Candy,
+    label: "Cravings & Energy Crashes",
+    detail: "Sugar hits at 4 PM and after every meal.",
+  },
+];
+
+export const practitioner = {
+  name: "Sai Sowjanya Nallimpalli",
+  role: "Clinical Nutritionist & Gut Health Specialist",
+  /* The real photograph, not a stock portrait of someone else. */
+  image: "/founder.jpg",
+  bio: [
+    "I'm Sai Sowjanya Nallimpalli, a dietitian with specialised education in gut health, working across digestive, hormonal and metabolic nutrition. I consult from my clinic in Kakinada, Andhra Pradesh — and online with clients across India.",
+    "My approach is simple: symptoms are messages, not problems to be silenced. Before I build a single meal plan, I want to understand your digestion, your sleep, your stress, your cycle and what your day actually looks like. That's where the real answers live.",
+    "Every plan I create is built around real Indian food — your kitchen, your family's meals, your schedule and your budget. No exotic ingredients, no crash diets, no protocols you'll abandon in three weeks.",
+  ],
+  quote:
+    "Nutrition isn't about restriction. It's about giving your body the support it needs, in a way you can keep up.",
+};
+
+export const stats = [
+  /*
+   * EMPTY, deliberately.
+   *
+   * This held "500+ Clients Rebalanced", "8+ Years of Practice", "15+
+   * Conditions Treated" and a "4.9 Client Rating". None came from the
+   * practice, and the brief forbids inventing client results or credentials
+   * in as many words. Anything that reads this shows nothing rather than a
+   * number nobody can stand behind.
+   */
+] as { value: string; label: string; hasStar?: boolean }[];
+
+export const credibilityItems = [
+  { icon: ShieldCheck, label: "Certified Clinical Nutritionist" },
+  { icon: Microscope, label: "Personalised Gut Protocols" },
+  { icon: Salad, label: "Personalised Indian Meal Plans" },
+  { icon: HeartPulse, label: "PCOS & Hormonal Support" },
+  { icon: Activity, label: "IBS · Bloating · Acidity" },
+  { icon: Video, label: "Online Consultations Pan-India" },
+  { icon: MapPin, label: "Kakinada Clinic" },
+];
+
+export const processSteps = [
+  {
+    number: "01",
+    icon: ClipboardList,
+    title: "Share Your Story",
+    description:
+      "A detailed assessment captures your symptoms, medical history, medications, food habits, sleep, stress and cycle. Nothing gets skipped, because nothing is irrelevant.",
+    meta: "10 minutes · Online form",
+  },
+  {
+    number: "02",
+    icon: Search,
+    title: "Careful Assessment",
+    description:
+      "I map your symptoms against what's actually happening in your gut, hormones and daily routine — then find the pattern connecting them.",
+    meta: "Reviewed personally",
+  },
+  {
+    number: "03",
+    icon: NotebookPen,
+    title: "Your Personalised Plan",
+    description:
+      "A realistic, food-first protocol built around your kitchen: meals, portions, timing, and supplements only where they're genuinely needed.",
+    meta: "Built around Indian food",
+  },
+  {
+    number: "04",
+    icon: TrendingUp,
+    title: "Guided Rebalancing",
+    description:
+      "Regular check-ins, honest course-corrections and accountability — until the results hold on their own, without the plan.",
+    meta: "Ongoing support",
+  },
+];
+
+export const aboutCtaCopy = {
+  title: "You've read the approach. Now let's apply it to *you*.",
+  subtitle:
+    "The assessment is where the work actually begins — your symptoms, history, medications, lifestyle and food habits, reviewed personally by Sai Sowjanya Nallimpalli.",
+};
+
+/* ==========================================================================
+   THE CONTENT BRIEF
+
+   Everything below this banner comes from the practice's own "Complete
+   Website Content & Developer Brief", and it SUPERSEDES the older exports
+   above wherever the two disagree. The old ones survive only because the
+   treatments, testimonials and gallery pages still read from them; they come
+   out once the homepage draft is signed off.
+
+   Three rules from the brief govern every line of copy below, and they are
+   not stylistic — they are the boundaries a nutrition practice has to work
+   inside:
+
+     - Nothing diagnoses, treats or cures. No "heal your gut", no "root
+       cause", no promise that a symptom will improve.
+     - Nothing is invented. No prices, no testimonials, no client counts, no
+       credentials or awards beyond the five the practice listed.
+     - Nothing implies nutrition replaces medical care.
+
+   The tagline is UNDER REVIEW. It lives in one constant so it can be swapped
+   without touching a layout, and no section is built around its length.
+   ========================================================================== */
+
+export const briefBrand = {
+  name: "Go Rebalance",
+  /** Under review. One line, one place, swappable. */
+  positioning: "Personalised nutrition. Gut health at the core.",
+  founder: "Sai Sowjanya Nallimpalli",
+  founderRole: "Dietitian | Gut Health Specialist",
+  /** The primary call to action, everywhere on the site. */
+  primaryCta: "Start Your Assessment",
+  secondaryCta: "Explore Programs",
+};
+
+export const briefHero = {
+  headline: "Go Rebalance",
+  positioning: briefBrand.positioning,
+  supporting: "Nutrition guidance designed around your body, your lifestyle and your needs.",
+};
+
+/** Section 2 — How Can We Support You? */
+export const areasOfFocus = [
+  {
+    id: "gut",
+    icon: Activity,
+    title: "Gut Health",
+    items: ["IBS", "IBD", "SIBO", "Gut Dysbiosis"],
+  },
+  {
+    id: "metabolic",
+    icon: Gauge,
+    title: "Weight & Metabolic Health",
+    items: ["Weight", "Diabetes", "Insulin Resistance"],
+  },
+  {
+    id: "hormonal",
+    icon: CalendarHeart,
+    title: "Hormonal & Thyroid Health",
+    items: ["PCOS", "PMS", "Thyroid", "Hashimoto's"],
+  },
+  {
+    id: "autoimmune",
+    icon: ShieldCheck,
+    title: "Autoimmune Nutrition",
+    note: "Nutrition support alongside your medical care.",
+    items: [],
+  },
+  {
+    id: "womens",
+    icon: HeartPulse,
+    title: "Women's Health",
+    items: ["Preconception", "Pregnancy", "Women's Nutrition"],
+  },
+];
+
+export const areasOfFocusCopy = {
+  eyebrow: "AREAS OF FOCUS",
+  title: "How Can We *Support* You?",
+  closing: "Different bodies. Different needs. Personalised nutrition.",
+};
+
+/** Section 3 — Who We Work With. */
+export const whoWeWorkWith = {
+  eyebrow: "WHO WE WORK WITH",
+  title: "Personalised Nutrition Support for Ages *15–50*",
+  body: [
+    "Go Rebalance currently works with clients aged 15 to 50. Support may include teenage nutrition, digestive concerns, hormonal and thyroid health, metabolic health, women's nutrition and individual nutrition goals.",
+    "Recommendations are adapted to the person's stage of life, health needs, food habits, lifestyle and goals.",
+  ],
+  /* Stated once here, once on the assessment, once in the FAQs. The brief is
+     explicit that it should be visible but not repeated across the site. */
+  guardianNote:
+    "For clients under 18, a parent or legal guardian should be involved in the consultation and consent process.",
+};
+
+/** Section 4 — Why Gut Health Is at the Core. Deliberately short. */
+export const gutHealthCore = {
+  eyebrow: "THE LENS",
+  title: "Why Gut Health Is at the *Core*",
+  body: "Digestive health is closely connected with food tolerance, nutrient absorption and day-to-day wellbeing. That is why Go Rebalance considers gut health as part of the wider nutritional picture rather than looking at it in isolation.",
+  pull: "We don't look at the gut alone. We look at the person as a whole.",
+};
+
+/** Section 5 — The Go Rebalance Approach. */
+export const approachSteps = [
+  {
+    number: "01",
+    icon: Search,
+    title: "Understand",
+    body: "We begin with your health history, symptoms, lifestyle, food habits and goals.",
+  },
+  {
+    number: "02",
+    icon: ClipboardList,
+    title: "Assess",
+    body: "We review relevant health reports and blood work to better understand your nutritional needs.",
+  },
+  {
+    number: "03",
+    icon: NotebookPen,
+    title: "Personalise",
+    body: "Your nutrition strategy is designed around you — with supplement guidance where appropriate.",
+  },
+  {
+    number: "04",
+    icon: RefreshCw,
+    title: "Support & Rebalance",
+    body: "Through regular follow-ups, we track progress, make adjustments and support you throughout your journey.",
+  },
+];
+
+export const approachCopy = {
+  eyebrow: "THE APPROACH",
+  title: "Not Just a Diet Plan. A Plan *Built Around You*.",
+  closing:
+    "Because personalised nutrition isn't just about creating a plan. It's about supporting you throughout the process.",
+};
+
+/**
+ * Section 6 — Programs.
+ *
+ * No prices, anywhere. The brief routes pricing through a discovery call, and
+ * a card's action is always "explore", never "buy".
+ */
+export const programs = [
+  {
+    id: "clarity",
+    slug: "nutrition-clarity-consultation",
+    title: "Nutrition Clarity Consultation",
+    summary:
+      "One focused consultation to understand where you are, what your nutrition needs and what your next steps could look like.",
+    points: [
+      "Personalised nutrition assessment",
+      "Review of relevant health reports",
+      "Clear, practical next steps",
+    ],
+    cta: "Explore Consultation",
+    signature: false,
+  },
+  {
+    id: "gut-reset",
+    slug: "21-day-gut-reset",
+    title: "21-Day Gut Reset",
+    summary:
+      "A guided 21-day experience to understand your gut, simplify your nutrition and begin building better digestive habits.",
+    points: [
+      "Gut-focused nutrition guidance",
+      "Personalised food & lifestyle strategies",
+      "Guided support for 21 days",
+    ],
+    cta: "Explore Gut Reset",
+    signature: false,
+  },
+  {
+    id: "rebalance-3",
+    slug: "3-month-rebalance",
+    title: "3-Month Rebalance Program",
+    summary:
+      "A 12-week personalised nutrition journey where we assess, plan, follow up and adapt your strategy as you progress.",
+    points: [
+      "In-depth personalised assessment",
+      "12 weekly consultations",
+      "Ongoing nutrition & WhatsApp support",
+    ],
+    note: "Your plan. Your progress. Your support.",
+    cta: "Explore Rebalance",
+    signature: true,
+  },
+  {
+    id: "rebalance-6",
+    slug: "6-month-rebalance",
+    title: "6-Month Rebalance Program",
+    summary:
+      "Longer-term personalised nutrition support for those who need more time, deeper guidance and continuity of care.",
+    points: [
+      "Long-term personalised strategy",
+      "Regular progress reviews & adjustments",
+      "Consistent professional support",
+    ],
+    cta: "Explore 6-Month Rebalance",
+    signature: false,
+  },
+];
+
+export const programsCopy = {
+  eyebrow: "PROGRAMS",
+  title: "Find the Right *Support* for You",
+  subtitle:
+    "From a focused consultation to longer-term personalised nutrition support, choose the level of guidance that fits your needs.",
+};
+
+/** Section 7 — Why Go Rebalance? */
+export const whyGoRebalance = [
+  {
+    icon: UserCheck,
+    title: "Personalised, Not Prescribed",
+    body: "Your plan starts with understanding you — your symptoms, health history, lifestyle, food habits and goals.",
+  },
+  {
+    icon: Search,
+    title: "Always Asking “Why?”",
+    body: "When something isn't progressing as expected, we reassess, ask why and adjust the approach instead of simply repeating the same plan.",
+  },
+  {
+    icon: TrendingUp,
+    title: "Consistency Over Perfection",
+    body: "Knowing what to do is only the beginning. We help you work through challenges and turn recommendations into habits you can realistically follow.",
+  },
+  {
+    icon: RefreshCw,
+    title: "Support That Evolves With You",
+    body: "Your needs may change throughout the journey. Regular follow-ups help us understand your progress and adapt your nutrition strategy along the way.",
+  },
+  {
+    icon: HeartPulse,
+    title: "Founder-Led Guidance",
+    body: "Go Rebalance is a personal practice. Clients receive guidance directly from Sai rather than being passed through a large coaching team.",
+  },
+];
+
+export const whyGoRebalanceCopy = {
+  eyebrow: "WHY GO REBALANCE",
+  title: "Guidance That Stays *With You*",
+  pull: "I can guide you, educate you and support you — but the real change happens when you put it into practice. My role is to help you keep moving forward.",
+};
+
+/**
+ * Section 8 — What You Can Expect.
+ *
+ * The most important section on the page, and the one most practices skip. It
+ * is a list of things Go Rebalance will NOT claim, which is precisely what
+ * makes the things it does claim believable.
+ */
+export const whatToExpect = [
+  {
+    title: "No One-Size-Fits-All Plans",
+    body: "Your nutrition strategy is built around your individual needs rather than a standard diet chart.",
+  },
+  {
+    title: "No Guaranteed Outcomes",
+    body: "Every body and every health journey responds differently. Individual results can vary.",
+  },
+  {
+    title: "No Unnecessary Supplements",
+    body: "Supplement guidance is considered only where appropriate for the individual.",
+  },
+  {
+    title: "No Replacing Medical Care",
+    body: "Nutrition support is not a substitute for medical diagnosis or treatment and should work alongside appropriate healthcare when needed.",
+  },
+];
+
+export const whatToExpectCopy = {
+  eyebrow: "WHAT YOU CAN EXPECT",
+  title: "No Quick Fixes. No *False Promises*.",
+  promise:
+    "What we do promise is thoughtful assessment, personalised guidance, honest communication, regular reassessment and support throughout your journey.",
+};
+
+/** Section 9 — When Nutrition Isn't Enough. Small, but visible. */
+export const beyondNutrition = {
+  eyebrow: "PROFESSIONAL BOUNDARIES",
+  title: "Knowing When to Look *Beyond Nutrition*",
+  body: "If a concern requires medical investigation or falls outside the scope of nutrition care, Go Rebalance may recommend that the client consult the appropriate healthcare professional.",
+};
+
+/** Section 10 — Meet Sai. */
+export const meetSai = {
+  eyebrow: "MEET SAI",
+  name: briefBrand.founder,
+  role: briefBrand.founderRole,
+  image: "/founder.jpg",
+  body: [
+    "With a background in Biotechnology, advanced education in Nutrition & Dietetics, clinical training across multispecialty hospitals, and specialised education in gut health, my approach goes beyond standard diet charts.",
+    "I created Go Rebalance to offer personalised nutrition guidance that helps you understand your body, support your gut and work towards better balance — one realistic step at a time.",
+  ],
+  cta: "Read My Story",
+};
+
+/**
+ * Section 11 — Education & Credentials.
+ *
+ * These five, exactly as the practice supplied them. Nothing added, no years
+ * inferred, no honorifics invented.
+ */
+export const credentials = [
+  { title: "Bachelor's in Biotechnology", detail: "GITAM University, Visakhapatnam" },
+  { title: "Certification in Food & Nutrition", detail: "Bridge Course" },
+  { title: "Master's in Dietetics & Food Service Management", detail: "" },
+  {
+    title: "Clinical Nutrition Internship & Training",
+    detail: "Clinical learning and exposure across multiple multispecialty hospitals.",
+  },
+  {
+    title: "Certificate of Advanced Education in Gut Health",
+    detail: "Institute for Integrative Nutrition (IIN)",
+  },
+];
+
+export const credentialsCopy = {
+  eyebrow: "EDUCATION & CREDENTIALS",
+  title: "The Training Behind the *Practice*",
+};
+
+/** Section 12 — FAQs. */
+export const briefFaqs = [
+  {
+    id: "who-can-join",
+    question: "Who can join Go Rebalance?",
+    answer:
+      "Go Rebalance currently provides personalised nutrition support for clients aged 15–50. For clients under 18, a parent or legal guardian should be involved in the consultation and consent process.",
+  },
+  {
+    id: "only-gut",
+    question: "Is Go Rebalance only for gut problems?",
+    answer:
+      "No. Gut health is an important part of our approach, but Go Rebalance also provides personalised nutrition support for weight, metabolic health, hormonal and thyroid concerns, autoimmune health and women's nutrition.",
+  },
+  {
+    id: "which-program",
+    question: "Which program is right for me?",
+    answer:
+      "You don't have to decide on your own. We consider your goals, symptoms, health concerns and initial assessment to help determine the level of support that may suit you best.",
+  },
+  {
+    id: "blood-tests",
+    question: "Do I need blood tests before starting?",
+    answer:
+      "Relevant recent blood work can help us better understand your nutritional needs. If appropriate reports aren't available, additional tests may be suggested based on your health history and symptoms.",
+  },
+  {
+    id: "personalised",
+    question: "Will my nutrition plan be personalised?",
+    answer:
+      "Yes. Your nutrition strategy is created around your health needs, symptoms, food habits, lifestyle and goals — not a standard diet chart.",
+  },
+  {
+    id: "supplements",
+    question: "Do you recommend supplements?",
+    answer:
+      "When appropriate. Supplements may be recommended based on individual nutritional needs, relevant reports and identified deficiencies. They are not automatically included for everyone.",
+  },
+  {
+    id: "online",
+    question: "How do online consultations work?",
+    answer:
+      "Consultations are conducted one-to-one online through Google Meet at a pre-scheduled time. Ongoing program support and follow-ups are provided through scheduled consultations and WhatsApp, depending on your program.",
+  },
+  {
+    id: "after-assessment",
+    question: "What happens after I submit the initial assessment?",
+    answer:
+      "We review the information you've shared and schedule a discovery call. During the call, we'll understand your concerns and goals more clearly and discuss which Go Rebalance program may be appropriate for you. Once you choose to enrol, the detailed assessment process begins.",
+  },
   {
     id: "whatsapp",
-    type: "WhatsApp",
-    label: "FASTEST",
-    value: "+91 93904 14536",
-    subLine:
-      "Message the clinic directly. Typically answered within a few hours during working days.",
-    action: "Open WhatsApp",
-    href: brand.whatsapp,
-    color: "var(--whatsapp)",
-    icon: MessageCircle,
+    question: "Is WhatsApp support available?",
+    answer:
+      "Yes. WhatsApp support is included in selected ongoing programs during designated working hours.",
   },
   {
-    id: "phone",
-    type: "Phone",
-    label: "CALL",
-    value: "+91 93904 14536",
-    subLine:
-      "Mon – Sat, 10:00 AM – 7:00 PM. If we're mid-consultation, leave a message and we'll return the call.",
-    action: "Call now",
-    href: `tel:${brand.phoneRaw}`,
-    color: "var(--primary)",
-    icon: Phone,
+    id: "medical",
+    question: "What if my concern needs medical attention?",
+    answer:
+      "If your concern requires medical investigation or falls outside the scope of nutrition care, you may be advised to consult the appropriate healthcare professional. Go Rebalance does not replace medical diagnosis or treatment.",
+  },
+];
+
+export const briefFaqCopy = {
+  eyebrow: "FREQUENTLY ASKED QUESTIONS",
+  title: "Everything You're *Wondering*",
+  subtitle: "The questions clients ask before they begin — answered plainly.",
+};
+
+/** Section 13 — Final CTA. */
+export const finalCta = {
+  title: "Ready to Start Your *Rebalance* Journey?",
+  lead: "You don't need to know which program is right for you.",
+  body: "Tell us a little about your health concerns and goals. We'll start by understanding where you are and guide you towards the next step.",
+  cta: briefBrand.primaryCta,
+  steps: ["Initial Assessment", "Discovery Call", "Personalised Program Recommendation"],
+};
+
+/**
+ * The professional disclaimer, verbatim from the brief.
+ *
+ * It belongs in the footer of every page, not tucked away on a legal page.
+ */
+export const professionalDisclaimer =
+  "Go Rebalance provides nutrition and lifestyle guidance for educational and wellness purposes. Services are not a substitute for medical diagnosis, treatment or care from a qualified healthcare professional. Nutrition and supplement recommendations are personalised where appropriate, and individual results may vary. Clients with medical conditions should continue to work with their treating healthcare professionals.";
+
+/**
+ * Section 7 — Program detail content.
+ *
+ * The full inclusion lists, which the brief keeps OFF the homepage cards and
+ * puts here. Two copy notes from the brief are load-bearing and are the reason
+ * some obvious words are missing:
+ *
+ *   - The 21-Day Gut Reset is never called a detox or a cleanse, and never
+ *     promises to heal or rebalance a gut in 21 days.
+ *   - The 6-Month program does not state a number of consultations, because
+ *     the practice has not settled one. "Scheduled one-to-one follow-ups" is
+ *     the honest phrasing until it does.
+ *
+ * Still no prices. Cost is discussed on the discovery call.
+ */
+export const programDetails = [
+  {
+    id: "clarity",
+    title: "Nutrition Clarity Consultation",
+    intro:
+      "Designed for someone who wants professional guidance on a specific nutrition concern without committing to a longer program.",
+    includes: [
+      "Health, nutrition & lifestyle assessment",
+      "Review of relevant reports, where appropriate",
+      "One-to-one nutrition consultation",
+      "Personalised nutrition recommendations",
+      "Guidance on practical next steps",
+      "Supplement guidance, where appropriate",
+    ],
+    bestFor:
+      "Someone looking for professional nutrition guidance, a second look at their current approach, or clarity about their next steps.",
+    signature: false,
   },
   {
-    id: "email",
-    type: "Email",
-    label: "EMAIL",
-    value: brand.email,
-    subLine:
-      "Best for detailed questions, existing reports or anything you'd rather write out at length.",
-    action: "Send an email",
-    href: `mailto:${brand.email}`,
-    color: "var(--accent)",
-    icon: FileText,
+    id: "gut-reset",
+    title: "21-Day Gut Reset",
+    intro:
+      "A focused starting point for people who want to better understand their digestive health and build supportive food and lifestyle habits.",
+    includes: [
+      "Gut health & symptom assessment",
+      "Review of food and lifestyle patterns",
+      "Personalised gut-supportive nutrition guidance",
+      "Meal and food guidance",
+      "Lifestyle recommendations",
+      "Supplement guidance where appropriate",
+      "Progress review during the program",
+      "Support throughout the 21-day journey",
+    ],
+    bestFor: "",
+    signature: false,
   },
+  {
+    id: "rebalance-3",
+    title: "3-Month Rebalance Program",
+    intro:
+      "This is the heart of Go Rebalance. A structured 12-week personalised nutrition journey designed for people who need more than a one-time plan.",
+    includes: [
+      "Comprehensive health & symptom assessment",
+      "Review of relevant blood work and health reports",
+      "Personalised nutrition strategy",
+      "Individualised meal guidance",
+      "Supplement guidance where appropriate",
+      "12 weekly one-to-one consultations",
+      "Regular progress reviews",
+      "Nutrition plan adjustments as needed",
+      "WhatsApp support during working hours, Monday–Saturday",
+    ],
+    bestFor:
+      "People looking for structured ongoing support for gut health, weight and metabolic health, hormonal health or other nutrition-related goals.",
+    note: "Your plan. Your progress. Your support.",
+    signature: true,
+  },
+  {
+    id: "rebalance-6",
+    title: "6-Month Rebalance Program",
+    intro:
+      "Longer-term personalised nutrition support for people who may benefit from more time, continuity and gradual adjustment.",
+    includes: [
+      "Comprehensive health & symptom assessment",
+      "Review of relevant blood work and health reports",
+      "Personalised nutrition strategy",
+      "Individualised meal guidance",
+      "Supplement guidance where appropriate",
+      "Scheduled one-to-one follow-ups",
+      "Ongoing progress and symptom reviews",
+      "Nutrition plan adjustments",
+      "WhatsApp support during working hours, Monday–Saturday",
+    ],
+    bestFor: "",
+    note: "A longer journey, with support that evolves with you.",
+    signature: false,
+  },
+];
+
+export const programsPageCopy = {
+  eyebrow: "PROGRAMS",
+  title: "Find the Right *Support* for You",
+  subtitle:
+    "From a focused consultation to longer-term personalised nutrition support, choose the level of guidance that fits your needs. Pricing is discussed personally on your discovery call, once we understand what you actually need.",
+};
+
+/**
+ * The client journey, from the brief's Section 5.
+ *
+ * Published because it answers the question the programs page creates: if
+ * there are no prices, what happens if I press the button? Showing the whole
+ * sequence — including that pricing comes after a conversation and that
+ * nothing detailed is reviewed before enrolment — is what makes a page with no
+ * prices feel considered rather than evasive.
+ */
+export const clientJourney = [
+  {
+    step: "01",
+    title: "Initial assessment",
+    body: "A short form about your health concerns and goals. Not a medical intake — that comes later, and only if you enrol.",
+  },
+  {
+    step: "02",
+    title: "Discovery call",
+    body: "We talk through your concerns and goals, and discuss which program may be appropriate for you.",
+  },
+  {
+    step: "03",
+    title: "Program & pricing",
+    body: "The recommended program and its cost are discussed with you privately. You decide from there.",
+  },
+  {
+    step: "04",
+    title: "Enrolment",
+    body: "Once you choose to enrol, the detailed health assessment begins and relevant reports are collected.",
+  },
+  {
+    step: "05",
+    title: "Your nutrition strategy",
+    body: "Your personalised plan follows, usually within 4–5 working days of receiving everything needed.",
+  },
+  {
+    step: "06",
+    title: "Follow-ups & adjustments",
+    body: "Your program begins, with reviews and adjustments as you progress.",
+  },
+];
+
+export const clientJourneyCopy = {
+  eyebrow: "WHAT HAPPENS NEXT",
+  title: "How a Program *Actually Starts*",
+  subtitle:
+    "No prices on this page is deliberate. Which program suits you depends on what we find, so the cost is discussed once there is something to discuss.",
+};
+
+/**
+ * Section 6 — the About page's story, in the founder's own words.
+ *
+ * Verbatim from the brief, including its emphases. It replaces a version that
+ * was written for her rather than by her, and that carried claims about
+ * root causes and years of practice which the practice never made.
+ */
+export const myStory = {
+  eyebrow: "MY STORY",
+  title: "I Didn't Always Know I Would Become a *Dietitian*.",
+  paragraphs: [
+    "Growing up, I dreamed of becoming a doctor, but life took me in a different direction — first into Biotechnology and eventually into the world of nutrition.",
+    "Along the way, my own experiences with health changed the way I looked at food and wellbeing. They taught me something textbooks alone cannot: what it feels like to be on the other side — to want answers, to want to feel better, and to want someone who truly listens.",
+    "That curiosity led me to pursue advanced studies in Food & Nutrition and Dietetics. My journey then moved beyond the classroom into clinical training, where I gained hands-on exposure across multispecialty hospitals and learned about supporting different nutritional needs, including recovery and post-surgical nutrition.",
+    "The more I worked with people, the clearer one thing became: I didn't want nutrition care to be just another standard diet chart.",
+    "I wanted to understand the person behind it — their body, symptoms, food habits, lifestyle and individual needs.",
+    "My further education in gut health strengthened that belief. I learned how important balance within the gut can be and how personalised nutrition and appropriate guidance can support overall wellbeing.",
+    "That idea became the heart of Go Rebalance.",
+    "For me, Go Rebalance is more than a name. It is an invitation to understand your body, support your gut and take meaningful steps towards finding your balance again.",
+  ],
+  closing: "Because your nutrition should be as individual as you are.",
+};
+
+/**
+ * Section 4 — the initial assessment form.
+ *
+ * A SHORT pre-enrolment form, and the word short is the specification. The
+ * brief is explicit that this is "not the full clinical/medical intake form
+ * and should not request detailed blood reports or extensive medical records",
+ * and that nothing may imply a plan or a blood-work analysis happens before
+ * somebody enrols.
+ *
+ * What it replaced was a five-step clinical questionnaire that collected
+ * medical history, a nutrition log and a payment screenshot before anyone had
+ * spoken to the practice. That is the opposite of this flow, and it also meant
+ * the site was holding medical data for people who never became clients.
+ */
+export const assessmentFormCopy = {
+  eyebrow: "INITIAL ASSESSMENT",
+  title: "Tell Us Where You're *Starting From*",
+  subtitle:
+    "A few questions about your health concerns and goals. It takes about three minutes, and there is nothing to pay.",
+  ageNote: "Go Rebalance currently supports clients aged 15 to 50.",
+  guardianNote:
+    "If you are under 18, please complete this with a parent or legal guardian, who should be involved in the consultation and consent process.",
+  privacyNote:
+    "Your answers are used to prepare for your discovery call and are never shared. This form is not a medical assessment.",
+  submit: "Submit Assessment",
+  nextSteps: ["Initial Assessment", "Discovery Call", "Personalised Program Recommendation"],
+};
+
+export const assessmentSuccessCopy = {
+  title: "Thank You — We've Received Your *Assessment*.",
+  body: "We'll review the information you've shared and get in touch to schedule your discovery call.",
+  detail:
+    "This is where we'll understand your concerns and goals better and discuss the next step in your Go Rebalance journey.",
+};
+
+/** The program a visitor can express interest in, from the brief's field list. */
+export const programInterestOptions = [
+  "Not sure yet",
+  "Nutrition Clarity Consultation",
+  "21-Day Gut Reset",
+  "3-Month Rebalance Program",
+  "6-Month Rebalance Program",
+];
+
+export const contactPreferenceOptions = ["WhatsApp", "Phone call", "Email"];
+
+/** Footer navigation, exactly the set the brief lists. */
+export const briefNavLinks = [
+  { label: "Home", href: "/" },
+  { label: "About", href: "/about" },
+  { label: "Programs", href: "/programs" },
+  { label: "FAQs", href: "/#faq" },
+  { label: "Contact", href: "/contact" },
 ];

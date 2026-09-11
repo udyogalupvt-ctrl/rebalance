@@ -3,12 +3,12 @@ import { lazyRoute } from "@/components/shared/lazyRoute";
 
 export const Route = createFileRoute("/assessment")({
   head: () => ({
-    title: "Gut Health Assessment | GoRebalance",
+    title: "Start Your Assessment | Go Rebalance",
     meta: [
       {
         name: "description",
         content:
-          "A ten-minute root-cause assessment covering your symptoms, history, lifestyle and food habits — reviewed personally by Dt. N. Sai Sowjanya.",
+          "A ten-minute assessment covering your symptoms, history, lifestyle and food habits, reviewed personally before your consultation.",
       },
     ],
   }),

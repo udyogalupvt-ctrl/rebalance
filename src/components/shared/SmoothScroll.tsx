@@ -52,11 +52,23 @@ export function SmoothScroll() {
     if (query.matches) return;
 
     const lenis = new Lenis({
-      // 1.05s to settle. Long enough to read as weight, short enough that a
-      // deliberate scroll to a section does not feel like waiting.
-      duration: 1.05,
-      // Exponential ease-out: fast take-off, long tail. This is the curve that
-      // reads as "momentum" rather than "animation".
+      /*
+       * 0.85s to settle, down from 1.05.
+       *
+       * The long tail was the thing that read as "sticking". Lenis drives the
+       * real scroll offset towards a target, so a longer duration means the
+       * page carries on moving for longer after the wheel stops — and a
+       * second flick during that tail lands on a page that is still resolving
+       * the first, which feels like drag rather than momentum. It is also the
+       * largest scripting cost left in a scroll profile, at roughly a tenth
+       * of the frame, because every one of those frames is a scrollTo.
+       *
+       * 0.85s keeps the weight and gets the page under the reader's hand
+       * again sooner.
+       */
+      duration: 0.85,
+      // Exponential ease-out: fast take-off, short tail. This is the curve
+      // that reads as "momentum" rather than "animation".
       easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       wheelMultiplier: 1,
       touchMultiplier: 1.6,
@@ -68,9 +80,24 @@ export function SmoothScroll() {
       autoRaf: true,
     });
 
+    /*
+     * Hand the page back to the browser while the tab is hidden.
+     *
+     * Lenis keeps a requestAnimationFrame loop running for as long as it is
+     * alive. A backgrounded tab does not need it, and coming back from one
+     * with a stale timestamp is what produces the single long jump some
+     * people see on returning to a page.
+     */
+    const onVisibility = () => {
+      if (document.hidden) lenis.stop();
+      else lenis.start();
+    };
+    document.addEventListener("visibilitychange", onVisibility);
+
     instance = lenis;
 
     return () => {
+      document.removeEventListener("visibilitychange", onVisibility);
       lenis.destroy();
       instance = null;
     };
