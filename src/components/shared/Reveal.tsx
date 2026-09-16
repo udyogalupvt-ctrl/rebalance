@@ -207,6 +207,32 @@ export function Reveal({
   const reduce = useReducedMotion();
 
   if (reduce) {
+    /*
+     * Reduced motion drops the animation, never the structure.
+     *
+     * This used to return the children bare inside a plain wrapper, which in
+     * stagger mode meant a <div> directly inside a <ul> holding every card: the
+     * list's grid saw ONE item, so a three-column set collapsed into a single
+     * cell, and the markup was invalid. With "Reduce Motion" switched on in an
+     * iPhone's settings — which plenty of people do — every card grid on the
+     * site broke that way. The same contents wrapper and the same item boxes
+     * are rendered here, just without motion.
+     */
+    if (stagger !== undefined) {
+      const Plain = childAs;
+      return (
+        <Component className={cn("contents", className)}>
+          {React.Children.map(children, (child, i) => {
+            if (!React.isValidElement(child)) return child;
+            return (
+              <Plain key={child.key ?? i} className={cn("grid min-w-0", childClassName)}>
+                {child}
+              </Plain>
+            );
+          })}
+        </Component>
+      );
+    }
     return (
       <Component ref={ref} className={className}>
         {children}
@@ -227,12 +253,23 @@ export function Reveal({
             <Item
               key={child.key ?? i}
               {...(i === 0 ? { ref: ref as never } : {})}
-              // The animated box IS the grid/flex item, so it stretches to the
-              // row height. It is itself a grid so its single child stretches
-              // to fill it — without this, content that sizes to itself (a
-              // <button>, an inline <a>) collapses to its text width now that
-              // it is no longer the grid item directly.
-              className={cn("grid h-full min-w-0", childClassName)}
+              /*
+               * The animated box IS the grid/flex item, and it gets its full
+               * height from stretch alignment — the default for grid and flex
+               * items — rather than from `height: 100%`.
+               *
+               * It used to carry `h-full`. A percentage height has to resolve
+               * against its parent, and here the parent is reached through a
+               * `display: contents` wrapper, which is exactly the chain WebKit
+               * resolves differently: on an iPhone the cards came out taller
+               * than the list that holds them, and the content after the list
+               * was drawn on top of them. Stretch has no such ambiguity.
+               *
+               * It is itself a grid so its single child stretches to fill it
+               * too — without that, content that sizes to itself (a <button>,
+               * an inline <a>) would collapse to its text width.
+               */
+              className={cn("grid min-w-0", childClassName)}
               initial={{ opacity: 0, y: DISTANCE }}
               animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: DISTANCE }}
               transition={{

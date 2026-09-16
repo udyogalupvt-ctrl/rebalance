@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { CheckCircle2, Copy, Check, MessageCircle, Info, Search } from "lucide-react";
 import { useAssessment } from "@/context/AssessmentContext";
-import { brand } from "@/data/content";
+import { brand, assessmentSuccessCopy } from "@/data/content";
 
 export default function StepComplete() {
   const { data, lastSubmissionId } = useAssessment();
@@ -48,8 +48,7 @@ export default function StepComplete() {
 
       <h1 className="af-complete-title">That's everything, {firstName}.</h1>
       <p className="af-complete-body">
-        Your assessment has been sent to Sai Sowjanya Nallimpalli. She reviews every submission
-        personally — you'll hear back within 24 hours on working days to schedule your consultation.
+        {assessmentSuccessCopy.body} {assessmentSuccessCopy.detail}
       </p>
 
       <div className="af-reference-panel">
@@ -78,10 +77,10 @@ export default function StepComplete() {
         <div className="af-what-next-row">
           <div className="af-what-next-number">1</div>
           <div>
-            <div className="af-what-next-title">Your payment is verified</div>
+            <div className="af-what-next-title">Your Discovery Call payment is verified</div>
             <div className="af-what-next-desc">
-              We confirm the screenshot against our records. If anything's unclear, we'll message
-              you.
+              We confirm the screenshot against our records. If anything&rsquo;s unclear,
+              we&rsquo;ll message you.
             </div>
           </div>
         </div>
@@ -89,10 +88,9 @@ export default function StepComplete() {
         <div className="af-what-next-row">
           <div className="af-what-next-number">2</div>
           <div>
-            <div className="af-what-next-title">Your assessment is reviewed</div>
+            <div className="af-what-next-title">Your answers are reviewed</div>
             <div className="af-what-next-desc">
-              Symptoms, history, lifestyle and nutrition log are read in full before your
-              consultation.
+              Your health, lifestyle and nutrition log are read in full before we speak.
             </div>
           </div>
         </div>
@@ -100,10 +98,10 @@ export default function StepComplete() {
         <div className="af-what-next-row">
           <div className="af-what-next-number">3</div>
           <div>
-            <div className="af-what-next-title">We reach out to schedule</div>
-            <div className="af-what-next-desc">
-              Within 24 hours on working days, on the number you gave us.
+            <div className="af-what-next-title">
+              We get in touch to schedule your Discovery Call
             </div>
+            <div className="af-what-next-desc">On the number you gave us.</div>
           </div>
         </div>
       </div>

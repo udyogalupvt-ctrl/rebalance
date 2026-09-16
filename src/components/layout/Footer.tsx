@@ -141,8 +141,11 @@ export function Footer() {
                   {brand.tagline}
                 </p>
                 <p className="mt-5 hidden max-w-[42ch] text-[14.5px] leading-[1.7] text-on-dark-muted sm:block">
-                  Personalised nutrition guidance designed around your body, your lifestyle and your
-                  needs, from {brand.practitioner}, {brand.credential}.
+                  {brand.positioning} Nutrition guidance designed around your body, your lifestyle
+                  and your needs.
+                </p>
+                <p className="mt-3 text-[13.5px] leading-[1.6] text-on-dark-muted">
+                  {brand.practitioner} · {brand.credential}
                 </p>
 
                 {/* Only the accounts the practice has actually given us. */}
@@ -181,6 +184,7 @@ export function Footer() {
                     <li key={link.label}>
                       <Link
                         to={link.href}
+                        {...(link.hash ? { hash: link.hash } : {})}
                         className="group relative flex items-center min-h-[44px] w-fit py-0 text-[14px] sm:text-[14.5px] leading-[1.5] text-on-dark-muted transition-all duration-250 hover:text-accent-contrast hover:translate-x-1.25 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-[3px]"
                       >
                         <span className="absolute left-[-14px] top-1/2 -translate-y-1/2 w-2 h-[1.5px] bg-accent origin-left scale-x-0 transition-transform duration-250 group-hover:scale-x-100" />
@@ -212,9 +216,8 @@ export function Footer() {
                 </h3>
                 <div className="w-6 h-0.5 bg-accent mb-3" />
                 <ul className="list-none p-0 m-0">
-                  {/* The four levels of support, not seven conditions. The
-                      old column deep-linked into a treatments page that no
-                      longer exists, and named conditions as things treated. */}
+                  {/* The four levels of support, each linking to its own
+                      place on the Programs page. */}
                   {programs.map((program) => (
                     <li key={program.id}>
                       <Link
@@ -268,6 +271,22 @@ export function Footer() {
                     className="inline-flex items-center min-h-[44px] text-[14.5px] leading-[1.6] text-on-dark-muted hover:text-on-dark transition-colors"
                   >
                     {brand.email}
+                  </a>
+                </div>
+
+                {/* Instagram */}
+                <div className="flex gap-3 items-start">
+                  <BrandIcon
+                    name="Instagram"
+                    className="w-[17px] h-[17px] text-on-dark-accent mt-3 flex-shrink-0"
+                  />
+                  <a
+                    href={brand.instagramUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center min-h-[44px] text-[14.5px] leading-[1.6] text-on-dark-muted hover:text-on-dark transition-colors"
+                  >
+                    {brand.instagram}
                   </a>
                 </div>
 
@@ -336,7 +355,7 @@ export function Footer() {
                     to="/assessment"
                     className="group h-[50px] w-full max-w-[260px] rounded-full bg-accent-strong text-on-accent text-[15px] font-semibold inline-flex items-center justify-center gap-2 transition-all hover:-translate-y-0.5 hover:shadow-[0_12px_30px_rgba(var(--accent-rgb), 0.34)]"
                   >
-                    Start Assessment
+                    Book Consultation
                     <ArrowRight
                       className="w-[17px] h-[17px] transition-transform group-hover:translate-x-1"
                       aria-hidden="true"

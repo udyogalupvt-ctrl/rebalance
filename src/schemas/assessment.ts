@@ -6,70 +6,91 @@ const pincodeRegex = /^\d{6}$/;
 const isoDate = z.string().datetime({ offset: true });
 
 /* ─── Step 1 — Details ─── */
-export const detailsSchema = z.object({
-  fullName: z
-    .string({ error: "Please enter your name." })
-    .trim()
-    .min(2, "Please enter your name.")
-    .max(80, "Name can be at most 80 characters."),
+export const detailsSchema = z
+  .object({
+    fullName: z
+      .string({ error: "Please enter your name." })
+      .trim()
+      .min(2, "Please enter your name.")
+      .max(80, "Name can be at most 80 characters."),
 
-  age: z.coerce
-    .number({ error: "Please enter an age between 1 and 120." })
-    .int("Please enter an age between 1 and 120.")
-    .min(1, "Please enter an age between 1 and 120.")
-    .max(120, "Please enter an age between 1 and 120."),
+    /*
+     * 15 to 50, because that is who the practice currently works with (its own
+     * brief and FAQ say so). Stopping here, on the first screen, is kinder than
+     * letting somebody fill in four more sections and pay for a discovery call
+     * the practice would then have to turn down.
+     */
+    age: z.coerce
+      .number({ error: "Please enter your age." })
+      .int("Please enter your age in whole years.")
+      .min(15, "Go Rebalance currently supports clients aged 15 to 50.")
+      .max(50, "Go Rebalance currently supports clients aged 15 to 50."),
 
-  gender: z.enum(["female", "male", "other", "prefer_not_to_say"], {
-    error: "Please choose an option.",
-  }),
+    /** Required when the client is under 18 — see the refinement below. */
+    guardianName: z.string().trim().max(80, "Name can be at most 80 characters.").optional(),
 
-  email: z
-    .string({ error: "That email doesn't look right — check for a typo." })
-    .trim()
-    .email("That email doesn't look right — check for a typo.")
-    .transform((v) => v.toLowerCase()),
-
-  phone: z
-    .string({ error: "Please enter a valid 10-digit Indian mobile number." })
-    .trim()
-    .regex(indianPhoneRegex, "Please enter a valid 10-digit Indian mobile number.")
-    .transform((v) => {
-      const digits = v.replace(/\D/g, "");
-      return digits.slice(-10);
+    gender: z.enum(["female", "male", "other", "prefer_not_to_say"], {
+      error: "Please choose an option.",
     }),
 
-  addressLine: z
-    .string({ error: "Please enter your address." })
-    .trim()
-    .min(5, "Please enter your address.")
-    .max(200, "Address can be at most 200 characters."),
+    email: z
+      .string({ error: "That email doesn't look right — check for a typo." })
+      .trim()
+      .email("That email doesn't look right — check for a typo.")
+      .transform((v) => v.toLowerCase()),
 
-  city: z
-    .string({ error: "Please enter your city." })
-    .trim()
-    .min(2, "Please enter your city.")
-    .max(60, "City can be at most 60 characters."),
+    phone: z
+      .string({ error: "Please enter a valid 10-digit Indian mobile number." })
+      .trim()
+      .regex(indianPhoneRegex, "Please enter a valid 10-digit Indian mobile number.")
+      .transform((v) => {
+        const digits = v.replace(/\D/g, "");
+        return digits.slice(-10);
+      }),
 
-  state: z
-    .string({ error: "Please enter your state." })
-    .trim()
-    .min(2, "Please enter your state.")
-    .max(60, "State can be at most 60 characters."),
+    addressLine: z
+      .string({ error: "Please enter your address." })
+      .trim()
+      .min(5, "Please enter your address.")
+      .max(200, "Address can be at most 200 characters."),
 
-  pincode: z
-    .string({ error: "Pincode should be 6 digits." })
-    .regex(pincodeRegex, "Pincode should be 6 digits."),
+    city: z
+      .string({ error: "Please enter your city." })
+      .trim()
+      .min(2, "Please enter your city.")
+      .max(60, "City can be at most 60 characters."),
 
-  preferredMode: z.enum(["in_clinic_kakinada", "online"], {
-    error: "Please choose how you'd like to consult.",
-  }),
+    state: z
+      .string({ error: "Please enter your state." })
+      .trim()
+      .min(2, "Please enter your state.")
+      .max(60, "State can be at most 60 characters."),
 
-  referralSource: z.string().trim().max(100).optional(),
-  selectedSymptoms: z.array(z.string()).optional(),
-  programInterest: z.string().optional(),
-});
+    pincode: z
+      .string({ error: "Pincode should be 6 digits." })
+      .regex(pincodeRegex, "Pincode should be 6 digits."),
 
-/* ─── Step 2 — Payment ─── */
+    preferredMode: z.enum(["in_clinic_kakinada", "online"], {
+      error: "Please choose how you'd like to consult.",
+    }),
+
+    referralSource: z.string().trim().max(100).optional(),
+    selectedSymptoms: z.array(z.string()).optional(),
+    programInterest: z.string().optional(),
+  })
+  .superRefine((data, ctx) => {
+    // Under 18: a parent or legal guardian has to be involved in the
+    // consultation and consent process, so the form asks who that is.
+    if (typeof data.age === "number" && data.age < 18 && !(data.guardianName ?? "").trim()) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["guardianName"],
+        message: "Please add the name of the parent or guardian completing this with you.",
+      });
+    }
+  });
+
+/* ─── Step 5 — Payment (the Discovery Call) ─── */
 export const paymentSchema = z.object({
   screenshotUrl: z
     .string({ error: "Please upload your payment screenshot." })
@@ -87,7 +108,7 @@ export const paymentSchema = z.object({
   verifiedBy: z.string().nullable().default(null),
 });
 
-/* ─── Step 3 — Health ─── */
+/* ─── Step 2 — Health ─── */
 export const healthSchema = z
   .object({
     weightKg: z.coerce
@@ -147,6 +168,70 @@ export const healthSchema = z
       }
     }
   });
+
+/* ─── Step 3 — Lifestyle & symptoms ─── */
+/*
+ * Sections 6 to 9 of the practice's own intake form ("Assessment form -1"):
+ * lifestyle and food habits, two symptom checklists and the menstrual cycle.
+ *
+ * Text answers that matter to every plan are required, with "none" accepted —
+ * the same convention as the health step, because a blank field cannot tell
+ * the practice whether somebody has no allergies or skipped the question.
+ */
+const requiredText = (label: string, max = 600) =>
+  z
+    .string({ error: `Please tell us about your ${label} (or write "none").` })
+    .trim()
+    .min(1, `Please tell us about your ${label} (or write "none").`)
+    .max(max, `Maximum ${max} characters.`);
+
+const optionalText = (max = 600) =>
+  z.string().trim().max(max, `Maximum ${max} characters.`).optional();
+
+export const GENERAL_SYMPTOMS = [
+  "Hair loss",
+  "Acne",
+  "Focus issues",
+  "Dry skin",
+  "Frequent headaches",
+  "Runny nose",
+  "Skin allergies",
+] as const;
+
+export const DIGESTIVE_SYMPTOMS = [
+  "Bloating / heaviness after meals",
+  "Flatulence",
+  "Abdominal pain",
+  "Acid reflux",
+] as const;
+
+export const lifestyleSchema = z.object({
+  diet: z.enum(["vegetarian", "eggetarian", "non_vegetarian", "vegan", "jain", "other"], {
+    error: "Please choose the diet you follow.",
+  }),
+  foodHabits: requiredText("food habits", 1000),
+  foodAllergies: requiredText("food allergies", 400),
+  teaCoffee: optionalText(300),
+  stress: z.enum(["low", "moderate", "high"], { error: "Please choose an option." }),
+  exercise: requiredText("movement and exercise", 600),
+  bowelType: z.enum(["1", "2", "3", "4", "5", "6", "7", "unsure"], {
+    error: 'Please choose the closest type, or "Not sure".',
+  }),
+  bowelNote: optionalText(400),
+  alcoholSmoking: optionalText(300),
+  screenTime: optionalText(300),
+  sleep: requiredText("sleep", 400),
+  profession: requiredText("profession", 120),
+  intolerances: optionalText(800),
+  sweetCravings: z.enum(["no", "sometimes", "often"]).optional(),
+
+  generalSymptoms: z.array(z.string()).optional(),
+  generalSymptomsNote: optionalText(600),
+  digestiveSymptoms: z.array(z.string()).optional(),
+  digestiveNote: optionalText(600),
+  menstrualCycle: z.enum(["regular", "irregular", "not_applicable"]).optional(),
+  menstrualNote: optionalText(400),
+});
 
 /* ─── Step 4 — Nutrition ─── */
 const mealSchema = z.object({
@@ -215,9 +300,10 @@ export const consentSchema = z.object({
 /* ─── Full assessment ─── */
 export const fullAssessmentSchema = z.object({
   details: detailsSchema,
-  payment: paymentSchema,
   health: healthSchema,
+  lifestyle: lifestyleSchema,
   nutrition: nutritionSchema,
+  payment: paymentSchema,
   consent: consentSchema,
 });
 
@@ -226,5 +312,6 @@ export type Details = z.infer<typeof detailsSchema>;
 export type Payment = z.infer<typeof paymentSchema>;
 export type Consent = z.infer<typeof consentSchema>;
 export type Health = z.infer<typeof healthSchema>;
+export type Lifestyle = z.infer<typeof lifestyleSchema>;
 export type Nutrition = z.infer<typeof nutritionSchema>;
 export type FullAssessment = z.infer<typeof fullAssessmentSchema>;

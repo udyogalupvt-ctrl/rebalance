@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useRef } from "react";
 import { useForm, Controller, type FieldErrors } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Building2, Video, ArrowRight, Lock } from "lucide-react";
+import { Building2, Video, ArrowRight, Lock, Info } from "lucide-react";
 import { detailsSchema, type Details } from "@/schemas/assessment";
+import { assessmentFormCopy } from "@/data/content";
 import { useAssessment } from "@/context/AssessmentContext";
 import {
   FormField,
@@ -23,6 +24,7 @@ import {
 interface DetailsFormValues {
   fullName: string;
   age: number;
+  guardianName?: string | undefined;
   gender: "female" | "male" | "other" | "prefer_not_to_say";
   email: string;
   phone: string;
@@ -89,6 +91,7 @@ export default function StepDetails() {
     setFocus,
     getValues,
     trigger,
+    watch,
   } = useForm<DetailsFormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     resolver: zodResolver(detailsSchema) as any,
@@ -96,6 +99,7 @@ export default function StepDetails() {
     defaultValues: {
       fullName: (data.details.fullName as string) ?? "",
       age: (data.details.age as number | undefined) ?? (undefined as unknown as number),
+      guardianName: (data.details.guardianName as string | undefined) ?? "",
       gender:
         (data.details.gender as DetailsFormValues["gender"] | undefined) ??
         (undefined as unknown as DetailsFormValues["gender"]),
@@ -141,7 +145,7 @@ export default function StepDetails() {
     async (formData: DetailsFormValues) => {
       updateSection("details", formData as unknown as Partial<Details>);
       await markStepComplete("details");
-      goToStep("payment");
+      goToStep("health");
     },
     [updateSection, markStepComplete, goToStep],
   );
@@ -185,6 +189,9 @@ export default function StepDetails() {
     [setFocus],
   );
 
+  const ageValue = watch("age");
+  const isMinor = typeof ageValue === "number" && !Number.isNaN(ageValue) && ageValue < 18;
+
   /* ─── Registration helpers with blur normalisers ─── */
   const fullNameReg = register("fullName", { onBlur: normaliseFullName });
   const emailReg = register("email", { onBlur: normaliseEmail });
@@ -196,9 +203,9 @@ export default function StepDetails() {
       {/* ─── Heading block ─── */}
       <div className="af-heading-block">
         {/* The step counter lives in <StepProgress> now — it was
-            printing "Step 1 of 4" twice on phones, once in the progress bar
+            printing the step number twice on phones, once in the progress bar
             and once here. */}
-        <span className="sr-only">Step 1 of 4</span>
+        <span className="sr-only">Step 1 of 5</span>
         <h2 className="af-title">Let's start with you.</h2>
         <p className="af-subtitle">
           Basic details so we know who we're speaking with and how to reach you. This takes about
@@ -241,16 +248,18 @@ export default function StepDetails() {
             required
             error={errors.age?.message}
             errorId="age-error"
+            helper={assessmentFormCopy.ageNote}
+            helperId="age-helper"
           >
             <NumberInput
               id="age"
               placeholder="e.g. 32"
               autoComplete="off"
               enterKeyHint="next"
-              min={1}
-              max={120}
+              min={15}
+              max={50}
               hasError={!!errors.age}
-              describedBy={errors.age ? "age-error" : undefined}
+              describedBy={errors.age ? "age-error" : "age-helper"}
               {...register("age", { valueAsNumber: true })}
             />
           </FormField>
@@ -280,6 +289,33 @@ export default function StepDetails() {
             />
           </FormField>
         </div>
+
+        {/* Under 18: the practice needs a parent or guardian involved. The
+            field only appears when it applies, so nobody else is asked. */}
+        {isMinor && (
+          <div className="af-conditional-field">
+            <div className="af-info-note" style={{ marginBottom: 18 }}>
+              <Info aria-hidden="true" />
+              <p>{assessmentFormCopy.guardianNote}</p>
+            </div>
+            <FormField
+              label="Parent or guardian's full name"
+              htmlFor="guardianName"
+              required
+              error={errors.guardianName?.message}
+              errorId="guardianName-error"
+            >
+              <TextInput
+                id="guardianName"
+                placeholder="Name of the parent or guardian"
+                autoComplete="off"
+                hasError={!!errors.guardianName}
+                describedBy={errors.guardianName ? "guardianName-error" : undefined}
+                {...register("guardianName")}
+              />
+            </FormField>
+          </div>
+        )}
 
         {/* ── How we reach you ── */}
         <h3 className="af-group-heading">How we reach you</h3>

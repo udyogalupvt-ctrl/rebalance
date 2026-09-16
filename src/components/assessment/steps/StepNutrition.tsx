@@ -171,7 +171,7 @@ export default function StepNutrition() {
   const onSubmit = useCallback(async () => {
     await markStepComplete("nutrition");
     // Advance to review screen
-    goToStep("review");
+    goToStep("payment");
   }, [markStepComplete, goToStep]);
 
   const onError = useCallback(
@@ -227,9 +227,9 @@ export default function StepNutrition() {
       {/* ─── Heading block ─── */}
       <div className="af-heading-block" style={{ position: "relative" }}>
         {/* The step counter lives in <StepProgress> now — it was
-            printing "Step 4 of 4" twice on phones, once in the progress bar
+            printing the step number twice on phones, once in the progress bar
             and once here. */}
-        <span className="sr-only">Step 4 of 4</span>
+        <span className="sr-only">Step 4 of 5</span>
         <h2 className="af-title">What did you eat yesterday?</h2>
         <p className="af-subtitle">
           A single honest day tells us more than a week of what you think you should have eaten.
@@ -449,7 +449,7 @@ export default function StepNutrition() {
         {/* ─── Footer ─── */}
         <div className="af-pay-footer">
           <div className="af-pay-footer__row">
-            <button type="button" className="af-back-btn" onClick={() => goToStep("health")}>
+            <button type="button" className="af-back-btn" onClick={() => goToStep("lifestyle")}>
               <ArrowLeft aria-hidden="true" />
               Back
             </button>

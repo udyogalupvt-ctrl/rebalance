@@ -7,13 +7,14 @@ import { CurveDivider } from "@/components/shared/CurveDivider";
 
 import { BriefHero } from "@/components/home/BriefHero";
 import { AreasOfFocus } from "@/components/home/AreasOfFocus";
-import { WhoWeWorkWith } from "@/components/home/WhoWeWorkWith";
 import { GutHealthCore } from "@/components/home/GutHealthCore";
 import { ApproachSteps } from "@/components/home/ApproachSteps";
 import { ProgramsSection } from "@/components/home/ProgramsSection";
 import { WhyGoRebalance } from "@/components/home/WhyGoRebalance";
 import { WhatToExpect } from "@/components/home/WhatToExpect";
 import { MeetSai } from "@/components/home/MeetSai";
+import { Credentials } from "@/components/home/Credentials";
+import { JourneySection } from "@/components/home/JourneySection";
 import { BriefFaq } from "@/components/home/BriefFaq";
 import { FinalCta } from "@/components/home/FinalCta";
 
@@ -34,12 +35,12 @@ import { FinalCta } from "@/components/home/FinalCta";
  */
 export const Route = createFileRoute("/")({
   head: () => ({
-    title: "Go Rebalance | Personalised Nutrition. Gut Health at the Core.",
+    title: "Go Rebalance | Rebalance From Within — Personalised Nutrition",
     meta: [
       {
         name: "description",
         content:
-          "Personalised nutrition guidance designed around your body, your lifestyle and your needs, from dietitian Sai Sowjanya Nallimpalli.",
+          "Personalised nutrition guidance designed around your body, your lifestyle and your needs, from dietitian Sai Sowjanya Penmetsa.",
       },
       { property: "og:title", content: "Go Rebalance | Personalised Nutrition" },
       {
@@ -60,20 +61,21 @@ function Index() {
       <Preloader />
       <Header overHero={false} />
       <main>
-        {/* 01 */} <BriefHero />
-        {/* 02 */} <AreasOfFocus />
-        {/* 03 */} <WhoWeWorkWith />
-        {/* 04 */} <GutHealthCore />
-        {/* 05 */} <ApproachSteps />
+        <BriefHero />
+        <AreasOfFocus />
+        <GutHealthCore />
+        <ApproachSteps />
         <CurveDivider fill="alt" />
-        {/* 06 */} <ProgramsSection />
+        <ProgramsSection />
         <CurveDivider fill="base" flip />
-        {/* 07 */} <WhyGoRebalance />
-        {/* 08 + 09 */} <WhatToExpect />
+        <WhyGoRebalance />
+        <WhatToExpect />
         <CurveDivider fill="base" flip />
-        {/* 10 + 11 */} <MeetSai />
-        {/* 12 */} <BriefFaq />
-        {/* 13 */} <FinalCta />
+        <MeetSai />
+        <Credentials />
+        <BriefFaq />
+        <JourneySection />
+        <FinalCta />
       </main>
       <Footer />
     </>

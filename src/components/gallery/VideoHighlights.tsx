@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 import { SectionWrapper } from "@/components/shared/SectionWrapper";
 import { SectionHeading } from "@/components/shared/SectionHeading";
 import { Reveal } from "@/components/shared/Reveal";
+import { CardRail } from "@/components/shared/CardRail";
 import { videoHighlights, type VideoHighlight } from "@/data/content";
 
 /** Chip ground that stays legible over any photograph. */
@@ -57,15 +58,18 @@ export function VideoHighlights() {
         />
       </div>
 
-      <Reveal stagger={0.08}>
-        <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-[18px] sm:gap-5 lg:gap-6 items-stretch max-w-[520px] sm:max-w-none mx-auto list-none p-0">
+      {/* A swipeable row on a phone, a grid from md. */}
+      <CardRail
+        count={items.length}
+        label="Video highlights"
+        className="md:grid md:grid-cols-2 md:gap-5 lg:grid-cols-3 lg:gap-6"
+      >
+        <Reveal stagger={0.08} childAs="li">
           {items.map((item) => (
-            <li key={item.id} className="h-full">
-              <VideoCard item={item} onOpen={handleOpen} reduce={!!reduce} />
-            </li>
+            <VideoCard key={item.id} item={item} onOpen={handleOpen} reduce={!!reduce} />
           ))}
-        </ul>
-      </Reveal>
+        </Reveal>
+      </CardRail>
 
       <VideoModal item={active} onClose={handleClose} reduce={!!reduce} />
     </SectionWrapper>
@@ -162,7 +166,7 @@ function VideoCard({
   );
 
   const base =
-    "group relative flex flex-col h-full w-full overflow-hidden rounded-[22px] bg-surface border border-border";
+    "group relative flex flex-col w-full overflow-hidden rounded-[22px] bg-surface border border-border";
 
   if (!playable) {
     return <div className={base}>{shell}</div>;

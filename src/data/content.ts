@@ -49,19 +49,26 @@ import type { Testimonial } from "@/types/content";
 
 export const brand = {
   name: "Go Rebalance",
-  /*
-   * The positioning line, NOT a tagline. The brief says the tagline is under
-   * review and the design must not be locked around one, so this is the line
-   * the practice is sure of and it lives in exactly one place.
-   */
-  tagline: "Personalised nutrition. Gut health at the core.",
-  practitioner: "Sai Sowjanya Nallimpalli",
+  /** The practice's line, set under the logo. */
+  tagline: "Rebalance From Within.",
+  /** The positioning statement. Under review as a tagline, so one place only. */
+  positioning: "Personalised nutrition. Gut health at the core.",
+  practitioner: "Sai Sowjanya Penmetsa",
   credential: "Dietitian | Gut Health Specialist",
+  /*
+   * NOTE FOR THE PRACTICE: the reference pages show this number as a
+   * placeholder. It is the number the site has always carried and it works,
+   * so it stays until a final one is supplied — replacing a working number
+   * with the word "placeholder" would cut off the one channel that is live.
+   */
   phone: "+91 93904 14536",
   phoneRaw: "919390414536",
-  email: "hello@gorebalance.in",
+  /** Supplied in the practice's contact reference. */
+  email: "contact@gorebalance.com",
+  instagram: "@gorebalance",
+  instagramUrl: "https://instagram.com/gorebalance",
   whatsapp:
-    "https://wa.me/919390414536?text=Hi%20GoRebalance%2C%20I%27d%20like%20to%20know%20more%20about%20your%20gut%20health%20programs",
+    "https://wa.me/919390414536?text=Hi%20Go%20Rebalance%2C%20I%27d%20like%20to%20know%20more%20about%20your%20programs",
   hours: "Mon – Sat · 10:00 AM – 7:00 PM",
 };
 
@@ -92,7 +99,7 @@ export const locations = [
  * TO ENABLE: paste the profile URL in place of the empty string.
  */
 export const socials = [
-  { label: "Instagram", href: "", icon: "Instagram" },
+  { label: "Instagram", href: brand.instagramUrl, icon: "Instagram" },
   { label: "Facebook", href: "", icon: "Facebook" },
   { label: "Youtube", href: "", icon: "Youtube" },
   { label: "WhatsApp", href: brand.whatsapp, icon: "MessageCircle" },
@@ -100,7 +107,7 @@ export const socials = [
 
 export const legalLinks = [
   { label: "Privacy Policy", href: "/privacy" },
-  { label: "Terms of Service", href: "/terms" },
+  { label: "Terms & Conditions", href: "/terms" },
   { label: "Disclaimer", href: "/disclaimer" },
 ];
 
@@ -113,11 +120,15 @@ export const legalLinks = [
  * questions on the homepage in an accordion and inventing a page to justify a
  * nav entry would be the wrong way round.
  */
-export const navLinks = [
-  { label: "Home", href: "/" },
-  { label: "About", href: "/about" },
-  { label: "Programs", href: "/programs" },
-  { label: "Treatments", href: "/treatments" },
+/**
+ * The footer's Explore column, in the practice's own wording. `hash` links
+ * point at a section of the home page.
+ */
+export const navLinks: { label: string; href: string; hash?: string }[] = [
+  { label: "About Sowjanya", href: "/about" },
+  { label: "Programs & Consultations", href: "/programs" },
+  { label: "Our Approach", href: "/", hash: "approach" },
+  { label: "FAQs", href: "/", hash: "faq" },
   { label: "Gallery", href: "/gallery" },
   { label: "Testimonials", href: "/testimonials" },
   { label: "Contact", href: "/contact" },
@@ -224,239 +235,13 @@ export const faqs = [
     id: "what-happens",
     question: "What happens after I submit the assessment?",
     answer:
-      "Sai Sowjanya Nallimpalli reviews your submission personally — your symptoms, history, medications, lifestyle and nutrition log. You'll be contacted within 24 hours to schedule your consultation, where we talk through your concerns and what your program would involve.",
+      "Sai Sowjanya Penmetsa reviews your submission personally — your symptoms, history, medications, lifestyle and nutrition log. You'll be contacted within 24 hours to schedule your consultation, where we talk through your concerns and what your program would involve.",
   },
   {
     id: "privacy",
     question: "Is my health information kept private?",
     answer:
       "Yes. Everything you share in the assessment is confidential and used only to build and adjust your plan. It isn't shared, sold or used for anything else.",
-  },
-];
-
-/**
- * The programs the practice actually runs.
- *
- * Rewritten from the practice's own list of treatments, with the conditions
- * named the way a clinician would write them (the brief carried a few
- * transcription slips: "Gred" -> GERD, "PMOS" -> PCOS, "Sibo" -> SIBO,
- * "Diabetics" -> Diabetes).
- *
- * Grouped into seven programs rather than listed as ten loose conditions:
- * someone arriving with reflux does not want to choose between "acid reflux"
- * and "GERD", and someone with IBS and irregular stools has one problem, not
- * two. Every condition on the practice's list appears in exactly one
- * program's `conditions` array, so nothing is lost to the grouping.
- */
-export const treatments = [
-  {
-    id: "gut-health",
-    slug: "gut-health",
-    category: "Gut & Digestion",
-    icon: Activity,
-    title: "Gut Health & Digestion",
-    shortTitle: "Gut Health & Digestion",
-    summary:
-      "H. pylori, IBS, SIBO and stool irregularities — treated by rebuilding the gut lining and the microbiome, not by silencing the symptom.",
-    description:
-      "H. pylori, IBS, SIBO, bloating and irregular stools, treated by rebuilding the gut lining and microbiome rather than masking symptoms.",
-    conditions: [
-      "H. pylori — nutritional support alongside treatment",
-      "IBS (constipation and diarrhoea predominant)",
-      "SIBO — small intestinal bacterial overgrowth",
-      "Stool irregularities — constipation, urgency, incomplete evacuation",
-      "Chronic bloating and flatulence",
-      "Food intolerances and sensitivities",
-      "Leaky gut and dysbiosis",
-      "Post-antibiotic gut recovery",
-    ],
-    involves: [
-      "A staged elimination and reintroduction protocol built around your regular meals",
-      "Meal timing and portion restructuring before any food is removed",
-      "Targeted gut-repair nutrition, with supplements only where a gap is clear",
-      "Fortnightly reviews to track stool, bloating and symptom shifts",
-    ],
-    timeline:
-      "Digestive symptoms usually ease within 3–5 weeks. Full gut repair and stable tolerance typically takes 4–6 months.",
-    tags: ["H. pylori", "IBS", "SIBO", "Bloating", "Constipation"],
-  },
-  {
-    id: "acid-reflux-gerd",
-    slug: "acid-reflux-gerd",
-    category: "Gut & Digestion",
-    icon: Flame,
-    title: "Acid Reflux & GERD",
-    shortTitle: "Acid Reflux & GERD",
-    summary:
-      "Closing the antacid drawer by fixing what drives the reflux — meal timing, meal composition and the pressure underneath it.",
-    description:
-      "Acid reflux, GERD, gastritis and chronic hyperacidity addressed through meal timing, composition and gut repair.",
-    conditions: [
-      "Acid reflux and heartburn",
-      "GERD — gastro-oesophageal reflux disease",
-      "Gastritis and chronic hyperacidity",
-      "Sour burps, throat burn and night-time reflux",
-      "Long-term antacid and PPI dependence",
-      "Reflux alongside hiatus hernia (supportive nutrition)",
-    ],
-    involves: [
-      "Rebuilding meal timing and portion size before any food is taken away",
-      "Identifying your specific triggers rather than removing the usual suspects",
-      "Nutrition to repair the stomach lining and restore digestive capacity",
-      "A structured, physician-coordinated taper off long-term antacids",
-    ],
-    timeline:
-      "Night-time reflux usually settles in 2–4 weeks. Coming off long-term antacids safely takes 3–4 months.",
-    tags: ["Acid Reflux", "GERD", "Gastritis", "Hyperacidity"],
-  },
-  {
-    id: "ibd-support",
-    slug: "ibd-support",
-    category: "Gut & Digestion",
-    icon: ShieldCheck,
-    title: "IBD Nutrition Support",
-    shortTitle: "IBD Support",
-    summary:
-      "Nutrition through flares and remission for Crohn's and ulcerative colitis — alongside your gastroenterologist, never instead of them.",
-    description:
-      "Crohn's disease and ulcerative colitis: flare-phase nutrition, remission maintenance and correction of the deficiencies IBD causes.",
-    conditions: [
-      "Crohn's disease",
-      "Ulcerative colitis",
-      "Indeterminate colitis",
-      "Flare-phase and low-residue nutrition",
-      "Remission maintenance",
-      "IBD-related anaemia and nutrient deficiencies",
-      "Weight and muscle loss during active disease",
-    ],
-    involves: [
-      "Phase-aware plans: what to eat during a flare is not what to eat in remission",
-      "Correcting the iron, B12, D and protein gaps that active disease creates",
-      "Rebuilding tolerance food by food as inflammation settles",
-      "Working to your gastroenterologist's plan — medication is never adjusted here",
-    ],
-    timeline:
-      "Flare-phase nutrition is adjusted weekly. Remission plans are reviewed monthly and held long-term.",
-    tags: ["Crohn's", "Ulcerative Colitis", "Flare Care", "Remission"],
-  },
-  {
-    id: "pcos-pcod",
-    slug: "pcos-pcod",
-    category: "Women's Health",
-    icon: CalendarHeart,
-    title: "PCOS & PCOD",
-    shortTitle: "PCOS & PCOD",
-    summary:
-      "Cycle regulation and insulin support through nutrition that works with your hormones rather than overriding them.",
-    description:
-      "PCOS and PCOD: cycle regulation, insulin resistance and fertility-supportive nutrition, built around how your hormones actually behave.",
-    conditions: [
-      "PCOS — polycystic ovary syndrome",
-      "PCOD — polycystic ovarian disease",
-      "Irregular or absent cycles",
-      "Painful periods and PMS",
-      "Insulin resistance and unexplained weight gain",
-      "Hirsutism and hormonal acne",
-      "Fertility-supportive nutrition",
-    ],
-    involves: [
-      "Insulin-first meal structuring to stabilise blood sugar across the day",
-      "Cycle-aware nutrition adjusted to your phase where relevant",
-      "Gut and liver support, since hormone clearance depends on both",
-      "Monthly cycle tracking to measure real progress, not just weight",
-    ],
-    timeline:
-      "Energy and PMS often improve in 4–6 weeks. Cycle regularity typically returns between months 3 and 6.",
-    tags: ["PCOS", "PCOD", "Irregular Cycles", "Fertility"],
-  },
-  {
-    id: "pregnancy-nutrition",
-    slug: "pregnancy-nutrition",
-    category: "Women's Health",
-    icon: HeartPulse,
-    title: "Pregnancy Nutrition",
-    shortTitle: "Pregnancy Nutrition",
-    summary:
-      "Trimester-by-trimester nutrition through pregnancy and after it — including the nausea, reflux and constipation nobody warns you about.",
-    description:
-      "Pre-conception, trimester-wise and postnatal nutrition, including gestational diabetes and the digestive symptoms of pregnancy.",
-    conditions: [
-      "Pre-conception nutrition",
-      "Trimester-wise pregnancy nutrition",
-      "Gestational diabetes",
-      "Pregnancy nausea, reflux and constipation",
-      "Anaemia and deficiencies in pregnancy",
-      "Healthy weight gain in pregnancy",
-      "Postnatal recovery and lactation nutrition",
-    ],
-    involves: [
-      "Plans built around what you can actually keep down this trimester",
-      "Blood-sugar structuring where gestational diabetes is diagnosed",
-      "Iron, calcium, folate and B12 addressed through food first",
-      "Coordination with your obstetrician throughout",
-    ],
-    timeline:
-      "Reviewed every 3–4 weeks through pregnancy, then monthly for as long as you are feeding.",
-    tags: ["Pregnancy", "Gestational Diabetes", "Postnatal", "Lactation"],
-  },
-  {
-    id: "diabetes-metabolic",
-    slug: "diabetes-metabolic",
-    category: "Metabolic",
-    icon: Gauge,
-    title: "Diabetes & Metabolic Health",
-    shortTitle: "Diabetes & Metabolic",
-    summary:
-      "Blood sugar, thyroid and fatty liver — the three that usually travel together, worked on as one problem rather than three.",
-    description:
-      "Type 2 diabetes, pre-diabetes, insulin resistance, thyroid dysfunction and fatty liver, supported through nutrition alongside your physician.",
-    conditions: [
-      "Type 2 diabetes — nutritional management and reversal support",
-      "Pre-diabetes and insulin resistance",
-      "Hypothyroidism and Hashimoto's thyroiditis",
-      "Fatty liver (NAFLD)",
-      "High cholesterol and triglycerides",
-      "Diabetes prevention where it runs in the family",
-    ],
-    involves: [
-      "Blood sugar stabilisation through meal composition, order and timing",
-      "Nutrient repletion for the cofactors thyroid function depends on",
-      "Gut support, since absorption and hormone conversion both depend on it",
-      "Coordination with your physician's prescribed medication — never replacing it",
-    ],
-    timeline:
-      "Energy and post-meal crashes usually improve within 4–8 weeks. HbA1c and lipids are best reassessed at 3–6 months.",
-    tags: ["Diabetes", "Pre-diabetes", "Thyroid", "Fatty Liver"],
-  },
-  {
-    id: "weight-loss",
-    slug: "weight-loss",
-    category: "Metabolic",
-    icon: Scale,
-    title: "Weight Loss & Management",
-    shortTitle: "Weight Loss",
-    summary:
-      "Fat loss built on metabolic repair and real Indian meals — not restriction your body eventually undoes.",
-    description:
-      "Sustainable weight loss, plateau-breaking and healthy weight gain that works with your metabolism instead of starving it into shutdown.",
-    conditions: [
-      "Weight loss and stubborn plateaus",
-      "Post-pregnancy weight",
-      "Underweight and healthy weight gain",
-      "Yo-yo dieting recovery",
-      "Metabolic adaptation from prolonged dieting",
-      "Emotional and stress eating",
-      "Visceral fat reduction",
-    ],
-    involves: [
-      "A metabolic assessment before any calorie change is considered",
-      "Adequate protein and fibre structured into the meals you already cook",
-      "Habit and hunger work alongside the plan, not after it",
-      "Progress tracked through measurements, energy and adherence — not the scale alone",
-    ],
-    timeline:
-      "Consistent, sustainable change appears from week 6 onward. Most clients work over 4–6 months to make it hold.",
-    tags: ["Weight Loss", "Plateaus", "Healthy Gain", "Metabolism"],
   },
 ];
 
@@ -485,19 +270,19 @@ export const practitionerStory = {
     // Was a stock photograph of a stranger, captioned with the practitioner's
     // name — a false attribution on the page that introduces her.
     src: "/founder.jpg",
-    alt: "Sai Sowjanya Nallimpalli at her desk in the GoRebalance clinic, Kakinada",
-    caption: "Sai Sowjanya Nallimpalli at the Kakinada clinic",
+    alt: "Sai Sowjanya Penmetsa at her desk in the GoRebalance clinic, Kakinada",
+    caption: "Sai Sowjanya Penmetsa at the Kakinada clinic",
   },
   intro:
     "Most people arrive at a nutritionist with a list of symptoms and a folder of reports that say nothing is wrong. Bloating that has lasted years. Cycles that never settled. Fatigue that sleep doesn't fix. They have usually been told, kindly and repeatedly, that this is normal. It rarely is.",
   paragraphs: [
-    "Sai Sowjanya Nallimpalli trained as a dietitian and spent her early practice doing what the field taught — calculating requirements, writing plans, adjusting macros. The plans worked, for a while. Then clients would return with the same complaints in a different order, and the honest conclusion was that something upstream had never been addressed.",
+    "Sai Sowjanya Penmetsa trained as a dietitian and spent her early practice doing what the field taught — calculating requirements, writing plans, adjusting macros. The plans worked, for a while. Then clients would return with the same complaints in a different order, and the honest conclusion was that something upstream had never been addressed.",
     "That something was almost always the gut. Digestion sits underneath energy, immunity, skin, mood and hormones, and when it is compromised, every plan built on top of it is temporary. So the practice changed shape. Instead of starting with a diet chart, she started with a conversation — one long enough to hear what a symptom sheet leaves out.",
     "Today that first conversation covers digestion, sleep, stress, medication history, menstrual health, work hours, screen time and what a real day of eating actually looks like. Not because every detail matters equally, but because the pattern only becomes visible when you have all of it in front of you.",
   ],
   pullQuote: {
     text: "A symptom is not the problem. It is the body's way of telling you where to look.",
-    attribution: "Sai Sowjanya Nallimpalli",
+    attribution: "Sai Sowjanya Penmetsa",
   },
   pillars: [
     {
@@ -593,208 +378,6 @@ export const clinicsCopy = {
   directionsLabel: "Get Directions",
 };
 
-// === TREATMENTS PAGE — WHAT'S INCLUDED ===
-export const programInclusions = [
-  {
-    icon: ClipboardList,
-    title: "A full case assessment",
-    description:
-      "Symptoms, medical history, medications, cycle, sleep, stress, lifestyle and a real nutrition log — reviewed before anything is prescribed.",
-  },
-  {
-    icon: NotebookPen,
-    title: "A personalised plan document",
-    description:
-      "Written for your kitchen and your schedule, with meals, portions, timing and swaps you can actually cook.",
-  },
-  {
-    icon: MessageCircle,
-    title: "Direct follow-up access",
-    description:
-      "Questions between consultations get answered by the clinic, not deferred to your next appointment.",
-  },
-  {
-    icon: RefreshCw,
-    title: "Scheduled plan revisions",
-    description:
-      "Plans are adjusted as your symptoms shift. A protocol that never changes isn't being monitored.",
-  },
-  {
-    icon: FileText,
-    title: "Report interpretation",
-    description:
-      "Existing blood work and reports are read in context — what the numbers mean for your nutrition, not a diagnosis.",
-  },
-  {
-    icon: Users,
-    title: "Family-aware planning",
-    description:
-      "Plans are designed to fit into shared household meals, so you're not cooking separately every day.",
-  },
-];
-
-export const consultationTiers = [
-  {
-    id: "single",
-    name: "Single Consultation",
-    description: "A one-time deep-dive to understand what's driving your symptoms.",
-    // PRICING PLACEHOLDER — replace `price` in consultationTiers with the client's confirmed fees.
-    // The layout must accommodate a real value like "₹2,500" without reflow.
-    price: "₹ —",
-    priceSubtitle: "Fee shared during booking",
-    included: [
-      "Full case assessment",
-      "45–60 minute consultation",
-      "Root-cause explanation",
-      "Initial dietary direction",
-      "Report interpretation",
-    ],
-    excluded: ["Written plan document", "Follow-up consultations", "Between-session support"],
-    cta: "Book a Single Consultation",
-    isFeatured: false,
-  },
-  {
-    id: "complete",
-    name: "Complete Program",
-    description: "The full protocol, monitored and adjusted until results hold.",
-    // PRICING PLACEHOLDER — replace `price` in consultationTiers with the client's confirmed fees.
-    price: "₹ —",
-    priceSubtitle: "Fee shared during booking",
-    included: [
-      "Everything in Single Consultation",
-      "Personalised written plan",
-      "Scheduled follow-up consultations",
-      "Plan revisions as symptoms shift",
-      "Direct follow-up access",
-      "Family-aware meal planning",
-    ],
-    excluded: [],
-    cta: "Start the Complete Program",
-    isFeatured: true,
-  },
-  {
-    id: "extended",
-    name: "Extended Program",
-    description: "For complex or long-standing conditions that need longer monitoring.",
-    // PRICING PLACEHOLDER — replace `price` in consultationTiers with the client's confirmed fees.
-    price: "₹ —",
-    priceSubtitle: "Fee shared during booking",
-    included: [
-      "Everything in Complete Program",
-      "Extended monitoring period",
-      "Quarterly reassessment",
-      "Coordination with your physician",
-      "Priority scheduling",
-    ],
-    excluded: [],
-    cta: "Start the Extended Program",
-    isFeatured: false,
-  },
-];
-
-// === TREATMENTS PAGE — JOURNEY ===
-export const programJourney = [
-  {
-    phase: "WEEK 0",
-    title: "Assessment & Review",
-    description:
-      "You complete the two-stage assessment. Your symptoms, history, medications, cycle, lifestyle and nutrition log are reviewed personally before the consultation — so the session starts with questions, not paperwork.",
-    chips: ["Online form", "Reviewed in 24 hrs"],
-  },
-  {
-    phase: "WEEK 1",
-    title: "The First Consultation",
-    description:
-      "A 45–60 minute conversation covering what's driving your symptoms, what the reports do and don't show, and what the plan will realistically involve. You leave understanding the why, not just the what.",
-    chips: ["45–60 minutes", "In-clinic or online"],
-  },
-  {
-    phase: "WEEKS 1–2",
-    title: "Your Plan Arrives",
-    description:
-      "A written protocol built around your kitchen: meals, portions, timing, swaps and any targeted supplementation. Designed to fit the food your household already cooks.",
-    chips: ["Written document", "Indian home cooking"],
-  },
-  {
-    phase: "WEEKS 3–12",
-    title: "Adjustment & Monitoring",
-    description:
-      "Scheduled follow-ups track what's shifting and what isn't. Plans are revised as digestion, energy and cycles respond — this is where most of the actual work happens.",
-    chips: ["Regular follow-ups", "Plan revisions"],
-  },
-  {
-    phase: "MONTHS 4–6",
-    title: "Stabilising Without the Plan",
-    description:
-      "The protocol loosens deliberately. The goal is a body that holds its results on ordinary food, without needing to be managed.",
-    chips: ["Reassessment", "Long-term habits"],
-  },
-];
-
-// === TREATMENTS PAGE — FAQ (independent from the home page `faqs`) ===
-export const treatmentsFaqs = [
-  {
-    id: "multiple-programs",
-    question: "What if my symptoms fit more than one program?",
-    answer:
-      "That's the norm rather than the exception. Gut issues, hormonal symptoms and fatigue are usually the same problem showing up in three places. The assessment identifies which one is driving the others, and the plan addresses that first — you don't need to pick correctly upfront.",
-  },
-  {
-    id: "blood-reports",
-    question: "Do I need blood reports before starting?",
-    answer:
-      "No. If you have recent reports, bring them and they'll be read in context. If you don't, the assessment and consultation are enough to begin. Any testing that would genuinely change the plan will be suggested — nothing is ordered routinely.",
-  },
-  {
-    id: "medication",
-    question: "Can I continue my prescribed medication?",
-    answer:
-      "Yes, and you should. Nutrition supports medical treatment, it does not replace it. Medications are never stopped or altered here — any change to a prescription is your physician's decision, and plans are built to work alongside what you're already taking.",
-  },
-  {
-    id: "timeline",
-    question: "How long before I actually see something change?",
-    answer:
-      "Digestion and energy usually shift first, often within three to five weeks. Cycles, skin and weight follow their own biological timelines and typically take three to six months. You'll be told a realistic timeline for your condition at the first consultation, not an optimistic one.",
-  },
-  {
-    id: "travel",
-    question: "What if I travel, or my schedule is unpredictable?",
-    answer:
-      "The plan is built around your actual week, including irregular hours, travel and eating out. A protocol that only works on ideal days isn't a working protocol. Tell us what your schedule really looks like and it gets designed around that.",
-  },
-  {
-    id: "diet-preferences",
-    question: "Are the plans vegetarian-friendly? Vegan? Jain?",
-    answer:
-      "Yes to all three. Plans are built from whatever you already eat — vegetarian, vegan, Jain, eggetarian or non-vegetarian. Restrictions are worked around, not argued with, and protein and nutrient adequacy are handled within your preference.",
-  },
-  {
-    id: "doesnt-work",
-    question: "What if the program doesn't work for me?",
-    answer:
-      "Then something in the assessment was incomplete, or the concern sits outside the scope of nutrition care — and you'll be told that directly rather than sold another package. In some cases the right next step is a referral to a physician or specialist, and that recommendation will be made honestly.",
-  },
-];
-
-export const treatmentsFaqCopy = {
-  eyebrow: "BEFORE YOU CHOOSE",
-  title: "Questions people ask about the *programs*.",
-  subtitle:
-    "Practical answers about conditions, medications, duration and what happens if your situation doesn't fit neatly into one program.",
-  strip: {
-    title: "Still not sure which program fits?",
-    body: "Message the clinic directly — you'll get a real answer, not a sales reply.",
-    ctaLabel: "Chat on WhatsApp",
-  },
-};
-
-export const treatmentsCtaCopy = {
-  title: "Found your program? Let's confirm the *cause*.",
-  subtitle:
-    "The assessment helps us understand your concerns and which level of support may suit you — reviewed personally by Sai Sowjanya Nallimpalli within 24 hours.",
-};
-
 // PLACEHOLDER VIDEOS — replace poster images and videoUrl values with the client's real footage. If no video is available at launch, leave this array empty and the section will not render.
 // NOTE: when real footage is added, captions/subtitles (WebVTT tracks or platform captions) must be provided for accessibility.
 export interface VideoHighlight {
@@ -875,7 +458,7 @@ export const videoHighlights: VideoHighlight[] = [
 export const galleryCtaCopy = {
   title: "Seen enough? The next step is *yours*.",
   subtitle:
-    "The assessment covers your symptoms, history, lifestyle and food habits — reviewed personally by Sai Sowjanya Nallimpalli within 24 hours.",
+    "Tell us a little about your health concerns and goals. We'll start by understanding where you are and guide you towards the next step.",
 };
 
 export const symptoms = [
@@ -930,12 +513,12 @@ export const symptoms = [
 ];
 
 export const practitioner = {
-  name: "Sai Sowjanya Nallimpalli",
+  name: "Sai Sowjanya Penmetsa",
   role: "Clinical Nutritionist & Gut Health Specialist",
   /* The real photograph, not a stock portrait of someone else. */
   image: "/founder.jpg",
   bio: [
-    "I'm Sai Sowjanya Nallimpalli, a dietitian with specialised education in gut health, working across digestive, hormonal and metabolic nutrition. I consult from my clinic in Kakinada, Andhra Pradesh — and online with clients across India.",
+    "I'm Sai Sowjanya Penmetsa, a dietitian with specialised education in gut health, working across digestive, hormonal and metabolic nutrition. I consult from my clinic in Kakinada, Andhra Pradesh — and online with clients across India.",
     "My approach is simple: symptoms are messages, not problems to be silenced. Before I build a single meal plan, I want to understand your digestion, your sleep, your stress, your cycle and what your day actually looks like. That's where the real answers live.",
     "Every plan I create is built around real Indian food — your kitchen, your family's meals, your schedule and your budget. No exotic ingredients, no crash diets, no protocols you'll abandon in three weeks.",
   ],
@@ -1003,105 +586,131 @@ export const processSteps = [
 export const aboutCtaCopy = {
   title: "You've read the approach. Now let's apply it to *you*.",
   subtitle:
-    "The assessment is where the work actually begins — your symptoms, history, medications, lifestyle and food habits, reviewed personally by Sai Sowjanya Nallimpalli.",
+    "The assessment is where the work actually begins — your symptoms, history, medications, lifestyle and food habits, reviewed personally by Sai Sowjanya Penmetsa.",
 };
 
 /* ==========================================================================
-   THE CONTENT BRIEF
+   THE CLIENT CONTENT
 
-   Everything below this banner comes from the practice's own "Complete
-   Website Content & Developer Brief", and it SUPERSEDES the older exports
-   above wherever the two disagree. The old ones survive only because the
-   treatments, testimonials and gallery pages still read from them; they come
-   out once the homepage draft is signed off.
+   Everything below this banner is the practice's own copy, taken from the
+   content brief and from the page references she sent afterwards (home,
+   about and contact). Where the two disagree the later documents win: the
+   founder's surname is Penmetsa, the practice's line is "Rebalance From
+   Within.", and the main call to action is "Book Consultation".
 
-   Three rules from the brief govern every line of copy below, and they are
-   not stylistic — they are the boundaries a nutrition practice has to work
-   inside:
+   Three rules still govern every line, and they are not stylistic — they are
+   the boundaries a nutrition practice has to work inside:
 
-     - Nothing diagnoses, treats or cures. No "heal your gut", no "root
-       cause", no promise that a symptom will improve.
-     - Nothing is invented. No prices, no testimonials, no client counts, no
-       credentials or awards beyond the five the practice listed.
+     - Nothing diagnoses, treats or cures. No "heal", no "root cause", no
+       promise that a symptom will improve, and no "treatment" wording at all.
+     - Nothing is invented. No prices, no client counts, no testimonials and
+       no credentials beyond the five the practice listed.
      - Nothing implies nutrition replaces medical care.
 
-   The tagline is UNDER REVIEW. It lives in one constant so it can be swapped
-   without touching a layout, and no section is built around its length.
+   Changes the practice asked for by name, so they are not undone later:
+     - Hashimoto's is not listed under hormonal and thyroid health.
+     - The one-off session is a "Single Consultation", not a "Nutrition
+       Clarity Consultation".
+     - Online consultations are not described as Google Meet calls.
+     - The after-the-assessment answer does not mention a discovery call.
+     - The About page does not describe a one-practitioner practice.
+     - The Programs page does not say pricing is discussed on the call.
    ========================================================================== */
 
 export const briefBrand = {
   name: "Go Rebalance",
-  /** Under review. One line, one place, swappable. */
+  /** The practice's line — set under the logo and as the home headline. */
+  tagline: "Rebalance From Within.",
+  /** The positioning statement. Under review as a tagline, so one place only. */
   positioning: "Personalised nutrition. Gut health at the core.",
-  founder: "Sai Sowjanya Nallimpalli",
+  founder: "Sai Sowjanya Penmetsa",
+  founderShort: "Sowjanya",
   founderRole: "Dietitian | Gut Health Specialist",
   /** The primary call to action, everywhere on the site. */
-  primaryCta: "Start Your Assessment",
+  primaryCta: "Book Consultation",
   secondaryCta: "Explore Programs",
 };
 
+/* ---------------------------------------------------------------- hero */
 export const briefHero = {
-  headline: "Go Rebalance",
+  /** The line above the headline — the practice asked for her title here. */
+  badge: briefBrand.founderRole,
+  headline: "Rebalance From Within.",
   positioning: briefBrand.positioning,
   supporting: "Nutrition guidance designed around your body, your lifestyle and your needs.",
+  trust: ["Evidence-conscious care", "1-on-1 online consultations", "Personalised food strategies"],
 };
 
-/** Section 2 — How Can We Support You? */
+/** The card beside the hero copy. */
+export const heroPracticeCard = {
+  eyebrow: "PRACTICE LEAD",
+  name: briefBrand.founder,
+  /* Not the title again: it now sits directly above the headline. */
+  role: "Founder, Go Rebalance",
+  principleLabel: "OUR GUIDING PRINCIPLE",
+  principle:
+    "Because personalised nutrition isn't just about creating a plan. It's about supporting you throughout the process.",
+  /*
+   * Plain words, at the practice's request. These replaced two labelled boxes
+   * ("FOCUS: Gut Microbiota", "METHOD: Rooted in You") that read as jargon.
+   */
+  points: ["Focus on gut health", "A plan built around you", "No restrictive fad diets"],
+  link: "Read Sowjanya's Story",
+};
+
+/* -------------------------------------------------------------- focus */
 export const areasOfFocus = [
   {
     id: "gut",
     icon: Activity,
     title: "Gut Health",
     items: ["IBS", "IBD", "SIBO", "Gut Dysbiosis"],
+    body: "Evidence-conscious dietary approaches to nurture digestive comfort, support microbiota balance, and identify food triggers with care.",
   },
   {
     id: "metabolic",
     icon: Gauge,
     title: "Weight & Metabolic Health",
     items: ["Weight", "Diabetes", "Insulin Resistance"],
+    body: "Sustainable metabolic nutrition tailored to your glycemic response and daily lifestyle — without restrictive fad dieting.",
   },
   {
     id: "hormonal",
     icon: CalendarHeart,
     title: "Hormonal & Thyroid Health",
-    items: ["PCOS", "PMS", "Thyroid", "Hashimoto's"],
+    // Hashimoto's removed at the practice's request.
+    items: ["PCOS", "PMS", "Thyroid"],
+    body: "Targeted nutrition to support endocrine rhythm, reproductive cycles, and thyroid metabolism in harmony with your body.",
   },
   {
     id: "autoimmune",
     icon: ShieldCheck,
     title: "Autoimmune Nutrition",
-    note: "Nutrition support alongside your medical care.",
-    items: [],
+    items: ["Nutrition support alongside your medical care"],
+    body: "Thoughtful dietary strategies designed to soothe system load and complement your ongoing physician-led medical protocol.",
   },
   {
     id: "womens",
     icon: HeartPulse,
     title: "Women's Health",
     items: ["Preconception", "Pregnancy", "Women's Nutrition"],
+    body: "Comprehensive nutritional care supporting every life stage — from preconception preparation to prenatal and postnatal nourishment.",
   },
 ];
 
 export const areasOfFocusCopy = {
   eyebrow: "AREAS OF FOCUS",
   title: "How Can We *Support* You?",
+  subtitle:
+    "Targeted nutritional guidance grounded in physiology, lifestyle balance, and digestive wellness.",
+  cardLink: "Discuss in your consultation",
   closing: "Different bodies. Different needs. Personalised nutrition.",
+  clinicalNoteLabel: "Clinical note:",
+  clinicalNote:
+    "Go Rebalance provides personalised nutrition and lifestyle guidance alongside your medical care. We do not diagnose, treat, or claim to cure medical diseases.",
 };
 
-/** Section 3 — Who We Work With. */
-export const whoWeWorkWith = {
-  eyebrow: "WHO WE WORK WITH",
-  title: "Personalised Nutrition Support for Ages *15–50*",
-  body: [
-    "Go Rebalance currently works with clients aged 15 to 50. Support may include teenage nutrition, digestive concerns, hormonal and thyroid health, metabolic health, women's nutrition and individual nutrition goals.",
-    "Recommendations are adapted to the person's stage of life, health needs, food habits, lifestyle and goals.",
-  ],
-  /* Stated once here, once on the assessment, once in the FAQs. The brief is
-     explicit that it should be visible but not repeated across the site. */
-  guardianNote:
-    "For clients under 18, a parent or legal guardian should be involved in the consultation and consent process.",
-};
-
-/** Section 4 — Why Gut Health Is at the Core. Deliberately short. */
+/* ------------------------------------------------------------- the lens */
 export const gutHealthCore = {
   eyebrow: "THE LENS",
   title: "Why Gut Health Is at the *Core*",
@@ -1109,7 +718,7 @@ export const gutHealthCore = {
   pull: "We don't look at the gut alone. We look at the person as a whole.",
 };
 
-/** Section 5 — The Go Rebalance Approach. */
+/* ------------------------------------------------------------ approach */
 export const approachSteps = [
   {
     number: "01",
@@ -1138,23 +747,30 @@ export const approachSteps = [
 ];
 
 export const approachCopy = {
-  eyebrow: "THE APPROACH",
+  eyebrow: "OUR CLINICAL PHILOSOPHY",
   title: "Not Just a Diet Plan. A Plan *Built Around You*.",
-  closing:
+  subtitle:
+    "A structured, human-centric methodology designed for sustainable habits and lasting digestive harmony.",
+  convictionLabel: "CORE CONVICTION",
+  conviction:
     "Because personalised nutrition isn't just about creating a plan. It's about supporting you throughout the process.",
+  convictionSub: "We stand beside you through every question, adjustment, and milestone.",
 };
 
+/* ------------------------------------------------------------ programs */
 /**
- * Section 6 — Programs.
+ * The four levels of support.
  *
- * No prices, anywhere. The brief routes pricing through a discovery call, and
- * a card's action is always "explore", never "buy".
+ * No prices, anywhere. `duration` is the short label above each title; the
+ * practice's reference design sets it there so the four read as a ladder of
+ * commitment before any detail is read.
  */
 export const programs = [
   {
-    id: "clarity",
-    slug: "nutrition-clarity-consultation",
-    title: "Nutrition Clarity Consultation",
+    id: "single",
+    slug: "single-consultation",
+    duration: "One-time session",
+    title: "Single Consultation",
     summary:
       "One focused consultation to understand where you are, what your nutrition needs and what your next steps could look like.",
     points: [
@@ -1168,6 +784,7 @@ export const programs = [
   {
     id: "gut-reset",
     slug: "21-day-gut-reset",
+    duration: "21 days",
     title: "21-Day Gut Reset",
     summary:
       "A guided 21-day experience to understand your gut, simplify your nutrition and begin building better digestive habits.",
@@ -1182,6 +799,7 @@ export const programs = [
   {
     id: "rebalance-3",
     slug: "3-month-rebalance",
+    duration: "12 weeks",
     title: "3-Month Rebalance Program",
     summary:
       "A 12-week personalised nutrition journey where we assess, plan, follow up and adapt your strategy as you progress.",
@@ -1197,6 +815,7 @@ export const programs = [
   {
     id: "rebalance-6",
     slug: "6-month-rebalance",
+    duration: "24 weeks / 6 months",
     title: "6-Month Rebalance Program",
     summary:
       "Longer-term personalised nutrition support for those who need more time, deeper guidance and continuity of care.",
@@ -1211,13 +830,19 @@ export const programs = [
 ];
 
 export const programsCopy = {
-  eyebrow: "PROGRAMS",
+  eyebrow: "STRUCTURED PATHWAYS",
   title: "Find the Right *Support* for You",
   subtitle:
     "From a focused consultation to longer-term personalised nutrition support, choose the level of guidance that fits your needs.",
+  pointsLabel: "Key highlights",
+  selectHint: "Choose it when you book",
 };
 
-/** Section 7 — Why Go Rebalance? */
+/* ------------------------------------------------------ why go rebalance */
+/**
+ * Four, not five. "Founder-Led Guidance" is out: the practice asked for the
+ * site not to present itself as a one-practitioner operation.
+ */
 export const whyGoRebalance = [
   {
     icon: UserCheck,
@@ -1239,26 +864,19 @@ export const whyGoRebalance = [
     title: "Support That Evolves With You",
     body: "Your needs may change throughout the journey. Regular follow-ups help us understand your progress and adapt your nutrition strategy along the way.",
   },
-  {
-    icon: HeartPulse,
-    title: "Founder-Led Guidance",
-    body: "Go Rebalance is a personal practice. Clients receive guidance directly from Sai rather than being passed through a large coaching team.",
-  },
 ];
 
 export const whyGoRebalanceCopy = {
-  eyebrow: "WHY GO REBALANCE",
-  title: "Guidance That Stays *With You*",
+  eyebrow: "THE DIFFERENCE",
+  title: "Why Go *Rebalance*?",
+  subtitle:
+    "Nutrition care designed to empower you with clarity, compassionate accountability, and physiological insight.",
   pull: "I can guide you, educate you and support you — but the real change happens when you put it into practice. My role is to help you keep moving forward.",
+  pullName: briefBrand.founder,
+  pullRole: "Founder, Dietitian & Gut Health Specialist",
 };
 
-/**
- * Section 8 — What You Can Expect.
- *
- * The most important section on the page, and the one most practices skip. It
- * is a list of things Go Rebalance will NOT claim, which is precisely what
- * makes the things it does claim believable.
- */
+/* -------------------------------------------------------- what to expect */
 export const whatToExpect = [
   {
     title: "No One-Size-Fits-All Plans",
@@ -1285,18 +903,20 @@ export const whatToExpectCopy = {
     "What we do promise is thoughtful assessment, personalised guidance, honest communication, regular reassessment and support throughout your journey.",
 };
 
-/** Section 9 — When Nutrition Isn't Enough. Small, but visible. */
 export const beyondNutrition = {
   eyebrow: "PROFESSIONAL BOUNDARIES",
   title: "Knowing When to Look *Beyond Nutrition*",
   body: "If a concern requires medical investigation or falls outside the scope of nutrition care, Go Rebalance may recommend that the client consult the appropriate healthcare professional.",
 };
 
-/** Section 10 — Meet Sai. */
+/* ------------------------------------------------------ meet the founder */
 export const meetSai = {
-  eyebrow: "MEET SAI",
+  eyebrow: "MEET YOUR DIETITIAN",
+  title: "Meet Sowjanya",
   name: briefBrand.founder,
   role: briefBrand.founderRole,
+  badge: "Dietitian",
+  tags: ["Biotechnology", "Dietetics", "Gut Health (IIN)"],
   image: "/founder.jpg",
   body: [
     "With a background in Biotechnology, advanced education in Nutrition & Dietetics, clinical training across multispecialty hospitals, and specialised education in gut health, my approach goes beyond standard diet charts.",
@@ -1305,39 +925,64 @@ export const meetSai = {
   cta: "Read My Story",
 };
 
+/* --------------------------------------------------------- credentials */
 /**
- * Section 11 — Education & Credentials.
- *
- * These five, exactly as the practice supplied them. Nothing added, no years
- * inferred, no honorifics invented.
+ * The five qualifications, exactly as the practice supplied them, with the
+ * one-line descriptions from its own reference pages. Nothing added.
  */
 export const credentials = [
-  { title: "Bachelor's in Biotechnology", detail: "GITAM University, Visakhapatnam" },
-  { title: "Certification in Food & Nutrition", detail: "Bridge Course" },
-  { title: "Master's in Dietetics & Food Service Management", detail: "" },
+  {
+    title: "Bachelor's in Biotechnology",
+    detail: "GITAM University, Visakhapatnam",
+    description:
+      "Solid foundation in biological sciences, cellular mechanisms, and biochemical pathways.",
+    kind: "degree",
+  },
+  {
+    title: "Certification in Food & Nutrition",
+    detail: "Bridge Course",
+    description:
+      "Foundational bridging curriculum connecting biological sciences to nutrition science.",
+    kind: "certificate",
+  },
+  {
+    title: "Master's in Dietetics & Food Service Management",
+    detail: "",
+    description:
+      "Postgraduate clinical education in therapeutic dietetics, nutritional biochemistry, and medical nutrition therapy.",
+    kind: "degree",
+  },
   {
     title: "Clinical Nutrition Internship & Training",
-    detail: "Clinical learning and exposure across multiple multispecialty hospitals.",
+    detail: "",
+    description:
+      "Clinical learning and exposure across multiple multispecialty hospitals supporting diverse patient requirements including surgical and recovery nutrition.",
+    kind: "clinical",
   },
   {
     title: "Certificate of Advanced Education in Gut Health",
     detail: "Institute for Integrative Nutrition (IIN)",
+    description:
+      "Specialised postgraduate coursework focused on the gut microbiome, digestive physiology, and microbiome-supportive nutrition.",
+    kind: "specialism",
   },
 ];
 
 export const credentialsCopy = {
-  eyebrow: "EDUCATION & CREDENTIALS",
-  title: "The Training Behind the *Practice*",
+  eyebrow: "ACADEMIC & CLINICAL BACKGROUND",
+  title: "Education & *Credentials*",
+  subtitle:
+    "Rooted in biological science, postgraduate clinical dietetics, and specialised gut health education.",
+  chip: "Verified Credential",
 };
 
-/** Section 12 — FAQs. */
+/* ----------------------------------------------------------------- FAQs */
+/**
+ * The questions in the order the practice's reference sets them. The last two
+ * — who can join, and what happens if a concern needs a doctor — come from the
+ * brief and are kept: the age rule and the medical boundary both belong here.
+ */
 export const briefFaqs = [
-  {
-    id: "who-can-join",
-    question: "Who can join Go Rebalance?",
-    answer:
-      "Go Rebalance currently provides personalised nutrition support for clients aged 15–50. For clients under 18, a parent or legal guardian should be involved in the consultation and consent process.",
-  },
   {
     id: "only-gut",
     question: "Is Go Rebalance only for gut problems?",
@@ -1372,19 +1017,25 @@ export const briefFaqs = [
     id: "online",
     question: "How do online consultations work?",
     answer:
-      "Consultations are conducted one-to-one online through Google Meet at a pre-scheduled time. Ongoing program support and follow-ups are provided through scheduled consultations and WhatsApp, depending on your program.",
+      "Consultations are conducted one-to-one online at a pre-scheduled time. Ongoing program support and follow-ups are provided through scheduled consultations and WhatsApp, depending on your program.",
   },
   {
     id: "after-assessment",
     question: "What happens after I submit the initial assessment?",
     answer:
-      "We review the information you've shared and schedule a discovery call. During the call, we'll understand your concerns and goals more clearly and discuss which Go Rebalance program may be appropriate for you. Once you choose to enrol, the detailed assessment process begins.",
+      "We review the information you've shared and get in touch with you. We'll understand your concerns and goals more clearly and discuss which Go Rebalance program may be appropriate for you. Once you choose to enrol, the detailed assessment process begins.",
   },
   {
     id: "whatsapp",
     question: "Is WhatsApp support available?",
     answer:
       "Yes. WhatsApp support is included in selected ongoing programs during designated working hours.",
+  },
+  {
+    id: "who-can-join",
+    question: "Who can join Go Rebalance?",
+    answer:
+      "Go Rebalance currently provides personalised nutrition support for clients aged 15–50. For clients under 18, a parent or legal guardian should be involved in the consultation and consent process.",
   },
   {
     id: "medical",
@@ -1395,47 +1046,105 @@ export const briefFaqs = [
 ];
 
 export const briefFaqCopy = {
-  eyebrow: "FREQUENTLY ASKED QUESTIONS",
-  title: "Everything You're *Wondering*",
-  subtitle: "The questions clients ask before they begin — answered plainly.",
+  eyebrow: "CLARITY & GUIDANCE",
+  title: "Frequently Asked *Questions*",
+  subtitle: "Answers to common questions about our nutrition consultations, process, and support.",
+  helpTitle: "Have another question?",
+  helpBody: "Book a consultation and we'll talk it through on your call.",
 };
 
-/** Section 13 — Final CTA. */
+/* -------------------------------------------------------------- journey */
+/** The practice's own eleven-step service flow, from its reference pages. */
+export const journeySteps = [
+  {
+    title: "Explore Go Rebalance",
+    body: "Browse our focus areas and programs to see how our gut-centred nutrition philosophy aligns with your health goals.",
+  },
+  {
+    title: "Complete Initial Assessment",
+    body: "Share your key symptoms, health history, and objectives through our brief preliminary assessment form.",
+  },
+  {
+    title: "Discovery Call",
+    body: "A dedicated conversation to clarify your concerns, answer your questions, and ensure we are the right fit for each other.",
+  },
+  {
+    title: "Recommend Appropriate Program",
+    body: "Receive tailored professional advice on the support format best suited to your unique requirements.",
+  },
+  {
+    title: "Discuss Program & Pricing Privately",
+    body: "Review complete program details, logistics, and investment privately during your discovery call.",
+  },
+  {
+    title: "Client Decides",
+    body: "Take your time to make an informed, pressure-free choice about embarking on your rebalance journey.",
+  },
+  {
+    title: "Enrolment / Payment",
+    body: "Secure your enrolment slot to initiate the formal onboarding process.",
+  },
+  {
+    title: "Detailed Health Assessment & Reports",
+    body: "Complete an in-depth clinical intake questionnaire and submit relevant blood work and medical reports.",
+  },
+  {
+    title: "Nutrition Review & Strategy Design",
+    body: "Your comprehensive, personalised plan is carefully developed over approximately 4–5 working days after all records are received.",
+    badge: "4–5 days",
+  },
+  {
+    title: "Program Begins",
+    body: "Your first in-depth consultation takes place, delivering your customised food and lifestyle roadmap.",
+  },
+  {
+    title: "Follow-ups & Adjustments",
+    body: "Regular one-to-one consultations and ongoing support help adjust your strategy as your body responds and evolves.",
+  },
+];
+
+export const journeyCopy = {
+  eyebrow: "STEP-BY-STEP EXPERIENCE",
+  title: "Your Journey With Go *Rebalance*",
+  subtitle:
+    "A clear, thoughtful pathway from your initial health assessment to continuous, supportive nutrition care.",
+  integrityLabel: "Clinical integrity:",
+  integrity:
+    "Detailed personalised plans and supplement recommendations are developed only after formal onboarding, full health intake, and clinical report review.",
+  cta: "Begin With Step 01 — Book Consultation",
+};
+
+/* ------------------------------------------------------------ final CTA */
 export const finalCta = {
+  eyebrow: "BEGIN YOUR CARE",
   title: "Ready to Start Your *Rebalance* Journey?",
   lead: "You don't need to know which program is right for you.",
   body: "Tell us a little about your health concerns and goals. We'll start by understanding where you are and guide you towards the next step.",
   cta: briefBrand.primaryCta,
-  steps: ["Initial Assessment", "Discovery Call", "Personalised Program Recommendation"],
+  flowLabel: "A SIMPLE, RESPECTFUL ONBOARDING FLOW",
+  steps: ["Initial Assessment", "Discovery Call", "Personalised Recommendation"],
 };
 
 /**
- * The professional disclaimer, verbatim from the brief.
- *
- * It belongs in the footer of every page, not tucked away on a legal page.
+ * The professional disclaimer, verbatim. It belongs in the footer of every
+ * page, not tucked away on a legal page.
  */
 export const professionalDisclaimer =
   "Go Rebalance provides nutrition and lifestyle guidance for educational and wellness purposes. Services are not a substitute for medical diagnosis, treatment or care from a qualified healthcare professional. Nutrition and supplement recommendations are personalised where appropriate, and individual results may vary. Clients with medical conditions should continue to work with their treating healthcare professionals.";
 
+/* ------------------------------------------------------- programs page */
 /**
- * Section 7 — Program detail content.
+ * The full inclusion lists, which stay off the homepage cards and live here.
  *
- * The full inclusion lists, which the brief keeps OFF the homepage cards and
- * puts here. Two copy notes from the brief are load-bearing and are the reason
- * some obvious words are missing:
- *
- *   - The 21-Day Gut Reset is never called a detox or a cleanse, and never
- *     promises to heal or rebalance a gut in 21 days.
- *   - The 6-Month program does not state a number of consultations, because
- *     the practice has not settled one. "Scheduled one-to-one follow-ups" is
- *     the honest phrasing until it does.
- *
- * Still no prices. Cost is discussed on the discovery call.
+ * The 21-Day Gut Reset is never called a detox or a cleanse and never promises
+ * to heal a gut in 21 days. The 6-Month program states no number of
+ * consultations, because the practice has not settled one.
  */
 export const programDetails = [
   {
-    id: "clarity",
-    title: "Nutrition Clarity Consultation",
+    id: "single",
+    duration: "One-time session",
+    title: "Single Consultation",
     intro:
       "Designed for someone who wants professional guidance on a specific nutrition concern without committing to a longer program.",
     includes: [
@@ -1452,6 +1161,7 @@ export const programDetails = [
   },
   {
     id: "gut-reset",
+    duration: "21 days",
     title: "21-Day Gut Reset",
     intro:
       "A focused starting point for people who want to better understand their digestive health and build supportive food and lifestyle habits.",
@@ -1470,6 +1180,7 @@ export const programDetails = [
   },
   {
     id: "rebalance-3",
+    duration: "12 weeks",
     title: "3-Month Rebalance Program",
     intro:
       "This is the heart of Go Rebalance. A structured 12-week personalised nutrition journey designed for people who need more than a one-time plan.",
@@ -1491,6 +1202,7 @@ export const programDetails = [
   },
   {
     id: "rebalance-6",
+    duration: "24 weeks / 6 months",
     title: "6-Month Rebalance Program",
     intro:
       "Longer-term personalised nutrition support for people who may benefit from more time, continuity and gradual adjustment.",
@@ -1515,65 +1227,58 @@ export const programsPageCopy = {
   eyebrow: "PROGRAMS",
   title: "Find the Right *Support* for You",
   subtitle:
-    "From a focused consultation to longer-term personalised nutrition support, choose the level of guidance that fits your needs. Pricing is discussed personally on your discovery call, once we understand what you actually need.",
+    "From a focused consultation to longer-term personalised nutrition support, choose the level of guidance that fits your needs.",
 };
 
 /**
- * The client journey, from the brief's Section 5.
+ * How a program begins, on the Programs page.
  *
- * Published because it answers the question the programs page creates: if
- * there are no prices, what happens if I press the button? Showing the whole
- * sequence — including that pricing comes after a conversation and that
- * nothing detailed is reviewed before enrolment — is what makes a page with no
- * prices feel considered rather than evasive.
+ * Three steps and no pricing: the practice asked for the line about fees
+ * being discussed on the call to come off this page.
  */
 export const clientJourney = [
   {
     step: "01",
     title: "Initial assessment",
-    body: "A short form about your health concerns and goals. Not a medical intake — that comes later, and only if you enrol.",
+    body: "Tell us about your health concerns, goals, lifestyle and food habits through the consultation form.",
   },
   {
     step: "02",
     title: "Discovery call",
-    body: "We talk through your concerns and goals, and discuss which program may be appropriate for you.",
+    body: "A one-to-one conversation to understand your concerns and answer your questions.",
   },
   {
     step: "03",
-    title: "Program & pricing",
-    body: "The recommended program and its cost are discussed with you privately. You decide from there.",
-  },
-  {
-    step: "04",
-    title: "Enrolment",
-    body: "Once you choose to enrol, the detailed health assessment begins and relevant reports are collected.",
-  },
-  {
-    step: "05",
-    title: "Your nutrition strategy",
-    body: "Your personalised plan follows, usually within 4–5 working days of receiving everything needed.",
-  },
-  {
-    step: "06",
-    title: "Follow-ups & adjustments",
-    body: "Your program begins, with reviews and adjustments as you progress.",
+    title: "Personalised recommendation",
+    body: "We suggest the level of support that suits you, and your program begins from there.",
   },
 ];
 
 export const clientJourneyCopy = {
-  eyebrow: "WHAT HAPPENS NEXT",
-  title: "How a Program *Actually Starts*",
-  subtitle:
-    "No prices on this page is deliberate. Which program suits you depends on what we find, so the cost is discussed once there is something to discuss.",
+  eyebrow: "HOW TO BEGIN",
+  title: "Three Steps to *Getting Started*",
+  subtitle: "You don't need to choose a program first. Start with the consultation form.",
 };
 
-/**
- * Section 6 — the About page's story, in the founder's own words.
- *
- * Verbatim from the brief, including its emphases. It replaces a version that
- * was written for her rather than by her, and that carried claims about
- * root causes and years of practice which the practice never made.
- */
+/* --------------------------------------------------------------- about */
+export const aboutHero = {
+  eyebrow: "FOUNDER & PRACTICE LEAD",
+  title: "My *Story*",
+  subtitle: `${briefBrand.founder} · ${briefBrand.founderRole}`,
+};
+
+/** The profile card beside the story. */
+export const aboutProfile = {
+  name: briefBrand.founder,
+  role: "Founder, Go Rebalance",
+  highlights: [
+    "Clinical Dietetics Training",
+    "Biotechnology Foundation",
+    "Advanced Gut Health (IIN)",
+  ],
+  cta: `Work With ${briefBrand.founderShort}`,
+};
+
 export const myStory = {
   eyebrow: "MY STORY",
   title: "I Didn't Always Know I Would Become a *Dietitian*.",
@@ -1590,32 +1295,34 @@ export const myStory = {
   closing: "Because your nutrition should be as individual as you are.",
 };
 
-/**
- * Section 4 — the initial assessment form.
- *
- * A SHORT pre-enrolment form, and the word short is the specification. The
- * brief is explicit that this is "not the full clinical/medical intake form
- * and should not request detailed blood reports or extensive medical records",
- * and that nothing may imply a plan or a blood-work analysis happens before
- * somebody enrols.
- *
- * What it replaced was a five-step clinical questionnaire that collected
- * medical history, a nutrition log and a payment screenshot before anyone had
- * spoken to the practice. That is the opposite of this flow, and it also meant
- * the site was holding medical data for people who never became clients.
- */
+export const aboutCredentialsCopy = {
+  eyebrow: "FORMAL QUALIFICATIONS",
+  title: "Education & *Credentials*",
+  subtitle: "Academic and clinical qualifications behind Go Rebalance.",
+};
+
+export const aboutCta = {
+  title: "Ready to Begin Your *Rebalance*?",
+  body: "Take a moment to share your health goals and symptoms through our brief initial assessment.",
+};
+
+/* ------------------------------------------------------------- contact */
+export const contactCopy = {
+  title: "Contact Go *Rebalance*",
+  subtitle: "We look forward to connecting with you.",
+  channelsLabel: "DIRECT CHANNELS",
+  messageLabel: "SEND A DIRECT MESSAGE",
+  ctaTitle: "Looking to start consultations right away?",
+  ctaLink: "Complete the consultation form",
+};
+
+/* ---------------------------------------------------------- assessment */
 export const assessmentFormCopy = {
-  eyebrow: "INITIAL ASSESSMENT",
-  title: "Tell Us Where You're *Starting From*",
-  subtitle:
-    "A few questions about your health concerns and goals. It takes about three minutes, and there is nothing to pay.",
+  eyebrow: "BOOK CONSULTATION",
   ageNote: "Go Rebalance currently supports clients aged 15 to 50.",
   guardianNote:
     "If you are under 18, please complete this with a parent or legal guardian, who should be involved in the consultation and consent process.",
-  privacyNote:
-    "Your answers are used to prepare for your discovery call and are never shared. This form is not a medical assessment.",
-  submit: "Submit Assessment",
-  nextSteps: ["Initial Assessment", "Discovery Call", "Personalised Program Recommendation"],
+  nextSteps: ["Consultation form", "Discovery call", "Personalised recommendation"],
 };
 
 export const assessmentSuccessCopy = {
@@ -1628,19 +1335,10 @@ export const assessmentSuccessCopy = {
 /** The program a visitor can express interest in, from the brief's field list. */
 export const programInterestOptions = [
   "Not sure yet",
-  "Nutrition Clarity Consultation",
+  "Single Consultation",
   "21-Day Gut Reset",
   "3-Month Rebalance Program",
   "6-Month Rebalance Program",
 ];
 
 export const contactPreferenceOptions = ["WhatsApp", "Phone call", "Email"];
-
-/** Footer navigation, exactly the set the brief lists. */
-export const briefNavLinks = [
-  { label: "Home", href: "/" },
-  { label: "About", href: "/about" },
-  { label: "Programs", href: "/programs" },
-  { label: "FAQs", href: "/#faq" },
-  { label: "Contact", href: "/contact" },
-];

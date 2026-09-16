@@ -29,28 +29,6 @@ export const OWN = {
   practitionerSmall: "/founder-sm.jpg",
 };
 
-/**
- * One image per treatment program, chosen for what is actually in the frame:
- * green produce for the gut work, a warm soothing bowl for reflux, gentle
- * yoghurt and fruit for IBD, and so on.
- */
-export const TREATMENT_IMAGES: Record<string, string> = {
-  "gut-health": unsplash("photo-1543362906-acfc16c67564"), // green vegetables, laid out on a pale green ground
-  "acid-reflux-gerd": unsplash("photo-1547592166-23ac45744acd"), // a soothing bowl of tomato soup
-  "ibd-support": unsplash("photo-1654923064926-be7e64267a31"), // yoghurt with berries and oats — gentle food
-  "pcos-pcod": unsplash("photo-1602881916963-5daf2d97c06e"), // a bright salad bowl on a blush ground
-  "pregnancy-nutrition": unsplash("photo-1494390248081-4e521a5940db"), // fruit and yoghurt bowls, soft morning light
-  "diabetes-metabolic": unsplash("photo-1512621776951-a57141f2eefd"), // a balanced wholegrain bowl
-  "weight-loss": unsplash("photo-1547592180-85f173990554"), // a portioned grain bowl on linen
-};
-
-export const FALLBACK_TREATMENT_IMAGE = TREATMENT_IMAGES["gut-health"]!;
-
-export function treatmentImage(slug: string | undefined): string {
-  if (!slug) return FALLBACK_TREATMENT_IMAGE;
-  return TREATMENT_IMAGES[slug] ?? FALLBACK_TREATMENT_IMAGE;
-}
-
 /** Wide, bright supporting photography for section backgrounds and cards. */
 export const SUPPORTING = {
   /** A market stall of fresh produce — used behind the clinic map card. */
@@ -141,7 +119,7 @@ export const PAGE_BACKDROPS = {
       alt: "Cauliflower, broccoli and radishes on a market table",
     },
   ],
-  treatments: [
+  programs: [
     {
       src: unsplash("photo-1591586116988-62fe65164f8d", 1600),
       alt: "Cauliflower, broccoli and radishes on a market table",
@@ -211,7 +189,7 @@ export const PAGE_BACKDROPS = {
  * is the drift this file exists to stop.
  */
 export const PAGE_PANELS = {
-  treatments: {
+  programs: {
     src: unsplash("photo-1543362906-acfc16c67564", 1200),
     alt: "Green vegetables arranged on a pale green ground",
   },
@@ -228,40 +206,6 @@ export const PAGE_PANELS = {
     alt: "Fruit, yoghurt and coffee laid out in soft morning light",
   },
 } as const;
-
-/**
- * One photograph per phase of the program journey, on the treatments page.
- *
- * The timeline alternates its cards left and right of a spine, which left
- * half of a 860px column empty beside every entry — five large blanks down
- * the middle of the page. The pictures fill the side the card is not on, so
- * the eye has somewhere to go on each step and the section reads as five
- * moments rather than five paragraphs.
- *
- * Keyed by index, matching programJourney in src/data/content.ts.
- */
-export const JOURNEY_IMAGES = [
-  {
-    src: unsplash("photo-1494390248081-4e521a5940db", 800),
-    alt: "A morning meal laid out, the kind the assessment asks about",
-  },
-  {
-    src: unsplash("photo-1547592180-85f173990554", 800),
-    alt: "A grain and vegetable bowl on a linen cloth",
-  },
-  {
-    src: unsplash("photo-1543362906-acfc16c67564", 800),
-    alt: "Vegetables sorted into groups, as a plan sets them out",
-  },
-  {
-    src: unsplash("photo-1556911220-e15b29be8c8f", 800),
-    alt: "A woman cooking at the stove in a bright home kitchen",
-  },
-  {
-    src: unsplash("photo-1556912999-8cd7c2582a5e", 800),
-    alt: "Herbs growing on a sunlit kitchen windowsill",
-  },
-] as const;
 
 /**
  * A photograph for each of the six "who we help" cards on the about page.
@@ -353,11 +297,6 @@ export const HOME_HERO_SLIDES = [
  * tied to the section it sits in rather than chosen for prettiness.
  */
 export const HOME_SECTION_IMAGES = {
-  /** Beside "Who We Work With" — a household cooking together. */
-  whoWeWorkWith: {
-    src: unsplash("photo-1556911220-e15b29be8c8f", 1200),
-    alt: "Cooking an everyday meal at home",
-  },
   /** Behind the gut-health statement — whole ingredients, nothing plated. */
   gutHealth: {
     src: unsplash("photo-1471193945509-9ad0617afabf", 1400),

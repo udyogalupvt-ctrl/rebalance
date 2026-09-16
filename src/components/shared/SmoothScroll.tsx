@@ -31,6 +31,11 @@ export function setScrollLocked(locked: boolean) {
 /** Scroll to an element or offset through the same easing as the wheel. */
 export function smoothScrollTo(target: string | HTMLElement | number, offset = 0) {
   if (instance) {
+    // Re-measure first. Lenis caches the scrollable height and clamps every
+    // target to it, so straight after a lazily loaded page mounts — when the
+    // cache still holds the height of the empty shell — a scroll to a section
+    // two thousand pixels down was cut short a few pixels from the top.
+    instance.resize();
     instance.scrollTo(target, { offset, duration: 1.1 });
     return;
   }

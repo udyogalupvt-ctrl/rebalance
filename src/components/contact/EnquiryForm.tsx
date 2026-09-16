@@ -33,6 +33,44 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
 import { Link } from "@tanstack/react-router";
+import { ArrowUpRight, AtSign, Mail, MessageCircle, Phone } from "lucide-react";
+import { brand, contactCopy } from "@/data/content";
+
+/** The direct channels, in the order the practice's contact reference lists them. */
+const contactChannels = [
+  {
+    id: "email",
+    label: "Email",
+    value: brand.email,
+    href: `mailto:${brand.email}`,
+    icon: Mail,
+    external: false,
+  },
+  {
+    id: "whatsapp",
+    label: "WhatsApp",
+    value: brand.phone,
+    href: brand.whatsapp,
+    icon: MessageCircle,
+    external: true,
+  },
+  {
+    id: "instagram",
+    label: "Instagram",
+    value: brand.instagram,
+    href: brand.instagramUrl,
+    icon: AtSign,
+    external: true,
+  },
+  {
+    id: "phone",
+    label: "Call",
+    value: brand.phone,
+    href: `tel:${brand.phoneRaw}`,
+    icon: Phone,
+    external: false,
+  },
+];
 
 // Form Schema
 const contactSchema = z.object({
@@ -127,59 +165,52 @@ export const EnquiryForm = () => {
       <CurveDivider fill="alt" />
 
       <div className="grid grid-cols-1 lg:grid-cols-[5fr_7fr] gap-11 lg:gap-[72px] items-start">
-        {/* Left Column - Info */}
+        {/* Left column — the direct channels, from the practice's contact
+            reference. On a wide screen they hold their place beside the form. */}
         <div className="lg:sticky lg:top-[calc(var(--header-h)+32px)] self-start">
           <SectionHeading
-            eyebrow="SEND A MESSAGE"
-            title="Tell us what you're *dealing with*."
-            subtitle="A short message is enough. You don't need to explain everything here — that's what the assessment is for."
-            className="mb-9"
+            eyebrow={contactCopy.channelsLabel}
+            title="Reach Us *Directly*"
+            className="mb-8"
           />
 
-          <div className="mt-9 space-y-9">
-            <div>
-              <span className="text-[12px] font-semibold uppercase tracking-[0.12em] text-muted-foreground block mb-5">
-                WHAT HAPPENS NEXT
-              </span>
-              <div className="space-y-[18px]">
-                {[
-                  {
-                    title: "We read it personally",
-                    body: "Every message reaches the clinic directly. Nothing is filtered through a bot.",
-                  },
-                  {
-                    title: "You get a real reply",
-                    body: "Usually within 24 hours on working days, answering what you actually asked.",
-                  },
-                  {
-                    title: "You decide from there",
-                    body: "If an assessment makes sense, we'll say so. If it doesn't, we'll say that too.",
-                  },
-                ].map((step, idx) => (
-                  <div key={idx} className="flex gap-3.5">
-                    <div className="w-8 h-8 shrink-0 bg-primary-soft rounded-full grid place-items-center">
-                      <span className="font-fraunces font-medium text-[13px] text-primary">
-                        {idx + 1}
-                      </span>
-                    </div>
-                    <div>
-                      <h4 className="text-[14.5px] font-semibold text-foreground">{step.title}</h4>
-                      <p className="text-[13.5px] text-muted-foreground leading-relaxed mt-1">
-                        {step.body}
-                      </p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
+          <ul className="m-0 flex list-none flex-col gap-3 p-0">
+            {contactChannels.map((channel) => (
+              <li key={channel.id}>
+                <a
+                  href={channel.href}
+                  {...(channel.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+                  className="group flex items-center gap-4 rounded-[20px] border border-border bg-surface p-4 pr-5 transition-[border-color,transform] duration-300 hover:-translate-y-[2px] hover:border-primary/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
+                >
+                  <span
+                    aria-hidden="true"
+                    className="grid h-12 w-12 shrink-0 place-items-center rounded-[14px] bg-primary-soft text-primary transition-colors duration-300 group-hover:bg-primary group-hover:text-white"
+                  >
+                    <channel.icon className="h-[21px] w-[21px]" />
+                  </span>
+                  <span className="min-w-0 flex-1">
+                    <span className="block text-[11.5px] font-semibold uppercase tracking-[0.12em] text-text-muted">
+                      {channel.label}
+                    </span>
+                    <span className="mt-0.5 block break-words font-fraunces text-[16.5px] font-medium leading-snug text-text">
+                      {channel.value}
+                    </span>
+                  </span>
+                  <ArrowUpRight
+                    aria-hidden="true"
+                    className="h-[18px] w-[18px] shrink-0 text-text-muted transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-primary"
+                  />
+                </a>
+              </li>
+            ))}
+          </ul>
 
-            <div className="bg-surface border border-border rounded-[18px] p-5 lg:p-[20px_22px] flex gap-3.5">
-              <Lock className="w-4 h-4 text-primary shrink-0 mt-0.5" />
-              <p className="text-[13.5px] text-muted-foreground leading-relaxed">
-                Anything you share here is confidential and used only to respond to your enquiry. It
-                isn't added to a mailing list.
-              </p>
-            </div>
+          <div className="mt-6 bg-surface border border-border rounded-[18px] p-5 lg:p-[20px_22px] flex gap-3.5">
+            <Lock className="w-4 h-4 text-primary shrink-0 mt-0.5" />
+            <p className="text-[13.5px] text-muted-foreground leading-relaxed">
+              Anything you share here is confidential and used only to respond to your enquiry. It
+              isn't added to a mailing list.
+            </p>
           </div>
         </div>
 
@@ -195,6 +226,13 @@ export const EnquiryForm = () => {
                 transition={{ duration: 0.35 }}
                 className="bg-surface border border-border rounded-[26px] p-10 md:p-[40px_38px] sm:p-[30px_24px] p-[26px_20px]"
               >
+                <p className="fs-eyebrow mb-2 text-primary-contrast">{contactCopy.messageLabel}</p>
+                <h2
+                  id="enquiry-heading"
+                  className="mb-7 font-fraunces text-[clamp(1.35rem,2.2vw,1.7rem)] font-medium leading-snug text-text"
+                >
+                  {contactCopy.subtitle}
+                </h2>
                 <form
                   onSubmit={handleSubmit((data) => onSubmit(data))}
                   noValidate
@@ -477,7 +515,7 @@ export const EnquiryForm = () => {
 
                   <div className="flex items-center justify-center gap-2 text-[12.5px] text-muted-foreground">
                     <Clock className="w-[13px] h-[13px]" />
-                    <span>We reply within 24 hours on working days.</span>
+                    <span>{brand.hours}</span>
                   </div>
                 </form>
               </motion.div>
@@ -504,8 +542,7 @@ export const EnquiryForm = () => {
                 </h3>
 
                 <p className="text-[15px] leading-[1.7] text-muted-foreground max-w-[46ch] mx-auto mb-7">
-                  Thanks, {firstName}. We've got your message and you'll hear from us within 24
-                  hours on working days.
+                  Thanks, {firstName}. We&rsquo;ve got your message and we&rsquo;ll get back to you.
                 </p>
 
                 <div className="flex flex-col sm:flex-row gap-3 w-full max-w-[400px]">
@@ -513,7 +550,7 @@ export const EnquiryForm = () => {
                     asChild
                     className="flex-1 bg-accent-strong hover:bg-accent-strong/90 text-white rounded-full"
                   >
-                    <Link to="/assessment">Take the Assessment &rarr;</Link>
+                    <Link to="/assessment">Book Consultation &rarr;</Link>
                   </Button>
                   <Button
                     variant="outline"

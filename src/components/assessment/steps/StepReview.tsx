@@ -5,6 +5,7 @@ import {
   Receipt,
   HeartPulse,
   UtensilsCrossed,
+  Sunrise,
   Pencil,
   ChevronDown,
   ShieldCheck,
@@ -33,6 +34,13 @@ function ReviewRow({
       {value ? <div className="af-dd">{value}</div> : <div className="af-dd af-dd--empty">—</div>}
     </div>
   );
+}
+
+/** "non_vegetarian" -> "Non vegetarian", for review rows. */
+function humanise(value: string | undefined): string | undefined {
+  if (!value) return undefined;
+  const text = value.replace(/_/g, " ");
+  return text.charAt(0).toUpperCase() + text.slice(1);
 }
 
 export default function StepReview() {
@@ -85,6 +93,9 @@ export default function StepReview() {
   // ─── Helpers to calculate summaries ───
   const filledHealthCount = Object.values(data.health).filter(
     (v) => v !== undefined && v !== "",
+  ).length;
+  const filledLifestyleCount = Object.values(data.lifestyle).filter((v) =>
+    Array.isArray(v) ? v.length > 0 : v !== undefined && v !== "",
   ).length;
   const filledMealsCount = data.nutrition.meals
     ? Object.values(data.nutrition.meals).filter((m) => m.items && m.items.length > 0).length
@@ -146,6 +157,9 @@ export default function StepReview() {
               <div className="af-dl-two-col">
                 <ReviewRow label="Full Name" value={data.details.fullName} />
                 <ReviewRow label="Age" value={data.details.age} />
+                {data.details.guardianName && (
+                  <ReviewRow label="Parent / Guardian" value={data.details.guardianName} />
+                )}
                 <ReviewRow label="Gender" value={data.details.gender} />
                 <ReviewRow label="Phone" value={data.details.phone} />
                 <ReviewRow label="Email" value={data.details.email} />
@@ -158,79 +172,6 @@ export default function StepReview() {
                   value={data.details.preferredMode?.replace(/_/g, " ")}
                 />
                 <ReviewRow label="Referral" value={data.details.referralSource} />
-              </div>
-            </div>
-          </Collapsible.Content>
-        </Collapsible.Root>
-
-        {/* ─── Payment ─── */}
-        <Collapsible.Root
-          className="af-review-card"
-          open={!!openSections["payment"]}
-          onOpenChange={() => toggleSection("payment")}
-        >
-          <Collapsible.Trigger asChild>
-            <div className="af-review-header">
-              <div className="af-review-header-left">
-                <div className="af-review-icon-box">
-                  <Receipt />
-                </div>
-                <div>
-                  <div className="af-review-title">Payment</div>
-                  <div className="af-review-summary">Screenshot uploaded</div>
-                </div>
-              </div>
-              <div className="af-review-header-right">
-                <button
-                  type="button"
-                  className="af-review-edit-btn"
-                  onClick={(e) => handleEdit(e, "payment")}
-                >
-                  <Pencil /> Edit
-                </button>
-                <div
-                  className={`af-review-chevron-box ${openSections["payment"] ? "af-review-chevron-box--open" : ""}`}
-                >
-                  <ChevronDown />
-                </div>
-              </div>
-            </div>
-          </Collapsible.Trigger>
-          <Collapsible.Content
-            className="af-review-content"
-            style={{ overflow: "hidden", transition: "height 340ms ease" }}
-          >
-            <div className="af-review-content-inner">
-              <div className="af-review-divider" />
-              <div style={{ display: "flex", gap: "20px", alignItems: "flex-start" }}>
-                {data.payment.screenshotUrl && (
-                  <img
-                    src={data.payment.screenshotUrl}
-                    alt="Payment screenshot"
-                    className="af-review-payment-thumb"
-                    onClick={() => window.open(data.payment.screenshotUrl, "_blank")}
-                  />
-                )}
-                <div className="af-dl">
-                  <div>
-                    <div className="af-dt">Upload Time</div>
-                    <div className="af-dd">
-                      {data.payment.uploadedAt
-                        ? format(new Date(data.payment.uploadedAt), "PPP p")
-                        : "Unknown"}
-                    </div>
-                  </div>
-                  <div>
-                    <div className="af-dt">Status</div>
-                    <div className="af-review-payment-chip">Pending verification</div>
-                  </div>
-                  {data.payment.transactionRef && (
-                    <div>
-                      <div className="af-dt">Transaction Ref</div>
-                      <div className="af-dd">{data.payment.transactionRef}</div>
-                    </div>
-                  )}
-                </div>
               </div>
             </div>
           </Collapsible.Content>
@@ -249,7 +190,7 @@ export default function StepReview() {
                   <HeartPulse />
                 </div>
                 <div>
-                  <div className="af-review-title">Health & Lifestyle</div>
+                  <div className="af-review-title">Health</div>
                   <div className="af-review-summary">{filledHealthCount} fields completed</div>
                 </div>
               </div>
@@ -301,6 +242,110 @@ export default function StepReview() {
                 <ReviewRow label="Current Symptoms" value={data.health.currentSymptoms} isLong />
                 <ReviewRow label="Supplements" value={data.health.supplementHistory} isLong />
                 <ReviewRow label="Medications" value={data.health.currentMedications} isLong />
+              </div>
+            </div>
+          </Collapsible.Content>
+        </Collapsible.Root>
+
+        {/* ─── Lifestyle & symptoms ─── */}
+        <Collapsible.Root
+          className="af-review-card"
+          open={!!openSections["lifestyle"]}
+          onOpenChange={() => toggleSection("lifestyle")}
+        >
+          <Collapsible.Trigger asChild>
+            <div className="af-review-header">
+              <div className="af-review-header-left">
+                <div className="af-review-icon-box">
+                  <Sunrise />
+                </div>
+                <div>
+                  <div className="af-review-title">Lifestyle & Symptoms</div>
+                  <div className="af-review-summary">{filledLifestyleCount} answers</div>
+                </div>
+              </div>
+              <div className="af-review-header-right">
+                <button
+                  type="button"
+                  className="af-review-edit-btn"
+                  onClick={(e) => handleEdit(e, "lifestyle")}
+                >
+                  <Pencil /> Edit
+                </button>
+                <div
+                  className={`af-review-chevron-box ${openSections["lifestyle"] ? "af-review-chevron-box--open" : ""}`}
+                >
+                  <ChevronDown />
+                </div>
+              </div>
+            </div>
+          </Collapsible.Trigger>
+          <Collapsible.Content
+            className="af-review-content"
+            style={{ overflow: "hidden", transition: "height 340ms ease" }}
+          >
+            <div className="af-review-content-inner">
+              <div className="af-review-divider" />
+              <div className="af-dl-two-col">
+                <ReviewRow label="Diet" value={humanise(data.lifestyle.diet)} />
+                <ReviewRow label="Stress" value={humanise(data.lifestyle.stress)} />
+                <ReviewRow label="Food Habits" value={data.lifestyle.foodHabits} isLong />
+                <ReviewRow label="Food Allergies" value={data.lifestyle.foodAllergies} />
+                <ReviewRow label="Tea / Coffee" value={data.lifestyle.teaCoffee} />
+                <ReviewRow
+                  label="Intolerances / Avoided Foods"
+                  value={data.lifestyle.intolerances}
+                  isLong
+                />
+                <ReviewRow label="Sweet Cravings" value={humanise(data.lifestyle.sweetCravings)} />
+                <ReviewRow label="Sleep" value={data.lifestyle.sleep} />
+                <ReviewRow label="Profession" value={data.lifestyle.profession} />
+                <ReviewRow label="Movement & Exercise" value={data.lifestyle.exercise} isLong />
+                <ReviewRow
+                  label="Alcohol / Smoking / Drugs"
+                  value={data.lifestyle.alcoholSmoking}
+                />
+                <ReviewRow label="Screen Time" value={data.lifestyle.screenTime} />
+                <ReviewRow
+                  label="Bowel Movement"
+                  value={
+                    data.lifestyle.bowelType
+                      ? data.lifestyle.bowelType === "unsure"
+                        ? "Not sure"
+                        : `Bristol type ${data.lifestyle.bowelType}`
+                      : null
+                  }
+                />
+                <ReviewRow label="Bowel Notes" value={data.lifestyle.bowelNote} />
+                <ReviewRow
+                  label="Digestive Symptoms"
+                  value={(data.lifestyle.digestiveSymptoms ?? []).join(", ") || "None ticked"}
+                  isLong
+                />
+                {data.lifestyle.digestiveNote && (
+                  <ReviewRow label="Digestive Notes" value={data.lifestyle.digestiveNote} isLong />
+                )}
+                <ReviewRow
+                  label="Other Symptoms"
+                  value={(data.lifestyle.generalSymptoms ?? []).join(", ") || "None ticked"}
+                  isLong
+                />
+                {data.lifestyle.generalSymptomsNote && (
+                  <ReviewRow
+                    label="Other Symptom Notes"
+                    value={data.lifestyle.generalSymptomsNote}
+                    isLong
+                  />
+                )}
+                {data.lifestyle.menstrualCycle && (
+                  <ReviewRow
+                    label="Menstrual Cycle"
+                    value={humanise(data.lifestyle.menstrualCycle)}
+                  />
+                )}
+                {data.lifestyle.menstrualNote && (
+                  <ReviewRow label="Cycle Notes" value={data.lifestyle.menstrualNote} />
+                )}
               </div>
             </div>
           </Collapsible.Content>
@@ -401,6 +446,79 @@ export default function StepReview() {
                         );
                       })}
                   </div>
+                </div>
+              </div>
+            </div>
+          </Collapsible.Content>
+        </Collapsible.Root>
+
+        {/* ─── Payment (last, as in the form) ─── */}
+        <Collapsible.Root
+          className="af-review-card"
+          open={!!openSections["payment"]}
+          onOpenChange={() => toggleSection("payment")}
+        >
+          <Collapsible.Trigger asChild>
+            <div className="af-review-header">
+              <div className="af-review-header-left">
+                <div className="af-review-icon-box">
+                  <Receipt />
+                </div>
+                <div>
+                  <div className="af-review-title">Discovery Call payment</div>
+                  <div className="af-review-summary">Screenshot uploaded</div>
+                </div>
+              </div>
+              <div className="af-review-header-right">
+                <button
+                  type="button"
+                  className="af-review-edit-btn"
+                  onClick={(e) => handleEdit(e, "payment")}
+                >
+                  <Pencil /> Edit
+                </button>
+                <div
+                  className={`af-review-chevron-box ${openSections["payment"] ? "af-review-chevron-box--open" : ""}`}
+                >
+                  <ChevronDown />
+                </div>
+              </div>
+            </div>
+          </Collapsible.Trigger>
+          <Collapsible.Content
+            className="af-review-content"
+            style={{ overflow: "hidden", transition: "height 340ms ease" }}
+          >
+            <div className="af-review-content-inner">
+              <div className="af-review-divider" />
+              <div style={{ display: "flex", gap: "20px", alignItems: "flex-start" }}>
+                {data.payment.screenshotUrl && (
+                  <img
+                    src={data.payment.screenshotUrl}
+                    alt="Payment screenshot"
+                    className="af-review-payment-thumb"
+                    onClick={() => window.open(data.payment.screenshotUrl, "_blank")}
+                  />
+                )}
+                <div className="af-dl">
+                  <div>
+                    <div className="af-dt">Upload Time</div>
+                    <div className="af-dd">
+                      {data.payment.uploadedAt
+                        ? format(new Date(data.payment.uploadedAt), "PPP p")
+                        : "Unknown"}
+                    </div>
+                  </div>
+                  <div>
+                    <div className="af-dt">Status</div>
+                    <div className="af-review-payment-chip">Pending verification</div>
+                  </div>
+                  {data.payment.transactionRef && (
+                    <div>
+                      <div className="af-dt">Transaction Ref</div>
+                      <div className="af-dd">{data.payment.transactionRef}</div>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -555,11 +673,11 @@ export default function StepReview() {
           <button
             type="button"
             className="af-back-btn"
-            onClick={() => goToStep("nutrition")}
+            onClick={() => goToStep("payment")}
             disabled={isSubmitting}
           >
             <ArrowLeft aria-hidden="true" />
-            Back to nutrition log
+            Back
           </button>
 
           <button

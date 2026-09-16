@@ -160,7 +160,7 @@ const ClinicCard = ({ location, index }: { location: Location; index: number }) 
           to="/assessment"
           className="flex-grow h-[50px] inline-flex items-center justify-center rounded-full bg-accent-strong text-on-accent text-[14.5px] font-semibold transition-all hover:translate-y-[-2px] hover:shadow-lg active:scale-95"
         >
-          Book a Consultation →
+          Book Consultation →
         </Link>
         <a
           href={location.mapDirectionsUrl}
@@ -195,9 +195,9 @@ export const ClinicLocationsFull = () => {
         <SectionHeading
           id="clinics-heading"
           align="center"
-          eyebrow="Visit us"
-          title="One clinic, one *standard of care*."
-          subtitle="In-person consultations in Kakinada. Online consultations follow exactly the same protocol, wherever you are in India."
+          eyebrow="VISIT US"
+          title="Find Us in *Kakinada*"
+          subtitle="Go Rebalance is based in Kakinada, Andhra Pradesh."
         />
 
         <div className="flex flex-col gap-[56px] md:gap-[40px]">
@@ -220,11 +220,11 @@ export const ClinicLocationsFull = () => {
               </div>
               <div>
                 <h3 className="font-fraunces text-[clamp(1.125rem,1.8vw,1.375rem)] font-medium text-text">
-                  Not near either clinic?
+                  Consultations are online
                 </h3>
                 <p className="mt-2 text-[14.5px] text-text-muted max-w-[56ch]">
-                  Online consultations run across India — the same assessment, the same plan, the
-                  same follow-ups. Nothing is abbreviated.
+                  Consultations are conducted one-to-one online at a pre-scheduled time, wherever
+                  you are.
                 </p>
               </div>
             </div>
@@ -232,7 +232,7 @@ export const ClinicLocationsFull = () => {
               to="/assessment"
               className="h-[52px] w-full md:w-auto px-[28px] shrink-0 inline-flex items-center justify-center rounded-full border-[1.5px] border-primary text-primary-contrast text-[15px] font-semibold transition-all hover:bg-primary-strong hover:text-on-primary active:scale-95 whitespace-nowrap"
             >
-              Start Online →
+              Book Consultation →
             </Link>
           </div>
         </Reveal>

@@ -109,7 +109,7 @@ export function MasonryGallery() {
             icon={Camera}
             title="No photographs published yet."
             body="The clinic's own photography is being gathered. Rather than fill this page with stock pictures captioned as though they were taken here, it stays empty until there is something real to show."
-            action={{ label: "Start your assessment", to: "/assessment" }}
+            action={{ label: "Book Consultation", to: "/assessment" }}
             className="mt-4"
           />
         ) : (

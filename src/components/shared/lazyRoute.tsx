@@ -36,7 +36,7 @@ export function lazyRoute(load: () => Promise<{ default: React.ComponentType }>)
 export function RouteFallback() {
   return (
     <div
-      className="min-h-screen w-full bg-bg"
+      className="min-h-[100svh] w-full bg-bg"
       role="status"
       aria-live="polite"
       aria-label="Loading"

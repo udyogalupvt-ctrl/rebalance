@@ -17,7 +17,7 @@ export default function Gallery() {
   ];
 
   return (
-    <div className="min-h-screen bg-bg">
+    <div className="min-h-[100svh] bg-bg">
       <Header overHero={false} />
       <main>
         <PageHero

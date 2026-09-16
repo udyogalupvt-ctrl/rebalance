@@ -5,7 +5,6 @@ import {
   ClipboardList,
   Receipt,
   UserPlus,
-  Stethoscope,
   Quote,
   Images,
   Mail,
@@ -25,6 +24,14 @@ const BASE_ROUTES = [
   { path: "/admin/leads", name: "Leads", icon: UserPlus, badgeKey: "leads" },
   { path: "/admin/assessments", name: "Assessments", icon: ClipboardList, badgeKey: "assessments" },
   { path: "/admin/payments", name: "Payments", icon: Receipt },
+  /*
+   * The public Testimonials and Gallery pages show an empty state until the
+   * practice publishes something, so the two managers that fill them have to
+   * be reachable from here. (The old treatments manager is not listed: those
+   * pages were folded into Programs and it edits nothing public any more.)
+   */
+  { path: "/admin/testimonials", name: "Testimonials", icon: Quote },
+  { path: "/admin/gallery", name: "Gallery", icon: Images },
   { path: "/admin/enquiries", name: "Enquiries", icon: Mail, badgeKey: "enquiries" },
 ];
 

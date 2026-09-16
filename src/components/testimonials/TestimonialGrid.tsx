@@ -101,7 +101,7 @@ export function TestimonialGrid() {
             icon={Quote}
             title="No client stories published yet."
             body="The practice is collecting consented stories from clients who have finished a program. Rather than fill this page with invented ones, we would rather leave it honest until there is something real to show."
-            action={{ label: "Start your assessment", to: "/assessment" }}
+            action={{ label: "Book Consultation", to: "/assessment" }}
           />
         ) : (
           <>

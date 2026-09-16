@@ -462,6 +462,64 @@
 }
 
 @layer utilities {
+  /*
+   * CARD RAILS — a set of cards becomes a swipeable row on a phone.
+   *
+   * A stack of eleven journey steps, five focus areas and five credentials is
+   * several full screens of vertical scrolling before the page moves on; as a
+   * rail each set is one screen tall and the reader chooses how deep to go.
+   * The next card always peeks in from the right edge, which is the cue that
+   * the row continues.
+   *
+   * The rail bleeds to the screen edge (negative margin equal to the
+   * container's gutter) so a card can slide under it, and pads back by the same
+   * amount so the first card still lines up with the heading above it.
+   *
+   * From md the list is whatever grid its own classes say — this block only
+   * exists below it. Program cards are deliberately never a rail: they are the
+   * choice being made, and they have to be compared side by side.
+   */
+  @media (max-width: 767.98px) {
+    .card-rail {
+      --rail-gutter: 20px;
+      display: flex !important;
+      gap: 14px;
+      overflow-x: auto;
+      overflow-y: hidden;
+      overscroll-behavior-x: contain;
+      scroll-snap-type: x mandatory;
+      scroll-padding-inline: var(--rail-gutter);
+      margin-inline: calc(var(--rail-gutter) * -1);
+      padding: 10px var(--rail-gutter) 22px;
+      scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
+    }
+    .card-rail::-webkit-scrollbar {
+      display: none;
+    }
+    /* Direct items, and the items Reveal's stagger renders through its
+       display:contents wrapper. */
+    .card-rail > li,
+    .card-rail > .contents > li {
+      flex: 0 0 var(--rail-card, min(84%, 330px));
+      scroll-snap-align: start;
+    }
+    /* The last card gets room to scroll fully into place at the gutter. */
+    .card-rail::after {
+      content: "";
+      flex: 0 0 1px;
+    }
+  }
+  @media (min-width: 640px) and (max-width: 767.98px) {
+    .card-rail {
+      --rail-gutter: 32px;
+    }
+    .card-rail > li,
+    .card-rail > .contents > li {
+      flex-basis: var(--rail-card-sm, min(58%, 340px));
+    }
+  }
+
   /* ---- SPACING & CONTAINER SCALE — the only source for these values ---- */
   .container-x {
     width: 100%;
@@ -850,6 +908,50 @@
   }
 
   /*
+   * The home hero's split layout: copy on the left, the practice card on the
+   * right. On a phone the two stack and the copy is centred, so the ground is
+   * the same centred spotlight as before. From lg the hold moves to sit under
+   * the copy column and releases towards the right, where the photograph shows
+   * at near full strength around a card that carries its own surface.
+   */
+  .hero-veil--split {
+    background:
+      radial-gradient(
+        ellipse 84% 40% at 50% 30%,
+        rgba(var(--bg-rgb), 0.97) 0%,
+        rgba(var(--bg-rgb), 0.94) 48%,
+        rgba(var(--bg-rgb), 0.55) 76%,
+        rgba(var(--bg-rgb), 0) 100%
+      ),
+      linear-gradient(
+        to bottom,
+        rgba(var(--bg-rgb), 0.3) 0%,
+        rgba(var(--bg-rgb), 0.14) 50%,
+        rgba(var(--bg-rgb), 0.42) 100%
+      );
+  }
+
+  @media (min-width: 1024px) {
+    .hero-veil--split {
+      background:
+        radial-gradient(
+          ellipse 44% 62% at 27% 50%,
+          rgba(var(--bg-rgb), 0.97) 0%,
+          rgba(var(--bg-rgb), 0.94) 52%,
+          rgba(var(--bg-rgb), 0.5) 80%,
+          rgba(var(--bg-rgb), 0) 100%
+        ),
+        linear-gradient(
+          to right,
+          rgba(var(--bg-rgb), 0.5) 0%,
+          rgba(var(--bg-rgb), 0.24) 48%,
+          rgba(var(--bg-rgb), 0.04) 72%,
+          rgba(var(--bg-rgb), 0) 100%
+        );
+    }
+  }
+
+  /*
    * THE PAGE HEROES — the same treatment as the home hero.
    *
    * They had the same fault and now have the same fix: the photograph runs
@@ -996,6 +1098,46 @@
     contain-intrinsic-size: auto 1200px;
   }
 
+  /*
+   * NOT on WebKit — which means not on any iPhone browser at all.
+   *
+   * On a real iPhone this broke whole sections: cards rendered far taller
+   * than their text, the paragraph after a card grid was painted on top of
+   * the cards, and icons came loose from the boxes they belong to. Safari
+   * shipped content-visibility late and its implementation still loses track
+   * of a skipped section's layout when the section comes back into view
+   * during a momentum flick — which on an iPhone also coincides with the
+   * bottom toolbar collapsing and resizing the viewport. The bug arrived in
+   * the same deploy as this rule.
+   *
+   * Two gates, so no single detection has to be right on its own:
+   *
+   *   - Touch screens never get it. `(hover: none)` / `(pointer: coarse)` is
+   *     every phone and tablet, whatever the browser — the win it buys is on
+   *     desktop scrolling, which is where it was measured.
+   *   - WebKit never gets it either. `font: -apple-system-body` and
+   *     `-webkit-touch-callout` are understood only by Apple's WebKit, which
+   *     covers desktop Safari as well.
+   */
+  /* While a #link is being followed, measure against real heights (see
+     HashScroll in routes/__root.tsx). */
+  html[data-anchoring] .render-on-approach {
+    content-visibility: visible;
+  }
+
+  @media (hover: none), (pointer: coarse) {
+    .render-on-approach {
+      content-visibility: visible;
+      contain-intrinsic-size: none;
+    }
+  }
+  @supports (font: -apple-system-body) or (-webkit-touch-callout: none) {
+    .render-on-approach {
+      content-visibility: visible;
+      contain-intrinsic-size: none;
+    }
+  }
+
   /* ========================================================================
      THE HEADER BAR
 
@@ -1136,14 +1278,22 @@
   }
 
   /*
-   * Room for the mobile assessment bar.
-   *
-   * It is fixed to the bottom edge below 640px, so the floating WhatsApp and
-   * back-to-top buttons have to sit above it rather than behind it.
+   * While the phone booking bar is up it carries WhatsApp itself, so the
+   * floating buttons step aside instead of stacking over the content (and
+   * over the bar) in the busiest corner of the screen.
    */
+  .floating-action {
+    transition:
+      opacity 0.25s ease,
+      visibility 0.25s;
+  }
+  /* !important because framer-motion writes an inline opacity for the
+     buttons' own entrance; visibility it never touches. */
   @media (max-width: 639.98px) {
-    .floating-action {
-      margin-bottom: 76px;
+    body[data-booking-bar="true"] .floating-action {
+      opacity: 0 !important;
+      visibility: hidden;
+      pointer-events: none;
     }
   }
 

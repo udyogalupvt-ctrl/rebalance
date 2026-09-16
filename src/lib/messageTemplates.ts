@@ -42,7 +42,7 @@ export const PLACEHOLDERS: { token: string; label: string }[] = [
   { token: "{name}", label: "Their first name" },
   { token: "{fullName}", label: "Their full name" },
   { token: "{concern}", label: "The health concern they gave" },
-  { token: "{practitioner}", label: "Sai Sowjanya Nallimpalli" },
+  { token: "{practitioner}", label: "Sai Sowjanya Penmetsa" },
   { token: "{clinic}", label: "GoRebalance" },
 ];
 

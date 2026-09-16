@@ -1,9 +1,10 @@
 import * as React from "react";
-import { Plus } from "lucide-react";
+import { ArrowRight, MessageCircleQuestion, Plus } from "lucide-react";
+import { Link } from "@tanstack/react-router";
 import * as AccordionPrimitive from "@radix-ui/react-accordion";
 import { SectionWrapper } from "@/components/shared/SectionWrapper";
 import { Reveal } from "@/components/shared/Reveal";
-import { briefFaqs, briefFaqCopy } from "@/data/content";
+import { briefFaqs, briefFaqCopy, briefBrand } from "@/data/content";
 import { HOME_SECTION_IMAGES } from "@/data/images";
 
 /**
@@ -20,11 +21,18 @@ import { HOME_SECTION_IMAGES } from "@/data/images";
  * any of those to sound more encouraging would undo the point of including
  * them.
  */
-export function BriefFaq() {
+interface BriefFaqProps {
+  /** Show only these questions, in this order. Defaults to all of them. */
+  ids?: string[];
+  bg?: "base" | "alt" | "surface";
+}
+
+export function BriefFaq({ ids, bg = "base" }: BriefFaqProps = {}) {
+  const items = ids ? ids.flatMap((id) => briefFaqs.filter((faq) => faq.id === id)) : briefFaqs;
   const image = HOME_SECTION_IMAGES.faq;
 
   return (
-    <SectionWrapper id="faq" bg="base" labelledBy="faq-heading" texture="weave">
+    <SectionWrapper id="faq" bg={bg} labelledBy="faq-heading" texture="weave">
       <div className="grid grid-cols-1 items-start gap-12 lg:grid-cols-[5fr_7fr] lg:gap-16 xl:gap-20">
         {/* ---- heading column ---- */}
         <div className="lg:sticky lg:top-[120px] lg:self-start">
@@ -63,39 +71,69 @@ export function BriefFaq() {
         </div>
 
         {/* ---- accordion ---- */}
-        <AccordionPrimitive.Root type="single" collapsible className="w-full">
-          <ul className="m-0 flex list-none flex-col gap-3 p-0">
-            <Reveal stagger={0.05} childAs="li">
-              {briefFaqs.map((faq) => (
-                <AccordionPrimitive.Item
-                  key={faq.id}
-                  value={faq.id}
-                  className="group overflow-hidden rounded-[20px] border border-border bg-surface transition-colors duration-300 data-[state=open]:border-primary/35"
-                >
-                  <AccordionPrimitive.Header className="m-0">
-                    <AccordionPrimitive.Trigger className="flex w-full items-center justify-between gap-5 p-[20px_22px] text-left transition-colors duration-200 hover:bg-surface-alt/60 sm:p-[22px_26px]">
-                      <span className="font-jakarta text-[15px] font-semibold leading-[1.45] text-text sm:text-[15.5px]">
-                        {faq.question}
-                      </span>
-                      <span
-                        aria-hidden="true"
-                        className="grid h-8 w-8 shrink-0 place-items-center rounded-full border border-border text-primary transition-transform duration-300 group-data-[state=open]:rotate-45 group-data-[state=open]:border-primary/40"
-                      >
-                        <Plus className="h-[15px] w-[15px]" />
-                      </span>
-                    </AccordionPrimitive.Trigger>
-                  </AccordionPrimitive.Header>
+        <div className="min-w-0">
+          <AccordionPrimitive.Root type="single" collapsible className="w-full">
+            <ul className="m-0 flex list-none flex-col gap-3 p-0">
+              <Reveal stagger={0.05} childAs="li">
+                {items.map((faq) => (
+                  <AccordionPrimitive.Item
+                    key={faq.id}
+                    value={faq.id}
+                    className="group overflow-hidden rounded-[20px] border border-border bg-surface transition-colors duration-300 data-[state=open]:border-primary/35"
+                  >
+                    <AccordionPrimitive.Header className="m-0">
+                      <AccordionPrimitive.Trigger className="flex w-full items-center justify-between gap-5 p-[20px_22px] text-left transition-colors duration-200 hover:bg-surface-alt/60 sm:p-[22px_26px]">
+                        <span className="font-jakarta text-[15px] font-semibold leading-[1.45] text-text sm:text-[15.5px]">
+                          {faq.question}
+                        </span>
+                        <span
+                          aria-hidden="true"
+                          className="grid h-8 w-8 shrink-0 place-items-center rounded-full border border-border text-primary transition-transform duration-300 group-data-[state=open]:rotate-45 group-data-[state=open]:border-primary/40"
+                        >
+                          <Plus className="h-[15px] w-[15px]" />
+                        </span>
+                      </AccordionPrimitive.Trigger>
+                    </AccordionPrimitive.Header>
 
-                  <AccordionPrimitive.Content className="overflow-hidden data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down">
-                    <p className="m-0 max-w-[62ch] p-[0_22px_22px] font-jakarta text-[14.5px] leading-[1.7] text-text-muted sm:p-[0_26px_26px]">
-                      {faq.answer}
-                    </p>
-                  </AccordionPrimitive.Content>
-                </AccordionPrimitive.Item>
-              ))}
-            </Reveal>
-          </ul>
-        </AccordionPrimitive.Root>
+                    <AccordionPrimitive.Content className="overflow-hidden data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down">
+                      <p className="m-0 max-w-[62ch] p-[0_22px_22px] font-jakarta text-[14.5px] leading-[1.7] text-text-muted sm:p-[0_26px_26px]">
+                        {faq.answer}
+                      </p>
+                    </AccordionPrimitive.Content>
+                  </AccordionPrimitive.Item>
+                ))}
+              </Reveal>
+            </ul>
+          </AccordionPrimitive.Root>
+
+          <Reveal delay={0.1}>
+            <div className="mt-6 flex flex-col gap-5 rounded-[22px] border border-[rgba(var(--primary-rgb),0.22)] bg-primary-soft p-6 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex items-start gap-3.5">
+                <span
+                  aria-hidden="true"
+                  className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[13px] bg-surface"
+                >
+                  <MessageCircleQuestion className="h-5 w-5 text-primary" />
+                </span>
+                <div className="min-w-0">
+                  <p className="font-fraunces text-[17px] font-medium text-text">
+                    {briefFaqCopy.helpTitle}
+                  </p>
+                  <p className="mt-1 font-jakarta text-[14px] leading-[1.6] text-primary-contrast">
+                    {briefFaqCopy.helpBody}
+                  </p>
+                </div>
+              </div>
+              <Link
+                to="/assessment"
+                className="press group inline-flex h-[48px] shrink-0 items-center justify-center gap-2 rounded-pill bg-accent-strong px-6 text-[14px] font-semibold text-on-accent"
+              >
+                {briefBrand.primaryCta}
+                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+              </Link>
+            </div>
+          </Reveal>
+        </div>
       </div>
     </SectionWrapper>
   );

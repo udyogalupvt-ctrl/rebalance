@@ -3,12 +3,12 @@ import { lazyRoute } from "@/components/shared/lazyRoute";
 
 export const Route = createFileRoute("/assessment")({
   head: () => ({
-    title: "Start Your Assessment | Go Rebalance",
+    title: "Book Consultation | Go Rebalance",
     meta: [
       {
         name: "description",
         content:
-          "A ten-minute assessment covering your symptoms, history, lifestyle and food habits, reviewed personally before your consultation.",
+          "Book a consultation with Go Rebalance: a guided form covering your health, lifestyle and food habits, followed by your Discovery Call.",
       },
     ],
   }),

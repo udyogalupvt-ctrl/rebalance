@@ -199,9 +199,9 @@ export function BookingDialog({
                     <X className="h-[18px] w-[18px]" />
                   </Dialog.Close>
 
-                  <span className="fs-eyebrow text-accent-contrast">Free · No obligation</span>
+                  <span className="fs-eyebrow text-accent-contrast">Have a question first?</span>
                   <Dialog.Title className="fs-h3 mt-1.5 text-text">
-                    {phase === "done" ? "Request received" : "Book your free consultation"}
+                    {phase === "done" ? "Request received" : "Request a call back"}
                   </Dialog.Title>
                   <p id="booking-intro" className="fs-micro mt-1.5 max-w-[42ch]">
                     {phase === "done"
@@ -362,7 +362,7 @@ export function BookingDialog({
                         </>
                       ) : (
                         <>
-                          Book My Free Consultation
+                          Request a Call Back
                           <ArrowRight className="h-[18px] w-[18px]" />
                         </>
                       )}
@@ -375,8 +375,8 @@ export function BookingDialog({
                     <ul className="mt-5 flex shrink-0 list-none flex-wrap justify-center gap-x-5 gap-y-2 border-t border-border p-0 pt-5 text-[12.5px] text-text-muted">
                       {[
                         { icon: ShieldCheck, label: "100% confidential" },
-                        { icon: Clock, label: "Reply within 24 hours" },
-                        { icon: PhoneCall, label: "No payment to book" },
+                        { icon: Clock, label: "Mon – Sat, working hours" },
+                        { icon: PhoneCall, label: "No payment needed" },
                       ].map(({ icon: Icon, label }) => (
                         <li key={label} className="flex items-center gap-1.5">
                           <Icon className="h-[13px] w-[13px] text-primary" aria-hidden="true" />

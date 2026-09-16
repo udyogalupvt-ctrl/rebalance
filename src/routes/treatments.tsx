@@ -1,23 +1,15 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { lazyRoute } from "@/components/shared/lazyRoute";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 
-type TreatmentsSearch = { program?: string };
-
+/**
+ * /treatments no longer exists as a page.
+ *
+ * The practice asked for one page for everything it offers, named Programs,
+ * and for no "treatment" wording on the site. Old links — bookmarks, shared
+ * messages, search results — still arrive here, so the route stays and
+ * forwards them rather than showing a 404.
+ */
 export const Route = createFileRoute("/treatments")({
-  /*
-   * `?program=<slug>` opens that program's card.
-   *
-   * The treatment cards on the home page and the Programs list in the footer
-   * used to link to /treatments/<slug>, which has no route -- every one of
-   * them landed on the 404 page. The expandable cards here already carry the
-   * conditions, what's involved and the timeline, so the fix is to open the
-   * right card rather than duplicate all of it on a second page.
-   */
-  validateSearch: (search: Record<string, unknown>): TreatmentsSearch => {
-    const raw = search["program"];
-    if (typeof raw !== "string") return {};
-    const slug = raw.trim().slice(0, 64);
-    return /^[a-z0-9-]{2,64}$/i.test(slug) ? { program: slug } : {};
+  beforeLoad: () => {
+    throw redirect({ to: "/programs", replace: true });
   },
-  component: lazyRoute(() => import("@/pages/Treatments")),
 });

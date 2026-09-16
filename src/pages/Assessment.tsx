@@ -4,6 +4,7 @@ import { AssessmentProvider, useAssessment } from "@/context/AssessmentContext";
 import StepDetails from "@/components/assessment/steps/StepDetails";
 import StepPayment from "@/components/assessment/steps/StepPayment";
 import StepHealth from "@/components/assessment/steps/StepHealth";
+import StepLifestyle from "@/components/assessment/steps/StepLifestyle";
 import StepNutrition from "@/components/assessment/steps/StepNutrition";
 import StepReview from "@/components/assessment/steps/StepReview";
 import StepComplete from "@/components/assessment/steps/StepComplete";
@@ -15,7 +16,7 @@ import "@/styles/assessment.css";
  * The assessment flow.
  *
  * Lifted out of the route file so the route can import it dynamically: the
- * six steps, their zod schemas, the Cloudinary uploader and a 2,500-line
+ * seven steps, their zod schemas, the Cloudinary uploader and a 2,500-line
  * stylesheet are a large payload, and nobody reading the marketing pages
  * needs a byte of it.
  */
@@ -48,7 +49,7 @@ function AssessmentShell() {
   const showProgress = currentStep !== "complete";
 
   return (
-    <div className="flex min-h-screen flex-col bg-bg">
+    <div className="flex min-h-[100svh] flex-col bg-bg">
       <AssessmentHeader onSaveExit={handleSaveExit} />
 
       <main className="flex-grow pb-20 pt-10 md:pt-14">
@@ -73,9 +74,10 @@ function AssessmentShell() {
             <div className="min-w-0 flex-1">
               <div className="mx-auto w-full" style={{ maxWidth }}>
                 {currentStep === "details" && <StepDetails />}
-                {currentStep === "payment" && <StepPayment />}
                 {currentStep === "health" && <StepHealth />}
+                {currentStep === "lifestyle" && <StepLifestyle />}
                 {currentStep === "nutrition" && <StepNutrition />}
+                {currentStep === "payment" && <StepPayment />}
                 {currentStep === "review" && <StepReview />}
                 {currentStep === "complete" && <StepComplete />}
               </div>

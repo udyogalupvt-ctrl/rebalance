@@ -13,22 +13,21 @@ import { useScrolledPast } from "@/hooks/use-scrolled-past";
 /**
  * The header's own copy of the navigation.
  *
- * Seven entries is too many for the bar at every width, so the desktop row
- * carries the five a visitor decides with and the rest live in the mobile
- * panel and the footer, which is where a longer list belongs.
+ * Every page a visitor can reach is here. Gallery and Testimonials used to be
+ * missing from the desktop bar entirely — on a laptop there was no way to get
+ * to the gallery at all except by knowing its address. FAQs is a section of
+ * the home page, so it is a hash link and only joins the desktop row at xl,
+ * where there is room for a seventh entry.
  */
-const navLinks = [
+const navLinks: { name: string; href: string; hash?: string; wideOnly?: boolean }[] = [
   { name: "Home", href: "/" },
   { name: "About", href: "/about" },
   { name: "Programs", href: "/programs" },
-  { name: "Treatments", href: "/treatments" },
   { name: "Gallery", href: "/gallery" },
   { name: "Testimonials", href: "/testimonials" },
+  { name: "FAQs", href: "/", hash: "faq", wideOnly: true },
   { name: "Contact", href: "/contact" },
 ];
-
-/** The five the desktop bar shows. The mobile panel shows all of them. */
-const DESKTOP_NAV = new Set(["Home", "About", "Programs", "Treatments", "Contact"]);
 
 interface HeaderProps {
   /**
@@ -79,9 +78,14 @@ export function Header({ overHero = true }: HeaderProps = {}) {
 
   const toggleTheme = () => setTheme(theme === "dark" ? "light" : "dark");
 
-  // "/" must match exactly; every other route also matches its sub-paths.
-  const isActive = (href: string) =>
-    href === "/" ? pathname === "/" : pathname === href || pathname.startsWith(href + "/");
+  // "/" must match exactly; every other route also matches its sub-paths. A
+  // hash link is never "the current page" — it is a place on one.
+  const isActive = (href: string, hash?: string) =>
+    hash
+      ? false
+      : href === "/"
+        ? pathname === "/"
+        : pathname === href || pathname.startsWith(href + "/");
 
   // Over the hero the bar is transparent and the content is on-dark. Once the
   // pill has a --surface fill, content switches to the normal text colours.
@@ -124,39 +128,39 @@ export function Header({ overHero = true }: HeaderProps = {}) {
           </Link>
 
           {/* Desktop nav */}
-          <nav className="hidden lg:flex items-center gap-5 xl:gap-8">
-            {navLinks
-              .filter((link) => DESKTOP_NAV.has(link.name))
-              .map((link) => {
-                const active = isActive(link.href);
-                return (
-                  <Link
-                    key={link.name}
-                    to={link.href}
-                    aria-current={active ? "page" : undefined}
+          <nav className="hidden lg:flex items-center gap-4 xl:gap-7" aria-label="Main">
+            {navLinks.map((link) => {
+              const active = isActive(link.href, link.hash);
+              return (
+                <Link
+                  key={link.name}
+                  to={link.href}
+                  {...(link.hash ? { hash: link.hash } : {})}
+                  aria-current={active ? "page" : undefined}
+                  className={cn(
+                    "relative group whitespace-nowrap font-jakarta text-[14px] transition-colors py-2 xl:text-[15px]",
+                    link.wideOnly && "hidden xl:inline-block",
+                    active ? "font-semibold" : "font-medium",
+                    onDark
+                      ? active
+                        ? "text-on-dark"
+                        : "text-on-dark-muted hover:text-on-dark"
+                      : active
+                        ? "text-primary-contrast"
+                        : "text-text-muted hover:text-text",
+                  )}
+                >
+                  {link.name}
+                  <span
                     className={cn(
-                      "relative group whitespace-nowrap font-jakarta text-[14.5px] transition-colors py-2 xl:text-[15px]",
-                      active ? "font-semibold" : "font-medium",
-                      onDark
-                        ? active
-                          ? "text-on-dark"
-                          : "text-on-dark-muted hover:text-on-dark"
-                        : active
-                          ? "text-primary-contrast"
-                          : "text-text-muted hover:text-text",
+                      "absolute -bottom-0.5 left-0 h-[2px] rounded-full transition-all duration-300",
+                      active ? "w-full" : "w-0 group-hover:w-full",
+                      onDark ? "bg-on-dark-accent" : "bg-accent",
                     )}
-                  >
-                    {link.name}
-                    <span
-                      className={cn(
-                        "absolute -bottom-0.5 left-0 h-[2px] rounded-full transition-all duration-300",
-                        active ? "w-full" : "w-0 group-hover:w-full",
-                        onDark ? "bg-on-dark-accent" : "bg-accent",
-                      )}
-                    />
-                  </Link>
-                );
-              })}
+                  />
+                </Link>
+              );
+            })}
           </nav>
 
           <div className="flex items-center gap-2 sm:gap-3">
@@ -198,7 +202,7 @@ export function Header({ overHero = true }: HeaderProps = {}) {
               to="/assessment"
               className="hidden sm:inline-flex shrink-0 items-center gap-2 h-11 whitespace-nowrap rounded-pill bg-accent-strong px-5 font-jakarta text-[14px] font-semibold text-on-accent press group xl:px-6"
             >
-              Start Your Assessment
+              Book Consultation
               <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
             </Link>
 
@@ -252,9 +256,9 @@ export function Header({ overHero = true }: HeaderProps = {}) {
               />
             </div>
 
-            <nav className="relative z-10 flex flex-col px-7" aria-label="Main">
+            <nav className="relative z-10 flex flex-col px-7" aria-label="Main menu">
               {navLinks.map((link, i) => {
-                const active = isActive(link.href);
+                const active = isActive(link.href, link.hash);
                 return (
                   <motion.div
                     key={link.name}
@@ -268,6 +272,7 @@ export function Header({ overHero = true }: HeaderProps = {}) {
                   >
                     <Link
                       to={link.href}
+                      {...(link.hash ? { hash: link.hash } : {})}
                       onClick={() => setIsMenuOpen(false)}
                       aria-current={active ? "page" : undefined}
                       className={cn(
@@ -321,7 +326,7 @@ export function Header({ overHero = true }: HeaderProps = {}) {
                 onClick={() => setIsMenuOpen(false)}
                 className="press flex h-14 w-full items-center justify-center gap-2 rounded-pill bg-accent-strong font-jakarta text-[16px] font-semibold text-on-accent"
               >
-                Start Your Assessment
+                Book Consultation
                 <ArrowRight className="h-4 w-4" />
               </Link>
 

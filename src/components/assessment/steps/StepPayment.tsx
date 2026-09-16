@@ -9,6 +9,7 @@ import {
   ArrowRight,
   ArrowLeft,
   ShieldCheck,
+  PhoneCall,
 } from "lucide-react";
 import { uploadToCloudinary, UploadError, type CloudinaryResult } from "@/lib/cloudinary";
 import { useAssessment } from "@/context/AssessmentContext";
@@ -22,7 +23,7 @@ const QR_IMAGE =
 // UPI ID — replace with the client's actual UPI ID
 const UPI_ID = "example@upi";
 
-// CONSULTATION FEE — replace with the client's confirmed amount
+// DISCOVERY CALL FEE — replace with the practice's confirmed amount
 const CONSULTATION_FEE = "₹ —";
 
 /* ─── Helpers ─── */
@@ -43,7 +44,7 @@ const INSTRUCTIONS = [
   "Open any UPI app — GPay, PhonePe, Paytm or your bank app.",
   "Scan the QR code, or pay directly to the UPI ID above.",
   "Take a screenshot of the successful payment.",
-  "Upload it below and continue to the health assessment.",
+  "Upload it below, then review your answers and submit.",
 ];
 
 const ACCEPTED_TYPES = ["image/jpeg", "image/png", "image/webp"];
@@ -242,11 +243,11 @@ export default function StepPayment() {
     });
 
     await markStepComplete("payment");
-    goToStep("health");
+    goToStep("review");
   }, [isUploadComplete, transactionRef, updateSection, markStepComplete, goToStep]);
 
   const handleBack = useCallback(() => {
-    goToStep("details");
+    goToStep("nutrition");
   }, [goToStep]);
 
   return (
@@ -254,14 +255,36 @@ export default function StepPayment() {
       {/* ─── Heading block ─── */}
       <div className="af-heading-block">
         {/* The step counter lives in <StepProgress> now — it was
-            printing "Step 2 of 4" twice on phones, once in the progress bar
+            printing the step number twice on phones, once in the progress bar
             and once here. */}
-        <span className="sr-only">Step 2 of 4</span>
-        <h2 className="af-title">Confirm your consultation.</h2>
+        <span className="sr-only">Step 5 of 5</span>
+        <p className="af-eyebrow">Last step</p>
+        <h2 className="af-title">Book your Discovery Call.</h2>
         <p className="af-subtitle">
-          Scan the QR code to pay the consultation fee, then upload the payment screenshot. You'll
-          move straight on to the health assessment — verification happens on our side.
+          This payment is for your <strong>Discovery Call</strong> — a one-to-one conversation to
+          understand your concerns and goals and discuss which Go Rebalance program may be right for
+          you. Pay with UPI, upload the screenshot, then review your answers and submit.
         </p>
+      </div>
+
+      {/* What the payment is for, stated before the QR code rather than
+          after it: nobody should be scanning to pay without knowing. */}
+      <div className="af-discovery-card">
+        <div className="af-discovery-card__icon" aria-hidden="true">
+          <PhoneCall />
+        </div>
+        <div className="af-discovery-card__body">
+          <p className="af-discovery-card__title">You are paying for: Discovery Call</p>
+          <ul className="af-discovery-card__list">
+            <li>
+              A one-to-one call with the practice, scheduled with you after we review your answers.
+            </li>
+            <li>We understand your concerns and goals and answer your questions.</li>
+            <li>
+              We discuss which program may suit you — you decide afterwards, with no pressure.
+            </li>
+          </ul>
+        </div>
       </div>
 
       {/* ═══ Card 1 — Payment ═══ */}
@@ -272,7 +295,7 @@ export default function StepPayment() {
             <div className="af-qr-panel">
               <img
                 src={QR_IMAGE}
-                alt="UPI QR code for consultation payment"
+                alt="UPI QR code for the Discovery Call payment"
                 className="af-qr-image"
               />
             </div>
@@ -297,6 +320,7 @@ export default function StepPayment() {
               </button>
             </div>
 
+            <p className="af-amount-label">Discovery Call fee</p>
             <p className="af-amount">{CONSULTATION_FEE}</p>
           </div>
 
@@ -315,8 +339,8 @@ export default function StepPayment() {
             <div className="af-info-note">
               <Info aria-hidden="true" />
               <p>
-                You can continue to the next step as soon as your screenshot is uploaded. We'll
-                verify the payment separately and confirm your consultation within 24 hours.
+                You can continue as soon as your screenshot is uploaded. We verify the payment
+                separately and get in touch to schedule your Discovery Call.
               </p>
             </div>
           </div>
@@ -476,7 +500,7 @@ export default function StepPayment() {
                 disabled={!isUploadComplete}
                 onClick={handleContinue}
               >
-                Continue to Health Assessment
+                Continue to Review
                 <ArrowRight aria-hidden="true" />
               </button>
             </div>
@@ -508,7 +532,7 @@ export default function StepPayment() {
           >
             <X aria-hidden="true" />
           </button>
-          <img src={lightboxUrl} alt="Payment screenshot full preview" />
+          <img src={lightboxUrl} alt="Discovery Call payment screenshot, full preview" />
         </div>
       )}
     </>

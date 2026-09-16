@@ -3,6 +3,7 @@ import { MinusCircle, Stethoscope } from "lucide-react";
 import { SectionWrapper } from "@/components/shared/SectionWrapper";
 import { SectionHeading } from "@/components/shared/SectionHeading";
 import { Reveal } from "@/components/shared/Reveal";
+import { CardRail } from "@/components/shared/CardRail";
 import { whatToExpect, whatToExpectCopy, beyondNutrition } from "@/data/content";
 
 /**
@@ -31,27 +32,25 @@ export function WhatToExpect() {
         title={whatToExpectCopy.title}
       />
 
-      {/*
-        The grid lives on the list; Reveal only staggers what is inside it.
-
-        Reveal's stagger mode puts `display: contents` on its own wrapper so
-        the animated boxes become the grid items directly — which means any
-        grid classes handed to Reveal itself are cancelled by that `contents`.
-        Passing the layout to a real <ul> and letting Reveal sit inside it
-        keeps both: the list is the grid, and each card still rises on its own
-        beat.
-      */}
-      <ul className="m-0 mt-14 grid list-none grid-cols-1 gap-5 p-0 sm:grid-cols-2 lg:gap-6">
-        <Reveal stagger={0.07} childAs="li" childClassName="h-full">
+      {/* A swipeable row on a phone, a two-by-two grid from md. */}
+      <CardRail
+        count={whatToExpect.length}
+        label={whatToExpectCopy.eyebrow}
+        wrapperClassName="mt-14"
+        className="md:grid md:grid-cols-2 md:gap-5 lg:gap-6"
+      >
+        <Reveal stagger={0.07} childAs="li">
           {whatToExpect.map((item) => (
             <div
               key={item.title}
-              className="flex h-full items-start gap-4 rounded-[22px] border border-border bg-surface p-[26px_24px]"
+              className="flex flex-col gap-4 rounded-[22px] border border-border bg-surface p-[26px_24px] sm:flex-row sm:items-start"
             >
-              <MinusCircle
+              <span
                 aria-hidden="true"
-                className="mt-[3px] h-[19px] w-[19px] shrink-0 text-accent"
-              />
+                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[12px] bg-accent-soft"
+              >
+                <MinusCircle className="h-[19px] w-[19px] text-accent-contrast" />
+              </span>
               <div className="min-w-0">
                 <h3 className="mb-2 font-fraunces text-[17px] font-medium leading-snug text-text">
                   {item.title}
@@ -63,7 +62,7 @@ export function WhatToExpect() {
             </div>
           ))}
         </Reveal>
-      </ul>
+      </CardRail>
 
       <Reveal delay={0.12}>
         <p className="mx-auto mt-12 max-w-[62ch] text-balance text-center font-fraunces text-[clamp(1.1rem,2vw,1.35rem)] font-medium leading-[1.45] text-text">

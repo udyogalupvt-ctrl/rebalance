@@ -2,6 +2,7 @@ import * as React from "react";
 import { MinusCircle, ShieldCheck } from "lucide-react";
 import { SectionWrapper } from "@/components/shared/SectionWrapper";
 import { Reveal } from "@/components/shared/Reveal";
+import { CardRail } from "@/components/shared/CardRail";
 import { whatToExpect, whatToExpectCopy } from "@/data/content";
 
 /**
@@ -42,12 +43,16 @@ export function ResultsStats() {
           </h2>
         </Reveal>
 
-        <ul className="m-0 grid list-none grid-cols-1 gap-4 p-0 sm:grid-cols-2">
-          <Reveal stagger={0.07} childAs="li" childClassName="h-full">
+        <CardRail
+          count={whatToExpect.length}
+          label={whatToExpectCopy.eyebrow}
+          className="md:grid md:grid-cols-2 md:gap-4"
+        >
+          <Reveal stagger={0.07} childAs="li">
             {whatToExpect.map((item) => (
               <div
                 key={item.title}
-                className="flex h-full items-start gap-3.5 rounded-[20px] border border-border bg-surface p-[22px_20px]"
+                className="flex items-start gap-3.5 rounded-[20px] border border-border bg-surface p-[22px_20px]"
               >
                 <MinusCircle
                   aria-hidden="true"
@@ -64,7 +69,7 @@ export function ResultsStats() {
               </div>
             ))}
           </Reveal>
-        </ul>
+        </CardRail>
 
         <Reveal delay={0.14}>
           <div className="mt-9 flex items-start gap-3.5 rounded-[20px] border border-[rgba(var(--primary-rgb),0.22)] bg-primary-soft p-[20px_22px]">

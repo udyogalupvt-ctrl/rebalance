@@ -13,7 +13,7 @@ interface AssessmentCTAProps {
 }
 
 const REASSURANCE = [
-  { icon: Clock, label: "Takes about 10 minutes" },
+  { icon: Clock, label: "About 15 minutes" },
   { icon: UserCheck, label: "Reviewed personally" },
   { icon: Lock, label: "100% confidential" },
 ];
@@ -128,7 +128,7 @@ export function AssessmentCTA({ title, subtitle, className }: AssessmentCTAProps
         <Reveal delay={0.15}>
           <p className="fs-sub mx-auto mb-9 max-w-[640px] text-on-dark-muted">
             {subtitle ||
-              "Take the Go Rebalance assessment — a guided form covering your symptoms, history, lifestyle and food habits. Every submission is reviewed personally before you are contacted."}
+              "Book a consultation through a guided form covering your health, lifestyle and food habits. Every submission is reviewed personally before you are contacted."}
           </p>
         </Reveal>
 
@@ -149,7 +149,7 @@ export function AssessmentCTA({ title, subtitle, className }: AssessmentCTAProps
               to="/assessment"
               className="press group inline-flex h-[58px] items-center justify-center gap-2.5 rounded-pill bg-accent-strong px-9 text-[16.5px] font-semibold text-on-accent shadow-[0_12px_32px_rgba(var(--accent-rgb),0.32)]"
             >
-              Begin My Assessment
+              Book Consultation
               <ArrowRight size={18} className="transition-transform group-hover:translate-x-1" />
             </Link>
             <button
@@ -158,14 +158,14 @@ export function AssessmentCTA({ title, subtitle, className }: AssessmentCTAProps
               className="press inline-flex h-[58px] items-center justify-center gap-2.5 rounded-pill border border-on-dark-border bg-on-dark-glass px-9 text-[16px] font-semibold text-on-dark backdrop-blur-xl transition-colors hover:bg-[rgba(var(--on-dark-rgb),0.2)]"
             >
               <CalendarCheck size={18} aria-hidden="true" />
-              Book Consultation
+              Request a Call Back
             </button>
           </div>
         </Reveal>
 
         <Reveal delay={0.3}>
           <p className="mx-auto mt-8 max-w-[520px] text-[13px] leading-[1.5] text-on-dark-faint">
-            Consultation fee applies · Secure payment · Clinic in Kakinada · Online across India
+            Discovery Call fee applies · Secure UPI payment · 1-on-1 online consultations
           </p>
         </Reveal>
       </div>

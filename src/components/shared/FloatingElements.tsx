@@ -7,7 +7,7 @@ import { brand } from "@/data/content";
 /**
  * Custom WhatsApp icon SVG to match brand style precisely.
  */
-const WhatsAppIcon = ({ className }: { className?: string }) => (
+export const WhatsAppIcon = ({ className }: { className?: string }) => (
   <svg
     viewBox="0 0 24 24"
     fill="currentColor"

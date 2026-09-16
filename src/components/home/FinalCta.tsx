@@ -17,7 +17,13 @@ import { finalCta } from "@/data/content";
  * visitor is far more likely to complete it when they can see it leads to a
  * conversation rather than straight to a payment screen.
  */
-export function FinalCta() {
+interface FinalCtaProps {
+  /** Override the heading, e.g. the About page's "Ready to Begin Your Rebalance?". */
+  title?: string;
+  body?: string;
+}
+
+export function FinalCta({ title = finalCta.title, body = finalCta.body }: FinalCtaProps = {}) {
   return (
     <section
       id="start"
@@ -42,8 +48,9 @@ export function FinalCta() {
       <div className="container-x relative z-10">
         <div className="mx-auto max-w-[760px] text-center">
           <Reveal>
+            <p className="fs-eyebrow mb-5 text-on-dark-accent">{finalCta.eyebrow}</p>
             <h2 id="final-cta-heading" className="fs-h2 mb-6 text-on-dark">
-              {finalCta.title.split(/(\*[^*]+\*)/g).map((part, i) =>
+              {title.split(/(\*[^*]+\*)/g).map((part, i) =>
                 part.startsWith("*") && part.endsWith("*") ? (
                   <span key={i} className="italic text-on-dark-accent">
                     {part.slice(1, -1)}
@@ -63,7 +70,7 @@ export function FinalCta() {
 
           <Reveal delay={0.14}>
             <p className="mx-auto mb-10 max-w-[56ch] text-balance font-jakarta text-[15.5px] leading-[1.7] text-on-dark-muted">
-              {finalCta.body}
+              {body}
             </p>
           </Reveal>
 
@@ -80,10 +87,13 @@ export function FinalCta() {
           {/* What happens next, in three steps. No prices, and no payment —
               the brief routes cost through the discovery call. */}
           <Reveal delay={0.28}>
-            <ol className="m-0 mt-12 flex list-none flex-col items-center justify-center gap-3 p-0 sm:flex-row sm:gap-0">
+            <p className="mt-12 font-jakarta text-[11.5px] font-semibold uppercase tracking-[0.14em] text-on-dark-faint">
+              {finalCta.flowLabel}
+            </p>
+            <ol className="m-0 mt-4 flex list-none flex-col items-center justify-center gap-3 p-0 sm:flex-row sm:gap-0">
               {finalCta.steps.map((step, i) => (
                 <li key={step} className="flex items-center gap-3 sm:gap-0">
-                  <span className="rounded-pill border border-on-dark-border bg-on-dark-glass px-4 py-2 font-jakarta text-[13px] font-medium text-on-dark backdrop-blur-xl">
+                  <span className="rounded-pill border border-on-dark-border bg-on-dark-glass px-4 py-2 font-jakarta text-[13px] font-medium text-on-dark">
                     {step}
                   </span>
                   {i < finalCta.steps.length - 1 && (

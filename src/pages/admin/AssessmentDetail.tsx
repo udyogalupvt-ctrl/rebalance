@@ -15,6 +15,7 @@ import {
   Target,
   Stethoscope,
   UtensilsCrossed,
+  Sunrise,
   Receipt,
   Check,
   X,
@@ -35,7 +36,14 @@ import { SelectField } from "@/components/assessment/fields";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { logActivity } from "@/lib/activityLog";
 import { toDate } from "@/lib/runtime";
-import type { Details, Health, Nutrition, Payment, Consent } from "@/schemas/assessment";
+import type { Details, Health, Lifestyle, Nutrition, Payment, Consent } from "@/schemas/assessment";
+
+/** "non_vegetarian" -> "Non vegetarian". */
+function humanise(value: string | undefined): string | undefined {
+  if (!value) return undefined;
+  const text = value.replace(/_/g, " ");
+  return text.charAt(0).toUpperCase() + text.slice(1);
+}
 
 export default function AssessmentDetail() {
   const { id } = useParams({ strict: false }); // We'll grab id manually or via props
@@ -211,6 +219,9 @@ export default function AssessmentDetail() {
 
   const d: Partial<Details> = data.details ?? {};
   const h: Partial<Health> = data.health ?? {};
+  // Assessments submitted before the lifestyle section existed have none.
+  const l: Partial<Lifestyle> = data.lifestyle ?? {};
+  const hasLifestyle = Object.keys(l).length > 0;
   const n: Partial<Nutrition> = data.nutrition ?? {};
   const p: Partial<Payment> = data.payment ?? {};
   const c: Partial<Consent> = data.consent ?? {};
@@ -452,6 +463,12 @@ export default function AssessmentDetail() {
                   </div>
                 </div>
               </div>
+              {d.guardianName && (
+                <div>
+                  <div className="af-field-label">Parent / guardian (client is under 18)</div>
+                  <div className="af-field-value">{d.guardianName}</div>
+                </div>
+              )}
               <div>
                 <div className="af-field-label">Phone</div>
                 <div className="af-field-value">
@@ -728,6 +745,150 @@ export default function AssessmentDetail() {
               </div>
             </div>
           </div>
+
+          {/* Lifestyle & symptoms — sections 6 to 9 of the practice's intake form */}
+          {hasLifestyle && (
+            <div className="af-detail-card">
+              <h2 className="af-detail-card-heading">
+                <Sunrise size={20} style={{ color: "var(--primary)" }} /> Lifestyle, food habits and
+                symptoms
+              </h2>
+              <div className="af-field-grid">
+                <div>
+                  <div className="af-field-label">Diet</div>
+                  <div className="af-field-value">
+                    {humanise(l.diet) || <span className="af-field-value--empty">—</span>}
+                  </div>
+                </div>
+                <div>
+                  <div className="af-field-label">Stress</div>
+                  <div className="af-field-value">
+                    {humanise(l.stress) || <span className="af-field-value--empty">—</span>}
+                  </div>
+                </div>
+                <div>
+                  <div className="af-field-label">Food habits</div>
+                  <div className="af-field-value">
+                    {l.foodHabits || <span className="af-field-value--empty">—</span>}
+                  </div>
+                </div>
+                <div>
+                  <div className="af-field-label">Food allergies</div>
+                  <div className="af-field-value">
+                    {l.foodAllergies || <span className="af-field-value--empty">—</span>}
+                  </div>
+                </div>
+                <div>
+                  <div className="af-field-label">Tea / coffee</div>
+                  <div className="af-field-value">
+                    {l.teaCoffee || <span className="af-field-value--empty">—</span>}
+                  </div>
+                </div>
+                <div>
+                  <div className="af-field-label">Known intolerances / foods avoided</div>
+                  <div className="af-field-value">
+                    {l.intolerances || <span className="af-field-value--empty">—</span>}
+                  </div>
+                </div>
+                <div>
+                  <div className="af-field-label">Sweet cravings</div>
+                  <div className="af-field-value">
+                    {humanise(l.sweetCravings) || <span className="af-field-value--empty">—</span>}
+                  </div>
+                </div>
+                <div>
+                  <div className="af-field-label">Sleep</div>
+                  <div className="af-field-value">
+                    {l.sleep || <span className="af-field-value--empty">—</span>}
+                  </div>
+                </div>
+                <div>
+                  <div className="af-field-label">Profession</div>
+                  <div className="af-field-value">
+                    {l.profession || <span className="af-field-value--empty">—</span>}
+                  </div>
+                </div>
+                <div>
+                  <div className="af-field-label">Movement & exercise</div>
+                  <div className="af-field-value">
+                    {l.exercise || <span className="af-field-value--empty">—</span>}
+                  </div>
+                </div>
+                <div>
+                  <div className="af-field-label">Alcohol / smoking / recreational drugs</div>
+                  <div className="af-field-value">
+                    {l.alcoholSmoking || <span className="af-field-value--empty">—</span>}
+                  </div>
+                </div>
+                <div>
+                  <div className="af-field-label">Screen time / digital exposure</div>
+                  <div className="af-field-value">
+                    {l.screenTime || <span className="af-field-value--empty">—</span>}
+                  </div>
+                </div>
+                <div>
+                  <div className="af-field-label">Bowel movement (Bristol type)</div>
+                  <div className="af-field-value">
+                    {l.bowelType ? (
+                      l.bowelType === "unsure" ? (
+                        "Not sure"
+                      ) : (
+                        `Type ${l.bowelType}`
+                      )
+                    ) : (
+                      <span className="af-field-value--empty">—</span>
+                    )}
+                  </div>
+                </div>
+                <div>
+                  <div className="af-field-label">Bowel notes</div>
+                  <div className="af-field-value">
+                    {l.bowelNote || <span className="af-field-value--empty">—</span>}
+                  </div>
+                </div>
+                <div>
+                  <div className="af-field-label">
+                    Bloating / flatulence / abdominal pain / reflux
+                  </div>
+                  <div className="af-field-value">
+                    {(l.digestiveSymptoms ?? []).join(", ") || "None ticked"}
+                  </div>
+                </div>
+                <div>
+                  <div className="af-field-label">Digestive notes</div>
+                  <div className="af-field-value">
+                    {l.digestiveNote || <span className="af-field-value--empty">—</span>}
+                  </div>
+                </div>
+                <div>
+                  <div className="af-field-label">
+                    Hair loss, acne, focus, skin, headaches, runny nose, skin allergies
+                  </div>
+                  <div className="af-field-value">
+                    {(l.generalSymptoms ?? []).join(", ") || "None ticked"}
+                  </div>
+                </div>
+                <div>
+                  <div className="af-field-label">Other symptom notes</div>
+                  <div className="af-field-value">
+                    {l.generalSymptomsNote || <span className="af-field-value--empty">—</span>}
+                  </div>
+                </div>
+                <div>
+                  <div className="af-field-label">Menstrual cycle</div>
+                  <div className="af-field-value">
+                    {humanise(l.menstrualCycle) || <span className="af-field-value--empty">—</span>}
+                  </div>
+                </div>
+                <div>
+                  <div className="af-field-label">Cycle notes</div>
+                  <div className="af-field-value">
+                    {l.menstrualNote || <span className="af-field-value--empty">—</span>}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Nutrition log */}
           <div className="af-detail-card">

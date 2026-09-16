@@ -22,21 +22,25 @@ import {
   detailsSchema,
   paymentSchema,
   healthSchema,
+  lifestyleSchema,
   nutritionSchema,
   type Details,
   type Payment,
   type Health,
+  type Lifestyle,
   type Nutrition,
 } from "@/schemas/assessment";
 
 /* ─── Types ─── */
-export type AssessmentStep = "details" | "payment" | "health" | "nutrition" | "review" | "complete";
+export type AssessmentStep =
+  "details" | "health" | "lifestyle" | "nutrition" | "payment" | "review" | "complete";
 
 export type AssessmentData = {
   details: Partial<Details>;
-  payment: Partial<Payment>;
   health: Partial<Health>;
+  lifestyle: Partial<Lifestyle>;
   nutrition: Partial<Nutrition>;
+  payment: Partial<Payment>;
 };
 
 export type AssessmentState = {
@@ -75,7 +79,12 @@ type AssessmentContextValue = AssessmentState & {
 };
 
 /* ─── Constants ─── */
-const STORAGE_KEY = "gr_assessment_draft_v1";
+/*
+ * v2: the steps were reordered (payment moved to the end, lifestyle added).
+ * A v1 draft is still read once, for its answers — see restoreDraft().
+ */
+const STORAGE_KEY = "gr_assessment_draft_v2";
+const LEGACY_STORAGE_KEY = "gr_assessment_draft_v1";
 const DRAFT_MAX_AGE_MS = 14 * 24 * 60 * 60 * 1000; // 14 days
 const DEBOUNCE_MS = 600;
 
@@ -88,23 +97,63 @@ const DEBOUNCE_MS = 600;
  * `targetIdx <= 0` -- which blocked EVERY navigation off the review screen:
  * the back button and all of its Edit links silently did nothing.
  */
-const STEPS: AssessmentStep[] = ["details", "payment", "health", "nutrition", "review", "complete"];
+/*
+ * The order follows the practice's own intake form — about you, health,
+ * lifestyle and symptoms, a day of eating — and payment comes LAST, framed as
+ * the fee for the Discovery Call. Somebody is far more willing to pay once
+ * they have seen what the practice asks and why; asking for money on the
+ * second screen, before a single health question, is what the practice
+ * asked to change.
+ */
+const STEPS: AssessmentStep[] = [
+  "details",
+  "health",
+  "lifestyle",
+  "nutrition",
+  "payment",
+  "review",
+  "complete",
+];
 
 const STEP_SCHEMAS = {
   details: detailsSchema,
-  payment: paymentSchema,
   health: healthSchema,
+  lifestyle: lifestyleSchema,
   nutrition: nutritionSchema,
+  payment: paymentSchema,
 } as const;
 
 const emptyData: AssessmentData = {
   details: {},
-  payment: {},
   health: {},
+  lifestyle: {},
   nutrition: {},
+  payment: {},
 };
 
 const makeId = () => crypto.randomUUID();
+
+/** How long a submission waits for Firestore before it reports a failure. */
+const SUBMIT_TIMEOUT_MS = 20000;
+
+/**
+ * Reject if a write has not been acknowledged in time.
+ *
+ * Firestore never rejects an undeliverable write — it queues it and leaves
+ * the promise pending — so without this a submission on a dead connection
+ * spins forever instead of offering the person a retry.
+ */
+function withTimeout<T>(work: Promise<T>): Promise<T> {
+  return Promise.race([
+    work,
+    new Promise<T>((_resolve, reject) =>
+      setTimeout(
+        () => reject(new Error("The submission timed out. Please check your connection.")),
+        SUBMIT_TIMEOUT_MS,
+      ),
+    ),
+  ]);
+}
 
 const initialState = (): AssessmentState => ({
   currentStep: "details",
@@ -116,25 +165,56 @@ const initialState = (): AssessmentState => ({
   lastSubmissionId: null,
 });
 
+/**
+ * Restore a saved draft, if there is a recent one.
+ *
+ * A draft saved under the old step order keeps its answers but restarts at
+ * the first step: its "completed" list describes an order that no longer
+ * exists, and resuming it mid-way could skip the new lifestyle section.
+ */
+function restoreDraft(): AssessmentState | null {
+  const fresh = (savedAt: unknown) =>
+    typeof savedAt === "string" && Date.now() - Date.parse(savedAt) <= DRAFT_MAX_AGE_MS;
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) {
+      const saved = JSON.parse(raw);
+      if (saved && fresh(saved.savedAt)) {
+        return {
+          ...initialState(),
+          ...saved,
+          data: { ...emptyData, ...(saved.data ?? {}) },
+          lastSavedAt: saved.savedAt,
+        };
+      }
+      localStorage.removeItem(STORAGE_KEY);
+    }
+    const legacy = localStorage.getItem(LEGACY_STORAGE_KEY);
+    if (legacy) {
+      localStorage.removeItem(LEGACY_STORAGE_KEY);
+      const saved = JSON.parse(legacy);
+      if (saved && fresh(saved.savedAt)) {
+        return {
+          ...initialState(),
+          draftId: typeof saved.draftId === "string" ? saved.draftId : makeId(),
+          data: { ...emptyData, ...(saved.data ?? {}) },
+          lastSavedAt: saved.savedAt,
+        };
+      }
+    }
+  } catch {
+    /* offline or corrupt draft */
+  }
+  return null;
+}
+
 /* ─── Context ─── */
 const AssessmentContext = createContext<AssessmentContextValue | null>(null);
 
 export function AssessmentProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<AssessmentState>(() => {
-    // Try to restore from localStorage
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (raw) {
-        const saved = JSON.parse(raw);
-        if (saved && saved.savedAt && Date.now() - Date.parse(saved.savedAt) <= DRAFT_MAX_AGE_MS) {
-          return { ...initialState(), ...saved, lastSavedAt: saved.savedAt };
-        }
-        // Draft too old — discard
-        localStorage.removeItem(STORAGE_KEY);
-      }
-    } catch {
-      /* offline or corrupt draft */
-    }
+    const restored = restoreDraft();
+    if (restored) return restored;
 
     // Pre-populate from URL params or local symptom selection
     const params = new URLSearchParams(window.location.search);
@@ -225,21 +305,31 @@ export function AssessmentProvider({ children }: { children: ReactNode }) {
 
       setState((s) => ({ ...s, completedSteps }));
 
-      try {
-        await setDoc(
-          doc(db, "assessmentDrafts", state.draftId),
-          {
-            ...state,
-            completedSteps,
-            updatedAt: Timestamp.now(),
-            createdAt: Timestamp.now(),
-            status: "draft",
-          },
-          { merge: true },
-        );
-      } catch {
-        /* Firestore must never block offline flow */
-      }
+      /*
+       * The draft mirror is sent, never waited for.
+       *
+       * A Firestore write does not reject when the server cannot be reached —
+       * it is queued locally and its promise stays pending until the server
+       * acknowledges it, which may be never. Every step's Continue button
+       * awaited this call before navigating, so on a flaky connection (or
+       * anywhere Firestore is blocked) the form simply stopped: the button
+       * spun and the next step never arrived. The answers are already saved
+       * to localStorage on every keystroke, so nothing is lost by letting
+       * this one catch up in its own time.
+       */
+      void setDoc(
+        doc(db, "assessmentDrafts", state.draftId),
+        {
+          ...state,
+          completedSteps,
+          updatedAt: Timestamp.now(),
+          createdAt: Timestamp.now(),
+          status: "draft",
+        },
+        { merge: true },
+      ).catch(() => {
+        /* offline, blocked, or rejected — the local draft still stands */
+      });
     },
     [state],
   );
@@ -277,15 +367,25 @@ export function AssessmentProvider({ children }: { children: ReactNode }) {
   /* ─── submitFinal ─── */
   const submitFinal = useCallback(
     async (consent: { accurateInfo: true; contactConsent: true; dataConsent: true }) => {
-      const submissionId = crypto.randomUUID();
+      /*
+       * The draft's own id IS the submission id.
+       *
+       * It used to be a fresh UUID per attempt, so a submission that timed
+       * out and was retried wrote a SECOND assessment document — the practice
+       * would see the same person twice and not know which to work from. The
+       * draft id is already unique per person per form, so a retry now
+       * overwrites the same document.
+       */
+      const submissionId = state.draftId;
       const payload = {
         submissionId,
         draftId: state.draftId,
         submittedAt: serverTimestamp(),
         details: state.data.details,
-        payment: state.data.payment,
         health: state.data.health,
+        lifestyle: state.data.lifestyle,
         nutrition: state.data.nutrition,
+        payment: state.data.payment,
         consent,
         status: "new",
         verificationStatus: state.data.payment.verificationStatus || "pending",
@@ -297,7 +397,16 @@ export function AssessmentProvider({ children }: { children: ReactNode }) {
         submittedFrom: document.referrer || "",
       };
 
-      await setDoc(doc(db, "assessments", submissionId), payload);
+      /*
+       * A submission must either land or say so.
+       *
+       * Firestore queues a write it cannot deliver and leaves the promise
+       * pending indefinitely, which on the review screen reads as a spinner
+       * that never stops — the one moment in the form where the person needs
+       * to know what happened. The race turns that silence into the retry
+       * message they can act on.
+       */
+      await withTimeout(setDoc(doc(db, "assessments", submissionId), payload));
 
       /*
        * Mirror a MINIMAL public status record.
@@ -316,15 +425,17 @@ export function AssessmentProvider({ children }: { children: ReactNode }) {
        */
       const phone = String(state.data.details?.phone ?? "");
       const fullName = String(state.data.details?.fullName ?? "").trim();
-      await setDoc(doc(db, "assessmentStatus", submissionId), {
-        submissionId,
-        firstName: fullName.split(/\s+/)[0] ?? "",
-        phoneLast4: phone.slice(-4),
-        status: "new",
-        verificationStatus: state.data.payment.verificationStatus || "pending",
-        submittedAt: serverTimestamp(),
-        updatedAt: serverTimestamp(),
-      });
+      await withTimeout(
+        setDoc(doc(db, "assessmentStatus", submissionId), {
+          submissionId,
+          firstName: fullName.split(/\s+/)[0] ?? "",
+          phoneLast4: phone.slice(-4),
+          status: "new",
+          verificationStatus: state.data.payment.verificationStatus || "pending",
+          submittedAt: serverTimestamp(),
+          updatedAt: serverTimestamp(),
+        }),
+      );
 
       // Clean up. The reference is kept so the tracking page can pre-fill it
       // on this device -- losing it should not mean losing access to status.
@@ -334,11 +445,11 @@ export function AssessmentProvider({ children }: { children: ReactNode }) {
       } catch {
         /* private mode */
       }
-      try {
-        await deleteDoc(doc(db, "assessmentDrafts", state.draftId));
-      } catch {
+      // Fire and forget: the draft copy is housekeeping, and the person is
+      // already on the confirmation screen.
+      void deleteDoc(doc(db, "assessmentDrafts", state.draftId)).catch(() => {
         /* ignore cleanup failure */
-      }
+      });
 
       setState((s) => ({ ...s, currentStep: "complete", lastSubmissionId: submissionId }));
     },

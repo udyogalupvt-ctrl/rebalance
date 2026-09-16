@@ -1,17 +1,17 @@
 import * as React from "react";
 import { motion, useReducedMotion } from "framer-motion";
-import { Check, ClipboardList, CreditCard, HeartPulse, Salad } from "lucide-react";
+import { Check, ClipboardList, HeartPulse, PhoneCall, Salad, Sunrise } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { AssessmentStep } from "@/context/AssessmentContext";
 
 /**
- * The four numbered stages, in order.
+ * The five numbered stages, in order — the practice's own intake form, with
+ * the Discovery Call payment last.
  *
  * "review" and "complete" are deliberately absent: they are not stages a
  * visitor fills in, and counting them would make the form look longer than it
- * is at exactly the moment someone is deciding whether to start it. They match
- * the "Step N of 4" eyebrows the step components already print.
+ * is at exactly the moment someone is deciding whether to start it.
  */
 const STAGES: { key: AssessmentStep; label: string; hint: string; icon: LucideIcon }[] = [
   {
@@ -20,14 +20,25 @@ const STAGES: { key: AssessmentStep; label: string; hint: string; icon: LucideIc
     hint: "Name, age and how to reach you",
     icon: ClipboardList,
   },
-  { key: "payment", label: "Consultation", hint: "Choose a plan and confirm", icon: CreditCard },
   {
     key: "health",
     label: "Your health",
-    hint: "History, symptoms and medication",
+    hint: "Measurements, goals, history and medication",
     icon: HeartPulse,
   },
-  { key: "nutrition", label: "Your food", hint: "A day of eating, habits and sleep", icon: Salad },
+  {
+    key: "lifestyle",
+    label: "Lifestyle",
+    hint: "Food habits, sleep, stress and symptoms",
+    icon: Sunrise,
+  },
+  { key: "nutrition", label: "Your food", hint: "What you ate yesterday", icon: Salad },
+  {
+    key: "payment",
+    label: "Discovery call",
+    hint: "Pay for your discovery call",
+    icon: PhoneCall,
+  },
 ];
 
 type State = "done" | "current" | "todo";

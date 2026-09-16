@@ -1,22 +1,28 @@
 import * as React from "react";
+import { Quote } from "lucide-react";
 import { SectionWrapper } from "@/components/shared/SectionWrapper";
 import { SectionHeading } from "@/components/shared/SectionHeading";
 import { Reveal } from "@/components/shared/Reveal";
+import { CardRail } from "@/components/shared/CardRail";
 import { approachSteps, approachCopy } from "@/data/content";
+import { PROCESS_STEP_IMAGES } from "@/data/images";
 
 /**
- * Section 5 — The Go Rebalance Approach.
+ * Not Just a Diet Plan — the four steps of the approach, and the conviction
+ * behind them.
  *
- * Four steps, so this one can be an honest row: a single line from lg with a
- * hairline running through the numerals, stacked on a phone. The rule behind
- * the numbers is what makes it read as a sequence rather than four unrelated
- * cards — it is the one piece of ornament here, and it is doing a job.
+ * The one thing this section has to get across is ORDER: these happen one
+ * after another. Each card therefore carries its place twice over — "Step 2 of
+ * 4" in words, and a four-segment meter filled to that point — so a reader
+ * swiping the row on a phone, who only ever sees one or two cards at once,
+ * still knows where in the sequence they are.
  *
- * Deliberately no photography. The steps are a process, and the page already
- * carries pictures directly above and below this band; a fifth set of food
- * photographs here would be decoration for its own sake.
+ * The photographs run from the market to a meal being cooked at home, so the
+ * four read as one story before a word of them is read.
  */
 export function ApproachSteps() {
+  const total = approachSteps.length;
+
   return (
     <SectionWrapper id="approach" bg="base" labelledBy="approach-heading" texture="contour">
       <SectionHeading
@@ -24,56 +30,108 @@ export function ApproachSteps() {
         align="center"
         eyebrow={approachCopy.eyebrow}
         title={approachCopy.title}
+        subtitle={approachCopy.subtitle}
       />
 
-      {/*
-        A ladder, not a row of four boxes.
-        
-        The first version was four equal cards under a hairline, which read as
-        a feature grid rather than as a sequence — the one thing this section
-        has to communicate is that these happen IN ORDER. Numbered plates on a
-        spine, each step indented from the last, makes the order the shape of
-        the section instead of something the numerals have to assert.
-      */}
-      <div className="relative mx-auto mt-16 max-w-[880px]">
-        <div
-          aria-hidden="true"
-          className="absolute bottom-6 left-[27px] top-6 w-px bg-[linear-gradient(to_bottom,transparent,var(--border)_12%,var(--border)_88%,transparent)] sm:left-[31px]"
-        />
-
-        <ol className="relative m-0 flex list-none flex-col gap-10 p-0 sm:gap-12">
-          <Reveal stagger={0.09} childAs="li">
-            {approachSteps.map((step) => {
-              const Icon = step.icon;
-              return (
-                <div key={step.number} className="flex items-start gap-6 sm:gap-8">
+      <CardRail
+        ordered
+        count={total}
+        label="The four steps of the approach"
+        wrapperClassName="mt-14"
+        className="md:grid md:grid-cols-2 md:gap-5 lg:grid-cols-4 lg:gap-6"
+      >
+        <Reveal stagger={0.08} childAs="li">
+          {approachSteps.map((step, index) => {
+            const Icon = step.icon;
+            const image = PROCESS_STEP_IMAGES[step.number];
+            return (
+              <article
+                key={step.number}
+                aria-labelledby={`approach-${step.number}`}
+                className="group flex flex-col overflow-hidden rounded-[24px] border border-border bg-surface surface-raise"
+              >
+                <div className="relative h-40 w-full shrink-0 overflow-hidden bg-surface-alt">
+                  {image && (
+                    <img
+                      src={image.src}
+                      alt=""
+                      aria-hidden="true"
+                      loading="lazy"
+                      decoding="async"
+                      width={640}
+                      height={400}
+                      className="h-full w-full object-cover transition-transform duration-[700ms] ease-[cubic-bezier(0.16,0.84,0.24,1)] group-hover:scale-[1.04]"
+                    />
+                  )}
+                  <div
+                    aria-hidden="true"
+                    className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_top,rgba(var(--surface-rgb),0.7),transparent_60%)]"
+                  />
                   <span
                     aria-hidden="true"
-                    className="relative z-10 flex h-[56px] w-[56px] shrink-0 items-center justify-center rounded-full border border-[rgba(var(--primary-rgb),0.28)] bg-bg font-fraunces text-[18px] font-medium text-primary-contrast shadow-[0_6px_18px_rgba(var(--shadow-rgb),0.08)] sm:h-[64px] sm:w-[64px] sm:text-[20px]"
+                    className="absolute bottom-3 left-5 font-fraunces text-[44px] font-medium leading-none text-primary-contrast"
                   >
                     {step.number}
                   </span>
-
-                  <div className="min-w-0 pt-2">
-                    <div className="mb-2.5 flex items-center gap-2.5">
-                      <Icon aria-hidden="true" className="h-[17px] w-[17px] shrink-0 text-accent" />
-                      <h3 className="fs-h4 text-text">{step.title}</h3>
-                    </div>
-                    <p className="max-w-[56ch] font-jakarta text-[15px] leading-[1.7] text-text-muted">
-                      {step.body}
-                    </p>
-                  </div>
                 </div>
-              );
-            })}
-          </Reveal>
-        </ol>
-      </div>
 
-      <Reveal delay={0.14}>
-        <p className="mx-auto mt-16 max-w-[52ch] text-balance text-center font-fraunces text-[clamp(1.1rem,2vw,1.4rem)] font-medium italic leading-snug text-primary-contrast">
-          {approachCopy.closing}
-        </p>
+                <div className="flex flex-1 flex-col p-6 pt-5">
+                  <div className="mb-4 flex items-center justify-between gap-3">
+                    <p className="font-jakarta text-[12px] font-semibold uppercase tracking-[0.12em] text-text-muted">
+                      Step {index + 1} of {total}
+                    </p>
+                    <span aria-hidden="true" className="flex gap-1">
+                      {Array.from({ length: total }, (_, i) => (
+                        <span
+                          key={i}
+                          className={
+                            i <= index
+                              ? "h-[4px] w-4 rounded-full bg-primary"
+                              : "h-[4px] w-4 rounded-full bg-[rgba(var(--primary-rgb),0.18)]"
+                          }
+                        />
+                      ))}
+                    </span>
+                  </div>
+
+                  <div className="mb-2.5 flex items-center gap-2.5">
+                    <span
+                      aria-hidden="true"
+                      className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[11px] bg-primary-soft"
+                    >
+                      <Icon className="h-[17px] w-[17px] text-primary" />
+                    </span>
+                    <h3 id={`approach-${step.number}`} className="fs-h4 text-text">
+                      {step.title}
+                    </h3>
+                  </div>
+                  <p className="font-jakarta text-[14.5px] leading-[1.68] text-text-muted">
+                    {step.body}
+                  </p>
+                </div>
+              </article>
+            );
+          })}
+        </Reveal>
+      </CardRail>
+
+      {/* ---- core conviction ---- */}
+      <Reveal delay={0.12}>
+        <figure className="relative mx-auto mt-12 max-w-[980px] overflow-hidden rounded-[28px] border border-[rgba(var(--primary-rgb),0.2)] bg-primary-soft px-6 py-9 sm:px-12 sm:py-11">
+          <Quote
+            aria-hidden="true"
+            className="absolute right-6 top-6 h-16 w-16 text-[rgba(var(--primary-rgb),0.12)] sm:right-10 sm:top-8 sm:h-20 sm:w-20"
+          />
+          <p className="fs-eyebrow mb-4 text-primary-contrast">{approachCopy.convictionLabel}</p>
+          <blockquote className="m-0">
+            <p className="max-w-[40ch] font-fraunces text-[clamp(1.25rem,2.4vw,1.7rem)] font-medium italic leading-[1.4] text-text">
+              {approachCopy.conviction}
+            </p>
+          </blockquote>
+          <figcaption className="mt-5 max-w-[60ch] font-jakarta text-[15px] leading-[1.65] text-text-muted">
+            {approachCopy.convictionSub}
+          </figcaption>
+        </figure>
       </Reveal>
     </SectionWrapper>
   );

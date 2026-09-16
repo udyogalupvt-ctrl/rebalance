@@ -11,7 +11,7 @@ import * as React from "react";
 import { useEffect, type ReactNode } from "react";
 import { WhatsAppButton, BackToTop } from "@/components/shared/FloatingElements";
 import { MobileAssessmentBar } from "@/components/shared/MobileAssessmentBar";
-import { SmoothScroll } from "@/components/shared/SmoothScroll";
+import { SmoothScroll, smoothScrollTo } from "@/components/shared/SmoothScroll";
 import { BookingProvider } from "@/context/BookingContext";
 import { Scripts } from "@tanstack/react-router";
 import { motion, useReducedMotion } from "framer-motion";
@@ -21,7 +21,7 @@ import appCss from "../styles.css?url";
 
 function NotFoundComponent() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-bg px-4">
+    <div className="flex min-h-[100svh] items-center justify-center bg-bg px-4">
       <div className="max-w-md text-center">
         <h1 className="fs-h1 text-text">404</h1>
         <h2 className="mt-4 fs-h4 text-text">Page not found</h2>
@@ -46,7 +46,7 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   const router = useRouter();
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-bg px-4">
+    <div className="flex min-h-[100svh] items-center justify-center bg-bg px-4">
       <div className="max-w-md text-center">
         <h1 className="fs-h4 text-text">This page didn't load</h1>
         <p className="mt-2 fs-micro text-text-muted">
@@ -148,6 +148,62 @@ function PageTransition({ pathname, children }: { pathname: string; children: Re
   );
 }
 
+/**
+ * Land on #anchors after navigating to them.
+ *
+ * The router scrolls to a hash the moment the route matches, but most pages
+ * load lazily — so on /programs#rebalance-3 (the home page's program cards,
+ * the footer's program links) the element did not exist yet at that moment
+ * and the page simply opened at the top. This waits briefly for the target
+ * to mount, then brings it into view through the same easing as the rest of
+ * the site. No offset is passed: Lenis honours each target's own
+ * scroll-margin-top, which is what keeps it clear of the fixed header.
+ */
+function HashScroll() {
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const hash = useRouterState({ select: (s) => s.location.hash });
+
+  useEffect(() => {
+    const id = decodeURIComponent((hash ?? "").replace(/^#/, ""));
+    if (!id) return;
+    let cancelled = false;
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    const started = performance.now();
+    const attempt = () => {
+      if (cancelled) return;
+      const el = document.getElementById(id);
+      if (el) {
+        /*
+         * Sections off screen skip rendering (content-visibility) and hold
+         * only an estimated height, so a target measured through them is in
+         * the wrong place — the footer's FAQs link landed 800px past the
+         * FAQ. For the length of the jump everything renders for real, the
+         * target is measured against true heights, and afterwards the
+         * skipped sections keep the sizes they have just reported.
+         */
+        const root = document.documentElement;
+        root.dataset["anchoring"] = "true";
+        requestAnimationFrame(() => {
+          if (!cancelled) smoothScrollTo(el);
+          timer = setTimeout(() => {
+            delete root.dataset["anchoring"];
+          }, 1600);
+        });
+        return;
+      }
+      if (performance.now() - started < 4000) timer = setTimeout(attempt, 80);
+    };
+    attempt();
+    return () => {
+      cancelled = true;
+      if (timer) clearTimeout(timer);
+      delete document.documentElement.dataset["anchoring"];
+    };
+  }, [pathname, hash]);
+
+  return null;
+}
+
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const { pathname } = useRouterState({ select: (s) => s.location });
@@ -163,6 +219,7 @@ function RootComponent() {
             assessment form: both have their own scroll containers and step
             transitions, where an easing tail reads as lag rather than weight. */}
         {!isAppRoute && <SmoothScroll key="lenis" />}
+        {!isAppRoute && <HashScroll />}
         <BookingProvider>
           <PageTransition pathname={pathname}>
             <Outlet />

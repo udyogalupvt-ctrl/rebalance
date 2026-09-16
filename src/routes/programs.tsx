@@ -8,7 +8,7 @@ export const Route = createFileRoute("/programs")({
       {
         name: "description",
         content:
-          "Four levels of personalised nutrition support, from a single consultation to six months of continuity. Pricing is discussed on your discovery call.",
+          "Four levels of personalised nutrition support, from a Single Consultation to the 6-Month Rebalance Program — and the areas of nutrition support Go Rebalance works in.",
       },
     ],
   }),

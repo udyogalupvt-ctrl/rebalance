@@ -131,7 +131,7 @@ export default function StepHealth() {
   /* ─── Submit handler ─── */
   const onSubmit = useCallback(async () => {
     await markStepComplete("health");
-    goToStep("nutrition");
+    goToStep("lifestyle");
   }, [markStepComplete, goToStep]);
 
   /* ─── Error handler ─── */
@@ -171,9 +171,9 @@ export default function StepHealth() {
       {/* ─── Heading block ─── */}
       <div className="af-heading-block" style={{ position: "relative" }}>
         {/* The step counter lives in <StepProgress> now — it was
-            printing "Step 3 of 4" twice on phones, once in the progress bar
+            printing the step number twice on phones, once in the progress bar
             and once here. */}
-        <span className="sr-only">Step 3 of 4</span>
+        <span className="sr-only">Step 2 of 5</span>
         <h2 className="af-title">Tell us what's been going on.</h2>
         <p className="af-subtitle">
           The more detail you give here, the more precise your plan will be. Write in your own words
@@ -195,7 +195,7 @@ export default function StepHealth() {
       </div>
 
       <div className="af-hint-row">
-        <Clock /> About 6-8 minutes. Your answers save automatically as you type.
+        <Clock /> About 5 minutes. Your answers save automatically as you type.
       </div>
 
       <form ref={formRef} onSubmit={handleSubmit(onSubmit, onError)} noValidate>
@@ -452,7 +452,7 @@ export default function StepHealth() {
         {/* ─── Footer ─── */}
         <div className="af-pay-footer">
           <div className="af-pay-footer__row">
-            <button type="button" className="af-back-btn" onClick={() => goToStep("payment")}>
+            <button type="button" className="af-back-btn" onClick={() => goToStep("details")}>
               <ArrowLeft aria-hidden="true" />
               Back
             </button>
