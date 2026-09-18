@@ -201,6 +201,7 @@ export default function AboutPage() {
           />
 
           <CardRail
+            autoPlay
             count={whyGoRebalance.length}
             label="How Go Rebalance works"
             wrapperClassName="mt-12"

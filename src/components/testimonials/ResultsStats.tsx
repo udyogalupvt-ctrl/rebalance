@@ -44,6 +44,7 @@ export function ResultsStats() {
         </Reveal>
 
         <CardRail
+          autoPlay
           count={whatToExpect.length}
           label={whatToExpectCopy.eyebrow}
           className="md:grid md:grid-cols-2 md:gap-4"

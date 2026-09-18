@@ -50,6 +50,7 @@ export function Credentials({
       />
 
       <CardRail
+        autoPlay
         count={credentials.length}
         label={eyebrow}
         wrapperClassName="mt-12"

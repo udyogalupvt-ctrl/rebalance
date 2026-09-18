@@ -35,6 +35,7 @@ export function FaqSection() {
       bg="base"
       labelledBy="faq-heading"
       className="relative"
+      sticky
     >
       {/* Decorative Glow */}
       <div

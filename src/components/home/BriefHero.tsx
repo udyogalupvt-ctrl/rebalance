@@ -1,11 +1,13 @@
 import * as React from "react";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion, useScroll, useReducedMotion } from "framer-motion";
 import { ArrowRight, ChevronDown, CircleCheck, Leaf, ShieldCheck, Soup, Video } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { briefHero, briefBrand, heroPracticeCard } from "@/data/content";
 import { HOME_HERO_SLIDES, OWN } from "@/data/images";
 import { HeroBackdrop, HeroBackdropDots } from "@/components/shared/HeroBackdrop";
 import { useBackdropCarousel } from "@/hooks/use-backdrop-carousel";
+import { useRange } from "@/components/shared/scroll/range";
+import { PillRail } from "@/components/shared/AutoScroller";
 
 /**
  * The opening frame, set to the practice's own reference page.
@@ -19,6 +21,20 @@ import { useBackdropCarousel } from "@/hooks/use-backdrop-carousel";
  * Nothing here is a number somebody would have to take on faith. The three
  * chips under the buttons are the three things the practice says about how it
  * works, in its own words.
+ *
+ * INTERACTION: the hero hands the page over rather than simply scrolling off.
+ *
+ * As the reader leaves, the photograph behind settles closer while the copy
+ * lifts and fades a little ahead of it. The two planes separating is what
+ * makes the next section feel like it is arriving rather than like the hero
+ * has merely run out — and it is the page's first answer to "is this thing
+ * responding to me".
+ *
+ * It is small on purpose. This is the one screen where the reader is deciding
+ * whether to stay, so nothing here may delay a word of the headline or move
+ * the two buttons while they are being aimed at. The copy only starts moving
+ * once the reader is already a third of the way out of the section, and the
+ * buttons are gone from the screen before the movement is noticeable.
  */
 const TRUST_ICONS = [ShieldCheck, Video, Soup];
 
@@ -37,6 +53,25 @@ function Headline({ text }: { text: string }) {
 export function BriefHero() {
   const reduce = useReducedMotion();
   const backdrop = useBackdropCarousel(HOME_HERO_SLIDES.length, 6500);
+  const sectionRef = React.useRef<HTMLElement>(null);
+
+  /*
+   * "start start" to "end start": progress runs from the moment the hero's top
+   * meets the viewport top (that is, straight away) to the moment its bottom
+   * does — the whole of the reader's exit, and nothing after it.
+   */
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start start", "end start"],
+  });
+
+  // The ground closes in slightly. Scale, not a y-offset: a backdrop that
+  // slides reveals its own edge at the bottom of the section.
+  const groundScale = useRange(scrollYProgress, [0, 1], [1, 1.12]);
+  const groundFade = useRange(scrollYProgress, [0.25, 1], [1, 0.35]);
+  // The copy leaves ahead of it, and only in the last two thirds.
+  const copyY = useRange(scrollYProgress, [0.3, 1], [0, -64]);
+  const copyFade = useRange(scrollYProgress, [0.45, 0.95], [1, 0]);
 
   const rise = (delay: number, y = 12) => ({
     initial: reduce ? false : { opacity: 0, y },
@@ -51,10 +86,15 @@ export function BriefHero() {
   return (
     <section
       id="hero"
+      ref={sectionRef}
       className="relative isolate flex w-full flex-col justify-center overflow-hidden bg-bg pb-20 pt-[calc(var(--header-h)+48px)] sm:pb-24 lg:min-h-[92svh] lg:pb-28 lg:pt-[calc(var(--header-h)+56px)]"
     >
       {/* ---- ground ---- */}
-      <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-0">
+      <motion.div
+        aria-hidden="true"
+        style={reduce ? {} : { scale: groundScale, opacity: groundFade }}
+        className="pointer-events-none absolute inset-0 z-0 will-change-transform"
+      >
         <HeroBackdrop
           slides={HOME_HERO_SLIDES}
           index={backdrop.index}
@@ -62,12 +102,15 @@ export function BriefHero() {
         />
         <div className="hero-veil hero-veil--split absolute inset-0" />
         <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-bg to-transparent" />
-      </div>
+      </motion.div>
 
-      <div className="container-x relative z-10 w-full">
+      <motion.div
+        style={reduce ? {} : { y: copyY, opacity: copyFade }}
+        className="container-x relative z-10 w-full will-change-transform"
+      >
         <div className="grid items-center gap-12 lg:grid-cols-12 lg:gap-10 xl:gap-16">
           {/* ---- copy ---- */}
-          <div className="flex flex-col items-center text-center lg:col-span-7 lg:items-start lg:text-left">
+          <div className="flex min-w-0 max-w-full flex-col items-center text-center lg:col-span-7 lg:items-start lg:text-left">
             <motion.p
               {...rise(0)}
               className="mb-7 inline-flex max-w-full items-center gap-2 rounded-pill border border-[rgba(var(--primary-rgb),0.22)] bg-[rgba(var(--surface-rgb),0.9)] px-4 py-2 font-jakarta text-[12.5px] font-semibold tracking-[0.01em] text-primary-contrast sm:text-[13px]"
@@ -106,25 +149,30 @@ export function BriefHero() {
               </Link>
             </motion.div>
 
-            <motion.ul
-              {...rise(0.36, 10)}
-              className="mt-10 flex list-none flex-wrap items-center justify-center gap-2.5 p-0 lg:justify-start"
-            >
-              {briefHero.trust.map((label, i) => {
-                const Icon = TRUST_ICONS[i] ?? CircleCheck;
-                return (
-                  <li key={label}>
-                    <span className="inline-flex items-center gap-2 rounded-pill border border-border bg-[rgba(var(--surface-rgb),0.9)] px-3.5 py-2 font-jakarta text-[13px] text-text-muted">
+            {/* One drifting line on a phone, a wrapped row from sm up. These
+                three chips used to wrap into three stacked rows at 390px,
+                which pushed the two buttons above them off the first screen
+                — the worst possible trade on the one view that decides
+                whether anybody stays. */}
+            <motion.div {...rise(0.36, 10)} className="mt-8 w-full lg:mt-10">
+              <PillRail label="How the practice works" className="justify-center lg:justify-start">
+                {briefHero.trust.map((label, i) => {
+                  const Icon = TRUST_ICONS[i] ?? CircleCheck;
+                  return (
+                    <span
+                      key={label}
+                      className="inline-flex items-center gap-2 whitespace-nowrap rounded-pill border border-border bg-[rgba(var(--surface-rgb),0.9)] px-3.5 py-2 font-jakarta text-[13px] text-text-muted"
+                    >
                       <Icon
                         className="h-[15px] w-[15px] shrink-0 text-primary"
                         aria-hidden="true"
                       />
                       {label}
                     </span>
-                  </li>
-                );
-              })}
-            </motion.ul>
+                  );
+                })}
+              </PillRail>
+            </motion.div>
 
             <motion.div {...rise(0.46, 0)} className="mt-9">
               <HeroBackdropDots
@@ -213,7 +261,7 @@ export function BriefHero() {
             </div>
           </motion.aside>
         </div>
-      </div>
+      </motion.div>
 
       <motion.a
         href="#focus"

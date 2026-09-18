@@ -80,14 +80,19 @@ export default function Programs() {
           <Reveal delay={0.06}>
             <nav
               aria-label="Jump to a program"
-              className="mx-auto mt-9 flex max-w-[900px] flex-wrap items-center justify-center gap-2.5"
+              /* One scrollable line on a phone, wrapped and centred from sm
+                 up. The four program names are long enough that wrapping put
+                 each on its own row — 152px of jump links above the content
+                 they jump to, on the page where the reader is closest to
+                 choosing. */
+              className="no-scrollbar -mx-5 mt-9 flex max-w-[900px] items-center gap-2.5 overflow-x-auto px-5 pb-1 sm:mx-auto sm:flex-wrap sm:justify-center sm:overflow-visible sm:px-0"
             >
               {programDetails.map((program) => (
                 <a
                   key={program.id}
                   href={`#${program.id}`}
                   className={cn(
-                    "inline-flex min-h-11 items-center gap-2 rounded-pill border px-4 font-jakarta text-[13.5px] font-semibold transition-colors",
+                    "inline-flex min-h-11 shrink-0 items-center gap-2 whitespace-nowrap rounded-pill border px-4 font-jakarta text-[13.5px] font-semibold transition-colors",
                     program.signature
                       ? "border-[rgba(var(--accent-rgb),0.45)] bg-accent-soft text-accent-contrast hover:bg-[rgba(var(--accent-rgb),0.18)]"
                       : "border-border bg-surface text-text hover:border-primary/40 hover:bg-primary-soft",

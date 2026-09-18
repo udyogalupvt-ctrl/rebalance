@@ -3,6 +3,7 @@ import { Link } from "@tanstack/react-router";
 import { ArrowRight, BadgeCheck } from "lucide-react";
 import { SectionWrapper } from "@/components/shared/SectionWrapper";
 import { Reveal } from "@/components/shared/Reveal";
+import { Parallax, WordReveal } from "@/components/shared/scroll/effects";
 import { meetSai } from "@/data/content";
 
 /**
@@ -19,13 +20,22 @@ import { meetSai } from "@/data/content";
  * years of experience, no client numbers, no honorifics, no awards. Every one
  * of those was on the previous version of this site and not one of them came
  * from the practice.
+ *
+ * INTERACTION: subtle, and human rather than mechanical.
+ *
+ * The portrait drifts slowly against the scroll, which separates it from the
+ * text beside it and gives the one photograph of a person on this page a
+ * little presence. And the sentence where she says why she started the
+ * practice gathers itself word by word as the reader comes to it — the only
+ * place on the site that treatment is used, because it is the only sentence
+ * that is her speaking in the first person.
  */
 export function MeetSai() {
   return (
     <SectionWrapper id="meet-sai" bg="base" labelledBy="meet-sai-heading">
       <div className="grid items-center gap-12 lg:grid-cols-12 lg:gap-16">
         {/* ---- portrait ---- */}
-        <Reveal className="lg:col-span-5">
+        <Parallax distance={40} className="lg:col-span-5">
           <figure className="relative m-0 mx-auto max-w-[420px] lg:mx-0 lg:max-w-none">
             {/* The arch echoes the round brand mark, and is the one silhouette
                 a stock template will not be using. */}
@@ -47,7 +57,7 @@ export function MeetSai() {
               />
             </div>
           </figure>
-        </Reveal>
+        </Parallax>
 
         {/* ---- story ---- */}
         <div className="lg:col-span-7">
@@ -71,11 +81,24 @@ export function MeetSai() {
             </ul>
           </Reveal>
 
-          {meetSai.body.map((para, i) => (
-            <Reveal key={i} delay={0.08 + i * 0.06}>
-              <p className="fs-body mb-5 max-w-[60ch] text-text-muted">{para}</p>
-            </Reveal>
-          ))}
+          {meetSai.body.map((para, i) =>
+            /* The last paragraph is the one in her own voice — why the
+               practice exists. It gets the word-by-word treatment; the
+               paragraph of background before it does not, because a
+               qualifications list read one word at a time is an irritation,
+               not a moment. */
+            i === meetSai.body.length - 1 ? (
+              <WordReveal
+                key={i}
+                text={para}
+                className="fs-body mb-5 max-w-[60ch] text-text-muted"
+              />
+            ) : (
+              <Reveal key={i} delay={0.08 + i * 0.06}>
+                <p className="fs-body mb-5 max-w-[60ch] text-text-muted">{para}</p>
+              </Reveal>
+            ),
+          )}
 
           <Reveal delay={0.24}>
             <Link

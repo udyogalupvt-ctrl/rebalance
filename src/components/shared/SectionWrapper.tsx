@@ -28,6 +28,21 @@ interface SectionWrapperProps {
    * grain, never as pattern competing with the copy.
    */
   texture?: "none" | "contour" | "weave" | "grid";
+  /**
+   * Set when anything inside uses `position: sticky`.
+   *
+   * This section normally clips with `overflow: hidden`, to keep the arc glow
+   * and texture from spilling. But an `overflow: hidden` box IS a scroll
+   * container, and a sticky element resolves against its nearest scroll
+   * container rather than the viewport — so every sticky descendant silently
+   * stops sticking and behaves as though it were `position: relative`.
+   *
+   * `overflow-x: clip` cuts the same horizontal spill without creating a
+   * scroll container, and leaves the vertical axis visible, which is what
+   * sticky needs. It is not the default only because `hidden` is the safer
+   * blanket clip for sections that have no sticky content.
+   */
+  sticky?: boolean;
 }
 
 export function SectionWrapper({
@@ -39,6 +54,7 @@ export function SectionWrapper({
   size = "default",
   arc = "none",
   texture = "none",
+  sticky = false,
 }: SectionWrapperProps) {
   const bgClass = {
     base: "bg-bg",
@@ -52,10 +68,16 @@ export function SectionWrapper({
       aria-labelledby={labelledBy}
       className={cn(
         size === "sm" ? "section-y-sm" : "section-y",
-        "relative overflow-hidden",
+        "relative",
+        sticky ? "overflow-x-clip" : "overflow-hidden",
         // Skips layout and paint entirely while the section is off screen.
         // See .render-on-approach in styles.css.
-        "render-on-approach",
+        //
+        // Not for sticky sections: content-visibility guesses the section's
+        // height while it is off screen, and a section holding a sticky stack
+        // is far taller than the guess — so the page height changes as it
+        // resolves and the scroll position jumps under the reader.
+        !sticky && "render-on-approach",
         bgClass,
         className,
       )}

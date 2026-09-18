@@ -108,6 +108,18 @@
   /* --- layout scale ------------------------------------------------------ */
   --header-h: 72px;
   --header-pill-max: 1180px;
+
+  /* Height of the fixed "Book Consultation" bar at the bottom of a phone,
+     including the iOS home-indicator inset.
+
+     10px top padding + a 48px control + 10px bottom padding, plus whatever
+     safe-area the device reserves. Anything that must not be covered by that
+     bar — a pinned stage's last line, the back-to-top button — offsets by
+     this rather than by a hardcoded number, because the inset is 0 on Android
+     and 34px on a notched iPhone and a fixed guess is wrong on one of them.
+
+     env() resolves to 0 where it is unsupported, so this is safe everywhere. */
+  --bar-h: calc(68px + env(safe-area-inset-bottom, 0px));
   --container-max: 1280px;
   --scroll-offset: 104px; /* header height + breathing room for anchors */
 }

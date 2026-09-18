@@ -134,17 +134,21 @@ const ClinicCard = ({ location, index }: { location: Location; index: number }) 
           </div>
         </div>
 
-        {/* Phone */}
-        <div className="flex gap-[13px]">
-          <Phone className="w-[18px] h-[18px] text-primary shrink-0 mt-[2px]" />
-          <a
-            href={`tel:${brand.phoneRaw}`}
-            className="text-[15px] font-semibold text-text hover:text-accent-contrast transition-colors"
-            aria-label={`Call ${brand.phone}`}
-          >
-            {brand.phone}
-          </a>
-        </div>
+        {/* Phone.
+
+            A tap target, not a line of text. This is the single most likely
+            thing a visitor on a phone will press on the contact page, and it
+            was 26px tall — well under the 44px a thumb needs. The icon keeps
+            its place by moving inside the link, so the whole row is pressable
+            rather than just the eleven digits. */}
+        <a
+          href={`tel:${brand.phoneRaw}`}
+          className="-my-1 flex min-h-[44px] items-center gap-[13px] rounded-[10px] py-1 text-[15px] font-semibold text-text transition-colors hover:text-accent-contrast"
+          aria-label={`Call ${brand.phone}`}
+        >
+          <Phone className="h-[18px] w-[18px] shrink-0 text-primary" aria-hidden="true" />
+          {brand.phone}
+        </a>
 
         {/* Note */}
         <div className="flex gap-[13px]">

@@ -115,7 +115,15 @@ export function BackToTop() {
           exit={{ scale: 0.7, opacity: 0 }}
           transition={{ type: "spring", stiffness: 420, damping: 30 }}
           onClick={scrollToTop}
-          className="floating-action group fixed bottom-[88px] right-6 z-[60] flex h-12 w-12 items-center justify-center rounded-full text-primary shadow-[0_6px_20px_rgba(var(--shadow-rgb),0.14)] glass sm:bottom-[104px] sm:right-8 sm:h-14 sm:w-14"
+          /*
+           * --persist keeps this one on screen when the mobile booking bar
+           * hides the other floating actions; the stylesheet also lifts it
+           * clear of the bar. Smaller on a phone (40px against 56px) because
+           * there it shares the bottom-right corner with the bar and is a
+           * convenience, not a primary action — but still a 40px target with
+           * its 44px hit area coming from the tap-target rule.
+           */
+          className="floating-action floating-action--persist group fixed bottom-[calc(var(--bar-h)+12px)] right-4 z-[60] flex h-10 w-10 items-center justify-center rounded-full text-primary shadow-[0_4px_14px_rgba(var(--shadow-rgb),0.16)] glass sm:bottom-[104px] sm:right-8 sm:h-14 sm:w-14"
           aria-label="Back to top"
         >
           <svg className="absolute inset-0 h-full w-full -rotate-90" viewBox="0 0 100 100">
@@ -131,7 +139,7 @@ export function BackToTop() {
               className="opacity-25"
             />
           </svg>
-          <ArrowUp className="h-5 w-5 transition-transform duration-300 group-hover:-translate-y-1" />
+          <ArrowUp className="h-[18px] w-[18px] transition-transform duration-300 group-hover:-translate-y-1 sm:h-5 sm:w-5" />
         </motion.button>
       )}
     </AnimatePresence>

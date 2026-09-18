@@ -1,6 +1,15 @@
 import { Link } from "@tanstack/react-router";
 import React from "react";
-import { MessageCircle, Phone, Mail, MapPin, Globe, ArrowRight, Info } from "lucide-react";
+import {
+  MessageCircle,
+  Phone,
+  Mail,
+  MapPin,
+  Globe,
+  ArrowRight,
+  Info,
+  ChevronDown,
+} from "lucide-react";
 import {
   brand,
   locations,
@@ -13,6 +22,7 @@ import {
 import { Logo } from "@/components/ui/Logo";
 import { Reveal } from "@/components/shared/Reveal";
 import { CurveDivider } from "@/components/shared/CurveDivider";
+import { useMediaQuery } from "@/hooks/use-media-query";
 
 // SVG paths for brands from simple-icons (minimized)
 const BRAND_ICONS: Record<string, { path: string; color: string }> = {
@@ -49,6 +59,56 @@ const iconMap: Record<string, React.ElementType> = {
   ArrowRight,
   Info,
 };
+
+/**
+ * A footer column that collapses on a phone and is always open above it.
+ *
+ * The two link columns were the single biggest thing in a 2,033px footer:
+ * eight Explore links and four Programs links, each an accessible 44px tap
+ * target, is 350px of the page on every route before the contact details even
+ * begin. Shrinking the targets would have been the wrong saving — 44px is the
+ * floor, not a preference.
+ *
+ * So the links fold away instead. Nothing is removed and nothing leaves the
+ * DOM, so every link is still crawlable and still reachable by a screen
+ * reader; a phone just does not have to scroll past all twelve to reach the
+ * copyright line.
+ *
+ * `open` is driven by the breakpoint rather than by CSS because there is no
+ * way to force a <details> open from a stylesheet. Above md the summary also
+ * stops being a button: it is a heading there, and a heading that responds to
+ * clicks invites one that does nothing.
+ */
+function FooterNav({
+  title,
+  label,
+  children,
+}: {
+  title: string;
+  label: string;
+  children: React.ReactNode;
+}) {
+  const isWide = useMediaQuery("(min-width: 768px)");
+
+  return (
+    <details open={isWide} className="footer-nav group">
+      <summary
+        className="flex min-h-[44px] cursor-pointer list-none items-center justify-between gap-3 py-2 md:min-h-0 md:pointer-events-none md:cursor-default md:py-0"
+        aria-label={isWide ? undefined : `${title} links`}
+      >
+        <span className="text-[12px] font-semibold uppercase tracking-[0.14em] text-on-dark-faint">
+          {title}
+        </span>
+        <ChevronDown
+          aria-hidden="true"
+          className="h-4 w-4 shrink-0 text-on-dark-faint transition-transform duration-300 group-open:rotate-180 md:hidden"
+        />
+      </summary>
+      <div className="mb-3 mt-3 h-0.5 w-6 bg-accent md:mt-5" />
+      <nav aria-label={label}>{children}</nav>
+    </details>
+  );
+}
 
 export function Footer() {
   const currentYear = new Date().getFullYear();
@@ -95,7 +155,7 @@ export function Footer() {
         <CurveDivider fill="custom" toDark className="text-[var(--dark-surface)]" />
       )}
 
-      <div className="bg-[var(--dark-surface)] dark:border-t dark:border-white/10 pt-[clamp(72px,9vw,112px)] pb-0">
+      <div className="bg-[var(--dark-surface)] dark:border-t dark:border-white/10 pt-[clamp(52px,7vw,96px)] pb-0">
         {/* Decorative Layers */}
         <div className="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
           {/* Primary Glow */}
@@ -126,7 +186,7 @@ export function Footer() {
             by side comfortably at 390px and the footer loses roughly a third
             of its height without shrinking a single tap target.
           */}
-          <div className="grid grid-cols-2 gap-x-6 gap-y-10 md:grid-cols-2 md:gap-x-10 md:gap-y-12 lg:gap-x-14 xl:grid-cols-[2.2fr_1fr_1.2fr_1.4fr] xl:gap-x-14">
+          <div className="grid grid-cols-2 gap-x-6 gap-y-7 md:grid-cols-2 md:gap-x-10 md:gap-y-12 lg:gap-x-14 xl:grid-cols-[2.2fr_1fr_1.2fr_1.4fr] xl:gap-x-14">
             {/* Column 1: Brand */}
             <Reveal delay={0} className="col-span-2 xl:col-span-1">
               <div>
@@ -149,7 +209,7 @@ export function Footer() {
                 </p>
 
                 {/* Only the accounts the practice has actually given us. */}
-                <div className="mt-7 flex flex-row gap-2.5">
+                <div className="mt-5 flex flex-row gap-2.5">
                   {socials
                     .filter((social) => social.href)
                     .map((social) => (
@@ -174,11 +234,7 @@ export function Footer() {
 
             {/* Column 2: Explore */}
             <Reveal delay={0.08}>
-              <nav aria-label="Explore">
-                <h3 className="text-[12px] font-semibold uppercase tracking-[0.14em] text-on-dark-faint mb-5">
-                  EXPLORE
-                </h3>
-                <div className="w-6 h-0.5 bg-accent mb-3" />
+              <FooterNav title="EXPLORE" label="Explore">
                 <ul className="list-none p-0 m-0">
                   {navLinks.map((link) => (
                     <li key={link.label}>
@@ -205,16 +261,12 @@ export function Footer() {
                     </Link>
                   </li>
                 </ul>
-              </nav>
+              </FooterNav>
             </Reveal>
 
             {/* Column 3: Programs */}
             <Reveal delay={0.16}>
-              <nav aria-label="Programs">
-                <h3 className="text-[12px] font-semibold uppercase tracking-[0.14em] text-on-dark-faint mb-5">
-                  PROGRAMS
-                </h3>
-                <div className="w-6 h-0.5 bg-accent mb-3" />
+              <FooterNav title="PROGRAMS" label="Programs">
                 <ul className="list-none p-0 m-0">
                   {/* The four levels of support, each linking to its own
                       place on the Programs page. */}
@@ -231,12 +283,12 @@ export function Footer() {
                     </li>
                   ))}
                 </ul>
-              </nav>
+              </FooterNav>
             </Reveal>
 
             {/* Column 4: Contact */}
             <Reveal delay={0.24} className="col-span-2 md:col-span-2 xl:col-span-1">
-              <div className="flex flex-col gap-[18px]">
+              <div className="flex flex-col gap-[14px] md:gap-[18px]">
                 <h3 className="text-[12px] font-semibold uppercase tracking-[0.14em] text-on-dark-faint mb-0.5">
                   GET IN TOUCH
                 </h3>
@@ -274,22 +326,6 @@ export function Footer() {
                   </a>
                 </div>
 
-                {/* Instagram */}
-                <div className="flex gap-3 items-start">
-                  <BrandIcon
-                    name="Instagram"
-                    className="w-[17px] h-[17px] text-on-dark-accent mt-3 flex-shrink-0"
-                  />
-                  <a
-                    href={brand.instagramUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center min-h-[44px] text-[14.5px] leading-[1.6] text-on-dark-muted hover:text-on-dark transition-colors"
-                  >
-                    {brand.instagram}
-                  </a>
-                </div>
-
                 {/* Locations */}
                 <div className="flex gap-3 items-start">
                   <MapPin
@@ -307,7 +343,7 @@ export function Footer() {
                           href={loc.mapDirectionsUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="mt-1 inline-flex min-h-[36px] items-center gap-1.5 text-[13px] font-semibold text-on-dark-accent transition-colors hover:text-on-dark"
+                          className="mt-1 inline-flex min-h-[44px] items-center gap-1.5 text-[13px] font-semibold text-on-dark-accent transition-colors hover:text-on-dark"
                         >
                           Get directions
                           <ArrowRight className="h-[13px] w-[13px]" aria-hidden="true" />
@@ -327,8 +363,21 @@ export function Footer() {
                   the critical path — it is at the foot of the document and
                   nobody is waiting for it.
                 */}
+                {/*
+                  Desktop only, for two reasons.
+
+                  It is 180px of a footer that appears on every page, and on a
+                  phone that is a real cost for something most people will not
+                  use — the "Get directions" link above hands off to the maps
+                  app they already have, which is what somebody on a phone
+                  actually wants.
+
+                  It also traps the scroll. A full-width Google embed under a
+                  thumb swallows the vertical drag and the page stops moving,
+                  which reads as the site having frozen.
+                */}
                 {locations[0] && (
-                  <figure className="m-0 mt-1 overflow-hidden rounded-[18px] border border-on-dark-border">
+                  <figure className="m-0 mt-1 hidden overflow-hidden rounded-[18px] border border-on-dark-border md:block">
                     <iframe
                       src={locations[0].mapEmbedUrl}
                       title={`Map of ${locations[0].label}`}
@@ -368,7 +417,7 @@ export function Footer() {
 
           {/* Medical Disclaimer */}
           <Reveal delay={0.32}>
-            <div className="mt-14 md:mt-11 w-full bg-on-dark-glass border border-on-dark-border rounded-2xl p-[18px_22px] md:p-[16px_18px]">
+            <div className="mt-9 md:mt-11 w-full bg-on-dark-glass border border-on-dark-border rounded-2xl p-[18px_22px] md:p-[16px_18px]">
               <div className="flex gap-3 items-start">
                 <Info
                   className="w-4 h-4 text-on-dark-faint mt-0.5 flex-shrink-0"
@@ -390,7 +439,7 @@ export function Footer() {
                 WhatsApp and back-to-top buttons, which were sitting on top of
                 the credit line — the last thing on the page was permanently
                 half-covered. */}
-            <div className="mt-10 border-t border-on-dark-border py-[26px] pb-[104px] md:mt-8 md:py-[22px]">
+            <div className="mt-8 border-t border-on-dark-border py-[22px] pb-[calc(var(--bar-h)+16px)] md:mt-8 md:py-[22px] md:pb-[22px]">
               <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-5">
                 {/* Copyright (Bottom on mobile) */}
                 <div className="order-2 md:order-1 flex flex-col items-center md:items-start gap-1.5 text-[13px] text-on-dark-faint">
@@ -409,18 +458,21 @@ export function Footer() {
                 </div>
 
                 {/* Legal Links (Top on mobile) */}
-                <div className="order-1 md:order-2 flex flex-wrap items-center justify-center gap-[10px_0] text-[13px] text-on-dark-faint">
+                {/* One line. Three legal links plus their separators wrapped
+                    to three rows at 360px — 98px of the footer, on every page,
+                    for links almost nobody follows. */}
+                <div className="no-scrollbar order-1 flex items-center justify-center gap-0 overflow-x-auto whitespace-nowrap text-[13px] text-on-dark-faint md:order-2 md:flex-wrap md:overflow-visible">
                   {legalLinks.map((link, idx) => (
                     <React.Fragment key={link.label}>
                       <a
                         href={link.href}
-                        className="inline-flex items-center min-h-[44px] px-1 hover:text-on-dark-accent transition-colors"
+                        className="inline-flex min-h-[44px] shrink-0 items-center px-1.5 transition-colors hover:text-on-dark-accent"
                       >
                         {link.label}
                       </a>
                       {idx < legalLinks.length - 1 && (
                         <span
-                          className="mx-3.5 w-[3px] h-[3px] rounded-full bg-on-dark-glass"
+                          className="mx-2 h-[3px] w-[3px] shrink-0 rounded-full bg-on-dark-glass"
                           aria-hidden="true"
                         />
                       )}
@@ -428,10 +480,6 @@ export function Footer() {
                   ))}
                 </div>
               </div>
-
-              {/* Safe area padding for floating stack */}
-              <div className="md:hidden h-[72px]" />
-              <div style={{ paddingBottom: "max(0px, env(safe-area-inset-bottom))" }} />
             </div>
           </Reveal>
         </div>

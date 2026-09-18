@@ -3,6 +3,9 @@
 /* Motion and depth. Imported after tokens because it builds on --shadow-rgb. */
 @import "./styles/motion.css";
 @import "./styles/texture.css";
+/* Scroll-driven layout: sticky stacks and pinned stages. After motion.css,
+   because it uses the same easing and duration scale. */
+@import "./styles/scroll.css";
 
 /* ==========================================================================
    The `dark:` variant follows the SITE's theme, not the operating system's.
@@ -1289,11 +1292,24 @@
   }
   /* !important because framer-motion writes an inline opacity for the
      buttons' own entrance; visibility it never touches. */
+  /*
+   * While the booking bar is up on a phone, the floating actions step aside —
+   * the bar already carries WhatsApp and the primary call to action, so the
+   * bubbles would be the same two controls twice, stacked on top of each
+   * other in the same corner.
+   *
+   * Back to top is the exception. It is not duplicated anywhere, and it is
+   * needed MOST on exactly the pages long enough to have raised the bar in
+   * the first place. It opts out with --persist and sits just above the bar.
+   */
   @media (max-width: 639.98px) {
-    body[data-booking-bar="true"] .floating-action {
+    body[data-booking-bar="true"] .floating-action:not(.floating-action--persist) {
       opacity: 0 !important;
       visibility: hidden;
       pointer-events: none;
+    }
+    body[data-booking-bar="true"] .floating-action--persist {
+      bottom: calc(var(--bar-h) + 12px);
     }
   }
 
@@ -1356,4 +1372,22 @@
   .motion-parallax {
     transform: none !important;
   }
+}
+
+/* ==========================================================================
+   FOOTER — collapsible link columns on a phone.
+
+   <summary> still shows a disclosure triangle in Safari and older WebKit even
+   when `list-style: none` is set, which lands a stray grey arrow next to the
+   heading. Both selectors are needed: the pseudo-element for WebKit, the
+   display rule for everything else.
+   ========================================================================== */
+.footer-nav > summary {
+  list-style: none;
+}
+.footer-nav > summary::-webkit-details-marker {
+  display: none;
+}
+.footer-nav > summary::marker {
+  content: "";
 }

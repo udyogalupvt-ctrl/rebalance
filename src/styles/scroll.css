@@ -1,0 +1,133 @@
+/* ==========================================================================
+   SCROLL-DRIVEN LAYOUT — the CSS half of src/components/shared/scroll/.
+
+   Only the things that must be CSS live here: the sticking itself, the
+   geometry that gives a stack its scroll distance, and the reduced-motion
+   escape hatch. Everything that reads scroll position is in the components.
+
+   The one rule that governs this whole file:
+
+     NEVER put `overflow: hidden` on an ancestor of a sticky element.
+
+   An `overflow: hidden` box is a scroll container, and a sticky element
+   positions itself against its nearest scroll container rather than against
+   the viewport — so it silently stops sticking. Every clip in here is
+   `overflow: clip`, which cuts the same overflow without becoming one.
+   ========================================================================== */
+
+/* ==========================================================================
+   STICKY STACK
+   ========================================================================== */
+
+.stack-cards {
+  display: flex;
+  flex-direction: column;
+
+  /* The gap is the scroll distance.
+     Sticky cards only separate in time by however far apart they sit in the
+     document, so this gap is what decides how long each card holds the screen
+     before the next one climbs over it. Too small and the deck deals itself
+     out in one flick; too large and the reader is scrolling through blank
+     space between cards. */
+  gap: clamp(60px, 12vh, 104px);
+
+  /* Room for the last card to reach its resting offset. Without this the
+     stack runs out of page while the final card is still travelling, and it
+     never actually parks. */
+  padding-bottom: clamp(32px, 8vh, 80px);
+}
+
+.stack-cards__item {
+  position: sticky;
+  /* `top` is set inline, per card, so each rests slightly lower than the last. */
+  margin: 0;
+}
+
+/* The wide-screen / reduced-motion form: an ordinary list, no sticking. */
+.stack-cards--flat {
+  display: grid;
+  gap: 20px;
+}
+
+/* ==========================================================================
+   PINNED STAGE
+   ========================================================================== */
+
+/* A card sitting inside a pinned stage must never grow past the stage: the
+   stage is exactly one small-viewport tall and cannot scroll, so anything
+   taller is simply unreachable. This caps the card and lets its own body
+   scroll in the rare case that the copy is longer than the phone is tall. */
+.stage-card {
+  display: flex;
+  max-height: 100%;
+  min-height: 0;
+  flex-direction: column;
+}
+
+.stage-card__body {
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
+  scrollbar-width: none;
+}
+
+.stage-card__body::-webkit-scrollbar {
+  display: none;
+}
+
+/* ==========================================================================
+   RAIL GUTTERS
+
+   A scroll rail is full-bleed — its cards must be able to run off the right
+   edge of the screen, which is what says "there is more" — but its FIRST card
+   has to line up with every other section's left edge or the page loses its
+   spine. So the track carries the container's own gutter as leading padding,
+   including the centring offset once the viewport is wider than the container.
+   These numbers are .container-x's padding-inline, and must stay in step.
+   ========================================================================== */
+
+.rail-lead {
+  --rail-pad: 20px;
+  padding-inline-start: max(
+    var(--rail-pad),
+    calc((100vw - var(--container-max)) / 2 + var(--rail-pad))
+  );
+  /* Trailing room so the last card can come fully clear of the edge. */
+  padding-inline-end: var(--rail-pad);
+}
+
+@media (min-width: 640px) {
+  .rail-lead {
+    --rail-pad: 32px;
+  }
+}
+@media (min-width: 1024px) {
+  .rail-lead {
+    --rail-pad: 48px;
+  }
+}
+@media (min-width: 1440px) {
+  .rail-lead {
+    --rail-pad: 64px;
+  }
+}
+
+/* ==========================================================================
+   REDUCED MOTION
+
+   The pinned components already render a separate, unpinned fallback in JS.
+   This is the belt-and-braces half: if anything sticky survives that path, it
+   is released here, because a stuck element with no animation driving it is
+   just content that will not move.
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .stack-cards {
+    gap: 20px;
+    padding-bottom: 0;
+  }
+
+  .stack-cards__item {
+    position: static;
+  }
+}

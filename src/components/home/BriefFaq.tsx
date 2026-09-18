@@ -32,7 +32,7 @@ export function BriefFaq({ ids, bg = "base" }: BriefFaqProps = {}) {
   const image = HOME_SECTION_IMAGES.faq;
 
   return (
-    <SectionWrapper id="faq" bg={bg} labelledBy="faq-heading" texture="weave">
+    <SectionWrapper id="faq" bg={bg} labelledBy="faq-heading" texture="weave" sticky>
       <div className="grid grid-cols-1 items-start gap-12 lg:grid-cols-[5fr_7fr] lg:gap-16 xl:gap-20">
         {/* ---- heading column ---- */}
         <div className="lg:sticky lg:top-[120px] lg:self-start">

@@ -1,5 +1,6 @@
 import * as React from "react";
 import { Reveal } from "@/components/shared/Reveal";
+import { MaskReveal, Parallax } from "@/components/shared/scroll/effects";
 import { Info } from "lucide-react";
 import { gutHealthCore } from "@/data/content";
 import { HOME_SECTION_IMAGES } from "@/data/images";
@@ -15,6 +16,19 @@ import { HOME_SECTION_IMAGES } from "@/data/images";
  * It is also the section where a nutrition site is most likely to overclaim,
  * which is why the copy says gut health is considered "as part of the wider
  * nutritional picture" rather than as the cause of anything.
+ *
+ * INTERACTION: almost none, deliberately.
+ *
+ * This section sits between two pinned set-pieces — the focus rail before it
+ * and the four-step stage after — and it is the page's breath between them. A
+ * page where every section performs has no performances left; the quiet ones
+ * are what make the loud ones land.
+ *
+ * So there is exactly one gesture: the photograph wipes into its frame once,
+ * as it arrives, and the line lifted onto its corner drifts a few pixels
+ * against the scroll so the two read as separate planes rather than as one
+ * flat pasted image. Nothing here is driven continuously by the scroll and
+ * nothing holds the page.
  */
 export function GutHealthCore() {
   return (
@@ -35,9 +49,9 @@ export function GutHealthCore() {
               at the whole picture rather than one part of it, and a frame full
               of many things standing together says that before a word is
               read. */}
-          <Reveal className="lg:col-span-5">
+          <div className="lg:col-span-5">
             <figure className="relative m-0">
-              <div className="overflow-hidden rounded-[26px] border border-border bg-surface-alt shadow-[0_26px_64px_rgba(var(--shadow-rgb),0.16)]">
+              <MaskReveal className="rounded-[26px] border border-border bg-surface-alt shadow-[0_26px_64px_rgba(var(--shadow-rgb),0.16)]">
                 <img
                   src={HOME_SECTION_IMAGES.gutHealth.src}
                   alt={HOME_SECTION_IMAGES.gutHealth.alt}
@@ -47,17 +61,21 @@ export function GutHealthCore() {
                   height={1050}
                   className="block aspect-[4/3] w-full object-cover"
                 />
-              </div>
+              </MaskReveal>
 
               {/* The line the section exists to land, lifted onto the corner
                   of the picture so the two read as one statement. */}
-              <figcaption className="absolute -bottom-7 -right-4 max-w-[74%] rounded-[20px] border border-border bg-surface p-[18px_22px] shadow-[0_18px_46px_rgba(var(--shadow-rgb),0.18)] sm:-right-7 sm:p-[22px_26px]">
-                <p className="font-fraunces text-[clamp(1rem,1.7vw,1.2rem)] font-medium leading-[1.4] text-text">
-                  {gutHealthCore.pull}
-                </p>
+              <figcaption className="absolute -bottom-7 -right-4 max-w-[74%] sm:-right-7">
+                <Parallax distance={26}>
+                  <span className="block rounded-[20px] border border-border bg-surface p-[18px_22px] shadow-[0_18px_46px_rgba(var(--shadow-rgb),0.18)] sm:p-[22px_26px]">
+                    <span className="block font-fraunces text-[clamp(1rem,1.7vw,1.2rem)] font-medium leading-[1.4] text-text">
+                      {gutHealthCore.pull}
+                    </span>
+                  </span>
+                </Parallax>
               </figcaption>
             </figure>
-          </Reveal>
+          </div>
 
           {/* ---- the copy ---- */}
           <div className="lg:col-span-7 lg:pl-4">

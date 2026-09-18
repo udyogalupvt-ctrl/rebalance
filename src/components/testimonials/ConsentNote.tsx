@@ -1,4 +1,5 @@
 import * as React from "react";
+import { PillRail } from "@/components/shared/AutoScroller";
 import { ShieldCheck, FileCheck, UserCheck, Ban } from "lucide-react";
 import { SectionWrapper } from "@/components/shared/SectionWrapper";
 import { CurveDivider } from "@/components/shared/CurveDivider";
@@ -19,8 +20,22 @@ export function ConsentNote() {
                   <ShieldCheck className="w-[26px] h-[26px] text-primary" />
                 </div>
 
-                {/* Text Content */}
-                <div className="flex-1">
+                {/* Text Content.
+
+                    `w-full` is the load-bearing one. The parent is
+                    `flex-col items-center` on a phone, and centring along the
+                    cross axis means children size to fit-content rather than
+                    stretching to the container. Once this column held a
+                    horizontally scrolling chip rail, fit-content was the full
+                    unwrapped width of that rail: the column grew to 499px
+                    inside a 300px card and took the heading and both
+                    paragraphs off the edge of the screen with it.
+
+                    A definite width takes the decision away from content
+                    measurement. `min-w-0` is kept for the sm:flex-row case,
+                    where this is a real flex item that must be able to shrink
+                    below its min-content. */}
+                <div className="w-full min-w-0 flex-1">
                   <h2
                     className="font-fraunces font-medium text-text mb-3"
                     style={{ fontSize: "clamp(1.125rem, 1.8vw, 1.375rem)" }}
@@ -44,20 +59,28 @@ export function ConsentNote() {
                   </div>
 
                   {/* Trust Markers */}
-                  <div className="mt-[22px] flex flex-wrap justify-center sm:justify-start gap-[10px]">
-                    {[
-                      { icon: FileCheck, label: "Written consent on file" },
-                      { icon: UserCheck, label: "Verified clients" },
-                      { icon: Ban, label: "No incentivised reviews" },
-                    ].map((marker, i) => (
-                      <div
-                        key={i}
-                        className="inline-flex items-center gap-[6px] px-[13px] py-[6px] rounded-full bg-surface-alt border border-border text-[12.5px] font-medium text-text-muted"
-                      >
-                        <marker.icon className="w-[14px] h-[14px] text-primary" />
-                        <span>{marker.label}</span>
-                      </div>
-                    ))}
+                  {/* Three short assurances that wrapped to three rows at
+                      360px. One drifting line says the same thing in a third
+                      of the height. */}
+                  <div className="mt-[22px]">
+                    <PillRail
+                      label="How these stories are collected"
+                      className="justify-center sm:justify-start"
+                    >
+                      {[
+                        { icon: FileCheck, label: "Written consent on file" },
+                        { icon: UserCheck, label: "Verified clients" },
+                        { icon: Ban, label: "No incentivised reviews" },
+                      ].map((marker, i) => (
+                        <span
+                          key={i}
+                          className="inline-flex items-center gap-[6px] whitespace-nowrap rounded-full border border-border bg-surface-alt px-[13px] py-[6px] text-[12.5px] font-medium text-text-muted"
+                        >
+                          <marker.icon className="h-[14px] w-[14px] text-primary" />
+                          <span>{marker.label}</span>
+                        </span>
+                      ))}
+                    </PillRail>
                   </div>
                 </div>
               </div>

@@ -65,7 +65,7 @@ function FounderQuote({ className }: { className?: string }) {
 
 export function WhyGoRebalance() {
   return (
-    <SectionWrapper id="why" bg="base" labelledBy="why-heading">
+    <SectionWrapper id="why" bg="base" labelledBy="why-heading" sticky>
       <div className="grid gap-12 lg:grid-cols-[5fr_7fr] lg:gap-16 xl:gap-20">
         <div className="lg:sticky lg:top-[120px] lg:self-start">
           <Reveal>
@@ -84,6 +84,7 @@ export function WhyGoRebalance() {
 
         <div className="min-w-0">
           <CardRail
+            autoPlay
             count={whyGoRebalance.length}
             label="Why Go Rebalance"
             className="md:grid md:grid-cols-2 md:gap-5"

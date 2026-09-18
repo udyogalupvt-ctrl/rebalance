@@ -3,6 +3,7 @@ import { motion, useReducedMotion } from "framer-motion";
 import { ChevronRight } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { cn } from "@/lib/utils";
+import { PillRail } from "@/components/shared/AutoScroller";
 import {
   HeroBackdrop,
   HeroBackdropDots,
@@ -148,10 +149,27 @@ export function PageHero({
 
       <div className="container-x relative z-10">
         <div className={cn("grid items-center gap-10", hasImage && "lg:grid-cols-12 lg:gap-12")}>
+          {/*
+            `w-full` matters here, and it is not redundant with `mx-auto`.
+
+            An auto inline margin on a grid item changes how `width: auto`
+            resolves: instead of stretching to the track, it becomes
+            fit-content — the item sizes to its own content and is then
+            centred. That is invisible while every child is narrower than the
+            track, which it was until this column gained a horizontally
+            scrolling chip rail. Its max-content is the full unwrapped width of
+            those chips, so the column sized itself to 757px inside a 350px
+            track and the heading, the eyebrow and the breadcrumb were all
+            dragged off the right edge of the phone.
+
+            Giving the width a definite value takes the decision away from
+            content measurement entirely; `mx-auto` then centres a full-width
+            box, which is a no-op, and `max-w` still caps it on a wide screen.
+          */}
           <div
             className={cn(
               "min-w-0",
-              hasImage ? "lg:col-span-7" : "mx-auto max-w-[780px] text-center",
+              hasImage ? "lg:col-span-7" : "mx-auto w-full max-w-[780px] text-center",
             )}
           >
             <motion.nav
@@ -161,7 +179,11 @@ export function PageHero({
               transition={{ duration: reduce ? 0 : 0.45 }}
               className={cn("mb-6 flex", isCenter && !hasImage && "justify-center")}
             >
-              <ol className="m-0 flex list-none flex-wrap items-center gap-2.5 p-0">
+              {/* Never wraps. A breadcrumb broken over three lines stops
+                  reading as a trail and starts reading as a list, and it is
+                  the one element on the page whose whole job is to be a
+                  single path. It scrolls instead on the rare deep route. */}
+              <ol className="no-scrollbar m-0 flex max-w-full list-none flex-nowrap items-center gap-2.5 overflow-x-auto whitespace-nowrap p-0">
                 {breadcrumb.map((item, index) => {
                   const isLast = index === breadcrumb.length - 1;
                   return (
@@ -174,7 +196,7 @@ export function PageHero({
                         ) : (
                           <Link
                             to={item.href}
-                            className="inline-flex min-h-[36px] items-center text-[13px] text-text-muted transition-colors hover:text-text hover:underline"
+                            className="inline-flex min-h-[44px] items-center text-[13px] text-text-muted transition-colors hover:text-text hover:underline"
                           >
                             {item.label}
                           </Link>
@@ -242,14 +264,30 @@ export function PageHero({
               {subtitle}
             </motion.p>
 
+            {/*
+              The hero's meta chips, as one line on a phone.
+
+              Every page passes three of these — "Clinical Dietetics Training",
+              "Advanced Gut Health (IIN)", "1-on-1 Online Consultations" — and
+              at 360px each one is wider than half the screen, so flex-wrap put
+              all three on their own row: 144px of the opening screen spent on
+              three labels, pushing the page's actual heading and its call to
+              action further down on every route that uses this hero.
+            */}
             {children && (
               <motion.div
                 initial={reduce ? false : { opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: reduce ? 0 : 0.5, delay: reduce ? 0 : 0.28 }}
-                className={cn("mt-8 flex flex-wrap gap-3", !hasImage && "justify-center")}
+                className="mt-7 w-full"
               >
-                {children}
+                <PillRail
+                  label="Page highlights"
+                  gap="12px"
+                  className={cn(!hasImage && "justify-center")}
+                >
+                  {children}
+                </PillRail>
               </motion.div>
             )}
 

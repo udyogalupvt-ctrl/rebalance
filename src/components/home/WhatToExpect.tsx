@@ -34,6 +34,7 @@ export function WhatToExpect() {
 
       {/* A swipeable row on a phone, a two-by-two grid from md. */}
       <CardRail
+        autoPlay
         count={whatToExpect.length}
         label={whatToExpectCopy.eyebrow}
         wrapperClassName="mt-14"
